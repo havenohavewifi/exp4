@@ -19,6 +19,8 @@
 #include "filter.h"
 #include "join_Hashjoin.h"
 #include "nestloop.h"
+#include "deleteTable.h"
+#include "createTable.h"
 
 int init_database(struct dbSysHead *head)
 {
@@ -62,8 +64,7 @@ int main()
 	showDesc(&head);
 
 //	printf("create file1...\n");
-	fid1 = creatFileSpace(&head);//Œ™Œƒº˛“ª∑÷≈‰ø’º‰
-    fid2 = creatFileSpace(&head);
+	
 //	showFileDesc(&head);
 /*	printf("extend 10 pages for file1...\n");
 	extendFileSpace(&head, fid1, 10);//¿©’π Æ“≥
@@ -103,8 +104,10 @@ int main()
      }
      free(one_Row_);
      */
-
-//	if(initTable(&head, fid1) == 0)
+/*
+    fid1 = creatFileSpace(&head);//Œ™Œƒº˛“ª∑÷≈‰ø’º‰
+    fid2 = creatFileSpace(&head);
+	
     if(initTable(&head, FIRST_FID) == 0)
 		printf("1 initTable: customer.tbl\n");
 	if(showTable(&head, "customer") == -1 )
@@ -114,6 +117,11 @@ int main()
         printf("1 initTable: nation.tbl\n");
     if(showTable(&head, "nation") == -1 )
         printf("2 showTable: nation\n");
+*/
+    if(createTable(&head) == -1)
+        printf("Create Table failed\n");
+    if(createTable(&head) == -1)
+        printf("Create Table failed\n");
     
     relation * temp_data_dict = new relation[MAX_FILE_NUM];
     //read customer.tbl and write into our file1, 一次性
@@ -227,8 +235,11 @@ int main()
     if(true == tableScanScopeFilter(&head, FIRST_FID, temp_data_dict,"custkey","220",NOT_MORE_THAN,"230",LESS_THAN,&temp_data_dict[5])){
         printf("tableScanScopeFilter()\n");
     }
-
-
+    
+    showFileDesc(&head);
+    deleteTable(&head,"customer");
+//    deleteTable(&head,"nation");
+    
     showFileDesc(&head);
     exit_database(&head);
 	system("pause");
