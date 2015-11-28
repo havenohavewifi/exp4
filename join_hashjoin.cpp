@@ -486,7 +486,7 @@ void hashjoin(struct dbSysHead *head, relation *temp_datadic1, relation *temp_da
         free(new_Row_);
         
         result->fileID = -buffer_id_;
-
+        result->changeRecordNum(output_relation->getOutputTupleCount());
         head->buff[-temp_datadic1->fileID].emptyOrnot = true;
         head->buff[-temp_datadic2->fileID].emptyOrnot = true;
         delete hash_join;
