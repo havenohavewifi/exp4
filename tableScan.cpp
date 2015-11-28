@@ -14,6 +14,7 @@
 #include <iostream>
 void TableScan(struct dbSysHead * head,int fileID, relation * temp_datadic){
     int fid = queryFileID(head, fileID);
+    cout<<"test tablescan fid"<<fid<<endl;
     int dictID = fid;
     int original_rec_length = head->redef[fid].getRecordLength(); //record_length in original table
     int size_per_record = original_rec_length;   //each record length in new temp table, in case SPJ use
@@ -24,7 +25,7 @@ void TableScan(struct dbSysHead * head,int fileID, relation * temp_datadic){
         if (head->buff[i].emptyOrnot == true) {
             buffer_id_ = i;
             head->buff[i].emptyOrnot = false;   // ready for writein
-            std::cout<<"bufferID: "<<i<<std::endl;
+            std::cout<<"TableScan bufferID: "<<i<<"  fileid: "<<fileID<<endl;
             break;
         }
     }
@@ -32,7 +33,6 @@ void TableScan(struct dbSysHead * head,int fileID, relation * temp_datadic){
         cout<<"No Buffer Can be Used!"<<endl;
     }
     else{
-        cout<<"fileid: "<<fileID<<endl;
         RecordCursor scanTable(head, fileID, original_rec_length, 0); //0 for readin data buffer
         char * one_Row_ = (char *)malloc(sizeof(char) * size_per_record);
         Buffer t(head, -2); //to avoid positive number, no meaning

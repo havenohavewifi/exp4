@@ -17,7 +17,7 @@
 #include "cursorForTmptable.h"
 #include "project.h"
 #include "filter.h"
-#include "join_Hashjoin.h"
+#include "join_hashjoin.h"
 #include "nestloop.h"
 #include "deleteTable.h"
 #include "createTable.h"
@@ -201,6 +201,12 @@ int main()
     nestloop_smaller_or_equal(&head, &temp_data_dict[0],&temp_data_dict[1], &result,"nationkey");
     //nestloop_bigger_or_equal(&head, &temp_data_dict[0],&temp_data_dict[1], &result,"nationkey");
 */
+    
+    relation hashjoin_result_;
+    hashjoin_result_.init("customer_nation_hash", "irenewu");
+    hashjoin(&head, &temp_data_dict[0], &temp_data_dict[1],&hashjoin_result_,"nationkey");
+     
+/*
     //project
 	relation result;
 	result.init("customer", "TianzhenWu");
@@ -235,9 +241,9 @@ int main()
     if(true == tableScanScopeFilter(&head, FIRST_FID, temp_data_dict,"custkey","220",NOT_MORE_THAN,"230",LESS_THAN,&temp_data_dict[5])){
         printf("tableScanScopeFilter()\n");
     }
-    
+*/
     showFileDesc(&head);
-    deleteTable(&head,"customer");
+//    deleteTable(&head,"customer");
 //    deleteTable(&head,"nation");
     
     showFileDesc(&head);

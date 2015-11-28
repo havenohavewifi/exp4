@@ -49,7 +49,7 @@ public:
         this->bufferOffset = 0;
         this->start = true;
         this->filePageNum = head->desc.fileDesc[idx].filePageNum;
-        cout<<idx<<":"<<this->filePageNum<<endl;
+//        cout<<"ReadCursor "<<idx<<":"<<this->filePageNum<<endl;
     }
 
     bool getNextRecord(void *des);
