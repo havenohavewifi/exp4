@@ -395,7 +395,7 @@ void hashjoin(struct dbSysHead *head, relation *temp_datadic1, relation *temp_da
     int original_rec_length2 = temp_datadic2->getRecordLength();
     int original_attribute_length1=temp_datadic1->getAttributeNum();
     int original_attribute_length2=temp_datadic2->getAttributeNum();
-    int new_rec_length = result->getRecordLength();   //each record length in new temp table, in case SPJ use
+//    int new_rec_length = result->getRecordLength();   //each record length in new temp table, in case SPJ use
     //look up which buffer is empty
     int buffer_id_;
     int i;
@@ -419,14 +419,14 @@ void hashjoin(struct dbSysHead *head, relation *temp_datadic1, relation *temp_da
         hashjoinBufferManager* hashjoinBuffer_manager = new hashjoinBufferManager();
         InputRelation* left_relation = new InputRelation(*hashjoinBuffer_manager, temp_datadic1->getRecordNum());
         InputRelation* right_relation = new InputRelation(*hashjoinBuffer_manager, temp_datadic2->getRecordNum());
-        
+        cout<<"left relation num :"<<temp_datadic1->getRecordNum() << "  right relation num :"<<temp_datadic2->getRecordNum() <<endl;
         //creat <key, pos> pair
         RecordCursorTmp scanTable1(head, temp_datadic1->fileID, original_rec_length1, -temp_datadic1->fileID, temp_datadic1->getRecordNum());
         while (true == scanTable1.getNextRecord(one_Row_1)) {
             for(int i=0;i<original_attribute_length1;i++){
                 if(strcmp(temp_datadic1->getAttributeByNo(i).getName(),name)==0){
                     start1=temp_datadic1->getAttributeByNo(i).getRecordDeviation();
-                    k1=*((int*)(one_Row_1+start1));
+                    k1=*((int*)(one_Row_1+start1));  //debug for key
                     cout<<k1<<endl;
                     left_relation->addInputTuple(k1,one_Row_1);
                     break;
@@ -438,7 +438,7 @@ void hashjoin(struct dbSysHead *head, relation *temp_datadic1, relation *temp_da
             for(int i=0;i<original_attribute_length2;i++){
                 if(strcmp(temp_datadic2->getAttributeByNo(i).getName(),name)==0){
                     start2=temp_datadic2->getAttributeByNo(i).getRecordDeviation();
-                    k2=*((int*)(one_Row_2+start2));
+                    k2=*((int*)(one_Row_2+start2));  //debug for key
                     cout<<k2<<endl;
                     right_relation->addInputTuple(k2,one_Row_2);
                     break;

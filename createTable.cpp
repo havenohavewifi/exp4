@@ -25,21 +25,21 @@ int createTable(struct dbSysHead *head)
         
         head->redef[n].initRelation(head, fid, "customer", "TianzhenWu");
         head->redef[n].insertAttribute("custkey", 1, 4);
-        head->redef[n].insertAttribute("name", 2, 64);
-        head->redef[n].insertAttribute("address", 2, 64);
+        head->redef[n].insertAttribute("name", 2, 32);
+        head->redef[n].insertAttribute("address", 2, 40);
         head->redef[n].insertAttribute("nationkey", 1, 4);
-        head->redef[n].insertAttribute("phone", 2, 64);
+        head->redef[n].insertAttribute("phone", 2, 16);
         head->redef[n].insertAttribute("acctbal", 2, 64);
-        head->redef[n].insertAttribute("mktsegment", 2, 64);
+        head->redef[n].insertAttribute("mktsegment", 2, 12);
         head->redef[n].insertAttribute("comment", 2, 128);
     }
     
     if (fid == 2) {
         head->redef[n].initRelation(head, fid, "nation", "IreneWu");
         head->redef[n].insertAttribute("nationkey", 1, 4);
-        head->redef[n].insertAttribute("name", 2, 16);
+        head->redef[n].insertAttribute("name", 2, 32);
         head->redef[n].insertAttribute("regionkey", 1, 4);
-        head->redef[n].insertAttribute("comment", 2, 104);
+        head->redef[n].insertAttribute("comment", 2, 160);
     }
     return 0;
 }

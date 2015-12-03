@@ -42,7 +42,7 @@ public:
         this->fid = fid;
         this->recordLength = recordLength;
         this->cLogicPage = -1;
-        this->cPhysicalPage = -1;
+        this->cPhysicalPage = -1; //no use?
         this->bufferID = bufferID;
 //        head->buff[bufferID].emptyOrnot = false;
         this->cBufferPage = 0;

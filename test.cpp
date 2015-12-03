@@ -66,7 +66,7 @@ int main()
 
 //	printf("create file1...\n");
 	
-//	showFileDesc(&head);
+	showFileDesc(&head);
 /*	printf("extend 10 pages for file1...\n");
 	extendFileSpace(&head, fid1, 10);//¿©’π Æ“≥
 	showFileDesc(&head);
@@ -127,26 +127,39 @@ int main()
     relation * temp_data_dict = new relation[MAX_FILE_NUM];
     //read customer.tbl and write into our file1, 一次性
     loaddata(&head, FIRST_FID);
+    loaddata(&head, FIRST_FID + 1);
+    sysUpdate(&head);
     
     //Scan Table
     TableScan(&head, FIRST_FID, temp_data_dict);
+/*
     //get the output of tablescan, temporarily according to datadict1, other than temp_data_dict[1]
     int buffer_ID_ = - temp_data_dict[0].fileID;   //find which buffer
     int record_num_ = temp_data_dict[0].getRecordNum();
     int record_len_ = temp_data_dict[0].getRecordLength();
- //   RecordCursorTmp t1(&head,1,record_len_,buffer_ID_,record_num_);
+    RecordCursorTmp t1(&head,1,record_len_,buffer_ID_,record_num_);
     cout<<buffer_ID_<<"~"<<record_len_<<"~"<<record_num_<<endl;
-    
-    loaddata(&head, FIRST_FID + 1);
+    char * one_Row_ = (char *)malloc(sizeof(char)*record_len_);
+    while (true == t1.getNextRecord(one_Row_)) { //only scan
+        getOneRecord(one_Row_, &temp_data_dict[0]); //get each attribute value and print
+    }
+    free(one_Row_);
+*/
     
     TableScan(&head, FIRST_FID + 1, temp_data_dict);
+/*
     //get the output of tablescan, temporarily according to datadict1, other than temp_data_dict[1]
     buffer_ID_ = - temp_data_dict[1].fileID;   //find which buffer
     record_num_ = temp_data_dict[1].getRecordNum();
     record_len_ = temp_data_dict[1].getRecordLength();
-//    RecordCursorTmp t2(&head,1,record_len_,buffer_ID_,record_num_);
     cout<<buffer_ID_<<"~"<<record_len_<<"~"<<record_num_<<endl;
-
+    RecordCursorTmp t2(&head,2,record_len_,buffer_ID_,record_num_);
+    one_Row_ = (char *)malloc(sizeof(char)*record_len_);
+    while (true == t2.getNextRecord(one_Row_)) { //only scan
+        getOneRecord(one_Row_, &temp_data_dict[1]); //get each attribute value and print
+    }
+    free(one_Row_);
+ */
     // create index
 /*
     printf("recordNum:%d\n",head.redef[dictID].recordNum);
@@ -202,20 +215,30 @@ int main()
     nestloop_smaller_or_equal(&head, &temp_data_dict[0],&temp_data_dict[1], &result,"nationkey");
     //nestloop_bigger_or_equal(&head, &temp_data_dict[0],&temp_data_dict[1], &result,"nationkey");
 
+*/
+    //project customer
+	relation c_result;
+	c_result.init("customer", "TianzhenWu");
+	c_result.insertAttribute("name", 2, 64);
+    c_result.insertAttribute("nationkey",1,4);
+	c_result.insertAttribute("phone", 2, 64);
+	showRelation(&c_result);
+	project(&head, &temp_data_dict[0], &c_result);
+
+    //project nation.tbl
+    relation n_result;
+    n_result.init("nation", "MengxiZhou");
+    n_result.insertAttribute("nationkey", 1, 4);
+    n_result.insertAttribute("name", 2, 16);
+    n_result.insertAttribute("regionkey", 1, 4);
+    showRelation(&n_result);
+    project(&head, &temp_data_dict[1], &n_result);
     
     relation hashjoin_result_;
     hashjoin_result_.init("customer_nation_hash", "irenewu");
-    hashjoin(&head, &temp_data_dict[0], &temp_data_dict[1],&hashjoin_result_,"nationkey");
-     
-
-    //project
-	relation result;
-	result.init("customer", "TianzhenWu");
-	result.insertAttribute("name", 2, 64);
-	result.insertAttribute("phone", 2, 64);
-	showRelation(&result);
-	project(&head, &temp_data_dict[0], &result);
- 
+//    hashjoin(&head, &temp_data_dict[0], &temp_data_dict[1],&hashjoin_result_,"nationkey");
+    hashjoin(&head, &c_result, &n_result, &hashjoin_result_,"nationkey");
+/*
     //filter
     printf("start tableScanEqualFilter()...\n");
     
@@ -243,7 +266,7 @@ int main()
         printf("tableScanScopeFilter()\n");
     }
 */
-    relation result;
+/*    relation result;
     result.init("sortmergejoin zmx","zmx");
     //	merge_relation(&head, temp_data_dict[0], temp_data_dict[1], &result);
     result.insertAttribute("custkey", 1, 4);
@@ -271,10 +294,10 @@ int main()
         getOneRecord(one_Row_, &result); //get each attribute value and print
     }
     free(one_Row_);
-    
+*/
     showFileDesc(&head);
-//    deleteTable(&head,"customer");
-//    deleteTable(&head,"nation");
+    deleteTable(&head,"customer");
+    deleteTable(&head,"nation");
     
     showFileDesc(&head);
     exit_database(&head);

@@ -84,6 +84,8 @@ void project(struct dbSysHead *head, relation *temp_datadic, relation *result){
 		//write remainder
 		t.writeBufferPage(t.filehead, buffer_id_, t.data_, t.current_size_);
 		result->fileID = -buffer_id_;
+        //Attention!!!
+        result->changeRecordNum(k);
 		head->buff[-temp_datadic->fileID].emptyOrnot = true;
 		free(one_Row_);
 		free(new_Row_);
