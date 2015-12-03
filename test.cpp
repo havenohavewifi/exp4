@@ -234,10 +234,38 @@ int main()
     showRelation(&n_result);
     project(&head, &temp_data_dict[1], &n_result);
     
-    relation hashjoin_result_;
-    hashjoin_result_.init("customer_nation_hash", "irenewu");
-//    hashjoin(&head, &temp_data_dict[0], &temp_data_dict[1],&hashjoin_result_,"nationkey");
-    hashjoin(&head, &c_result, &n_result, &hashjoin_result_,"nationkey");
+//    relation hashjoin_result_;
+//    hashjoin_result_.init("customer_nation_hash", "irenewu");
+//    hashjoin(&head, &c_result, &n_result, &hashjoin_result_,"nationkey");
+    
+    relation result;
+    result.init("sortmergejoin zmx","zmx");
+//    	merge_relation(&head, c_result, n_result, &result);
+//    result.insertAttribute("custkey", 1, 4);
+    result.insertAttribute("name", 2, 32);
+//    result.insertAttribute("address", 2, 40);
+    result.insertAttribute("nationkey", 1, 4);
+    result.insertAttribute("phone", 2, 16);
+//    result.insertAttribute("acctbal", 2, 64);
+//    result.insertAttribute("mktsegment", 2, 12);
+//    result.insertAttribute("comment", 2, 128);
+    result.insertAttribute("nationkey", 1, 4);
+    result.insertAttribute("name", 2, 32);
+    result.insertAttribute("regionkey", 1, 4);
+//    result.insertAttribute("comment", 2, 160);
+    showRelation(&result);
+    sortmergejoin(&head, &c_result, &n_result, "nationkey", &result);
+    
+    int buffer_ID_ = - result.fileID;   //find which buffer
+    int record_num_ = result.getRecordNum();
+    int record_len_ = result.getRecordLength();
+    RecordCursorTmp t2(&head,-11,record_len_,buffer_ID_,record_num_);
+    cout<<buffer_ID_<<"~"<<record_len_<<"~"<<record_num_<<endl;
+    char * one_Row_ = (char *)malloc(sizeof(char)*record_len_);
+    while (true == t2.getNextRecord(one_Row_)) { //only scan
+        getOneRecord(one_Row_, &result); //get each attribute value and print
+    }
+    free(one_Row_);
 /*
     //filter
     printf("start tableScanEqualFilter()...\n");
@@ -266,35 +294,7 @@ int main()
         printf("tableScanScopeFilter()\n");
     }
 */
-/*    relation result;
-    result.init("sortmergejoin zmx","zmx");
-    //	merge_relation(&head, temp_data_dict[0], temp_data_dict[1], &result);
-    result.insertAttribute("custkey", 1, 4);
-    result.insertAttribute("name", 2, 64);
-    result.insertAttribute("address", 2, 64);
-    result.insertAttribute("nationkey", 1, 4);
-    result.insertAttribute("phone", 2, 64);
-    result.insertAttribute("acctbal", 2, 64);
-    result.insertAttribute("mktsegment", 2, 64);
-    result.insertAttribute("comment", 2, 128);
-    result.insertAttribute("nationkey", 1, 4);
-    result.insertAttribute("name", 2, 16);
-    result.insertAttribute("regionkey", 1, 4);
-    result.insertAttribute("comment", 2, 104);
-    showRelation(&result);
-    sortmergejoin(&head, &temp_data_dict[0], &temp_data_dict[1], "nationkey", &result);
 
-    buffer_ID_ = - result.fileID;   //find which buffer
-    record_num_ = result.getRecordNum();
-    record_len_ = result.getRecordLength();
-    RecordCursorTmp t2(&head,-11,record_len_,buffer_ID_,record_num_);
-    cout<<buffer_ID_<<"~"<<record_len_<<"~"<<record_num_<<endl;
-    char * one_Row_ = (char *)malloc(sizeof(char)*record_len_);
-    while (true == t2.getNextRecord(one_Row_)) { //only scan
-        getOneRecord(one_Row_, &result); //get each attribute value and print
-    }
-    free(one_Row_);
-*/
     showFileDesc(&head);
     deleteTable(&head,"customer");
     deleteTable(&head,"nation");
