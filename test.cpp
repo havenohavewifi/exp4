@@ -19,7 +19,7 @@
 #include "filter.h"
 #include "join_Hashjoin.h"
 #include "nestloop.h"
-#include "deleteTable.h"
+#include "dropTable.h"
 #include "createTable.h"
 #include "sortmergejoin.h"
 #include "insertOneTuple.h"
@@ -358,7 +358,7 @@ int main()
 */
 
     showFileDesc(&head);
-    deleteTable(&head,"customer");
+    dropTable(&head,"customer");
 //    deleteTable(&head,"nation");
 
 
