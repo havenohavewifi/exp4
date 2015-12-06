@@ -89,7 +89,7 @@ int attribute::getRecordDeviation()
     return this->recordDeviation;
 }
 
-int relation::initRelation(struct dbSysHead *head, int fid, char *relationName, char *constructorName)
+int relation::initRelation(struct dbSysHead *head, int fid, const char *relationName, const char *constructorName)
 {
     int n = queryFileID(head, fid);
     if (n == -1)

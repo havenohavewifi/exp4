@@ -10,7 +10,33 @@
 #include "file.h"
 #include "dbHead.h"
 #include "datadictionary.h"
+#include "string.h"
+#include <iostream>
 
+using namespace std;
+/*
+struct eachAttribute{
+    char[A_NAME_LENGTH] attribute_name_;
+    int attribute_type_;
+    int attribute_length_;
+};
+ */
+int createTable(struct dbSysHead * head, const char * relationName, const char * constructorName,  int attributeNum, struct eachAttribute * attributeList)
+{
+    int fid = creatFileSpace(head);
+    int n = queryFileID(head, fid);
+    if (n == -1)
+    {
+        cout<<"can't find file!"<<endl;
+        return -1;
+    }
+    head->redef[n].initRelation(head, fid, relationName, constructorName);
+    for (int i = 0 ; i < attributeNum; i++) {
+        head->redef[n].insertAttribute(attributeList[i].attribute_name_, attributeList[i].attribute_type_, attributeList[i].attribute_length_);
+    }
+    cout<<"create table succeed!"<<endl;
+    return  0;
+}
 //add some param such as tablename and attribute array?
 int createTable(struct dbSysHead *head)
 {
@@ -18,7 +44,7 @@ int createTable(struct dbSysHead *head)
     int n = queryFileID(head, fid);
     if (n == -1)
     {
-        printf("can't find file!\n");
+        cout<<"can't find file!"<<endl;
         return -1;
     }
     if (fid == 1) {

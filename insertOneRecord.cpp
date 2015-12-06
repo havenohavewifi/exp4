@@ -12,17 +12,17 @@
 #include "indexOpt.h"
 #include "dataDictionary.h"
 #include <iostream>
-
+//need to add input control, check error
 long insertOneRecord(struct dbSysHead *head , int fileID, char * oneRow){
     int fPhysicalID = queryFileID(head , fileID);
 //did this make change??
-    relation dic = head->redef[fPhysicalID];
+    relation *dic = &head->redef[fPhysicalID];
     long pos = (head->desc.fileDesc[fPhysicalID].filePageNum - 1) * SIZE_PER_PAGE + head->desc.fileDesc[fPhysicalID].filePageEndPos;
-    wtFile(head, 0, 1, pos, dic.getRecordLength(), oneRow);
-    head->desc.fileDesc[fPhysicalID].filePageEndPos += dic.getRecordLength();
-    dic.changeRecordNum(dic.getRecordNum()+1);
-	
-	if(true==insertInIndex(head, fileID, pos))
-        std::cout<<"insert in index true"<<std::endl;
+    wtFile(head, 0, 1, pos, dic->getRecordLength(), oneRow);
+    head->desc.fileDesc[fPhysicalID].filePageEndPos += dic->getRecordLength();
+    dic->changeRecordNum(dic->getRecordNum()+1);
+    cout<<head->redef[fPhysicalID].getRecordNum()<<endl;
+//	if(true==insertInIndex(head, fileID, pos))
+//        std::cout<<"insert in index true"<<std::endl;
 	return pos;
 }

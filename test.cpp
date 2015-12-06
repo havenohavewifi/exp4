@@ -22,7 +22,7 @@
 #include "deleteTable.h"
 #include "createTable.h"
 #include "sortmergejoin.h"
-
+#include "insertOneTuple.h"
 int init_database(struct dbSysHead *head)
 {
 	initSys(head);
@@ -119,17 +119,48 @@ int main()
     if(showTable(&head, "nation") == -1 )
         printf("2 showTable: nation\n");
 */
+/*
     if(createTable(&head) == -1)
         printf("Create Table failed\n");
     if(createTable(&head) == -1)
         printf("Create Table failed\n");
-    
+  */
+    struct eachAttribute * nation_att = new struct eachAttribute[12];
+    strcpy(nation_att[0].attribute_name_,"custkey");
+    nation_att[0].attribute_type_ = 1;
+    nation_att[0].attribute_length_ = 4;
+    strcpy(nation_att[1].attribute_name_,"name");
+    nation_att[1].attribute_type_ = 2;
+    nation_att[1].attribute_length_ =32;
+    strcpy(nation_att[2].attribute_name_,"address");
+    nation_att[2].attribute_type_ = 2;
+    nation_att[2].attribute_length_ =40;
+    strcpy(nation_att[3].attribute_name_,"nationkey");
+    nation_att[3].attribute_type_ = 1;
+    nation_att[3].attribute_length_ = 4;
+    strcpy(nation_att[4].attribute_name_,"phone");
+    nation_att[4].attribute_type_ = 2;
+    nation_att[4].attribute_length_ =16;
+    strcpy(nation_att[5].attribute_name_,"acctbal");
+    nation_att[5].attribute_type_ = 2;
+    nation_att[5].attribute_length_ =64;
+    strcpy(nation_att[6].attribute_name_,"mktsemgent");
+    nation_att[6].attribute_type_ = 2;
+    nation_att[6].attribute_length_ =12;
+    strcpy(nation_att[7].attribute_name_,"comment");
+    nation_att[7].attribute_type_ = 2;
+    nation_att[7].attribute_length_ =128;
+    if (createTable( &head, "customer", "TianzhenWu",  8, nation_att) == -1) {
+        printf("Create Table failed\n");
+    }
     relation * temp_data_dict = new relation[MAX_FILE_NUM];
     //read customer.tbl and write into our file1, 一次性
     loaddata(&head, FIRST_FID);
-    loaddata(&head, FIRST_FID + 1);
+//    loaddata(&head, FIRST_FID + 1);
     sysUpdate(&head);
-    
+
+    insertOneTuple(&head, "customer", "501|Customer#000000001|IVhzIApeRb ot,c,E|15|25-989-741-2988|711.56|BUILDING|to the even, regular platelets.HHHHHH|");
+    sysUpdate(&head);
     //Scan Table
     TableScan(&head, FIRST_FID, temp_data_dict);
 /*
@@ -144,9 +175,9 @@ int main()
         getOneRecord(one_Row_, &temp_data_dict[0]); //get each attribute value and print
     }
     free(one_Row_);
-*/
+
     
-    TableScan(&head, FIRST_FID + 1, temp_data_dict);
+//    TableScan(&head, FIRST_FID + 1, temp_data_dict);
 /*
     //get the output of tablescan, temporarily according to datadict1, other than temp_data_dict[1]
     buffer_ID_ = - temp_data_dict[1].fileID;   //find which buffer
@@ -217,7 +248,7 @@ int main()
 
 */
     //project customer
-	relation c_result;
+/*	relation c_result;
 	c_result.init("customer", "TianzhenWu");
 	c_result.insertAttribute("name", 2, 64);
     c_result.insertAttribute("nationkey",1,4);
@@ -233,7 +264,8 @@ int main()
     n_result.insertAttribute("regionkey", 1, 4);
     showRelation(&n_result);
     project(&head, &temp_data_dict[1], &n_result);
-    
+*/
+ /*
 //    relation hashjoin_result_;
 //    hashjoin_result_.init("customer_nation_hash", "irenewu");
 //    hashjoin(&head, &c_result, &n_result, &hashjoin_result_,"nationkey");
@@ -294,11 +326,11 @@ int main()
         printf("tableScanScopeFilter()\n");
     }
 */
-
+/*
     showFileDesc(&head);
     deleteTable(&head,"customer");
     deleteTable(&head,"nation");
-    
+*/
     showFileDesc(&head);
     exit_database(&head);
 	system("pause");
