@@ -17,6 +17,7 @@
 %token	NUMBER_VALUE
 %token	VARCHAR_VALUE
 %token	DATE_VALUE
+%token	END
 
 %%
 
@@ -66,8 +67,7 @@ attribute_type
 
 drop
 	: DROP_TABLE VARIABLE { 
-	// need to change: drop the dictionary, not just data
-	deleteTable(&head, $2.name); }
+	dropTable(&head, $2.name); }
 	;
 
 insert
@@ -111,8 +111,8 @@ item
 	;
 
 delete
-	: DELETE STAR FROM VARIABLE { deleteTable(&head, $4.name); } 
-	| DELETE FROM VARIABLE WHERE where_list {
+	: DELETE STAR FROM VARIABLE { deleteAllTuples(&head, $4.name); } 
+	| DELETE FROM VARIABLE WHERE where_list END{
 		if (cur_condition == 1) {
 			int fid = getLogicfidByName(&head, $3.name);
 			deleteRecordWhere(&head, fid, condition_array[0].attribute_name, condition_array[0].attribute_value, condition_array[0].operation, 0);
@@ -184,8 +184,23 @@ select
 		    
 		}
 	}
-	| SELECT attribute_list FROM table_list WHERE where_list {
+	| SELECT attribute_list FROM table_list WHERE where_list END{
+		for (int i=0; i<cur_sattr; i++) {
+			printf("%s ", select_attributes[i]);
+		}
+		printf("\n");
 
+		for (int i=0; i<cur_table; i++) {
+			printf("%s ", table_array[i]);
+		}
+		printf("\n");
+
+		for (int i=0; i<cur_condition; i++) {
+			printf("%s %d %s\n", condition_array[i].attribute_name, condition_array[i].operation, condition_array[i].attribute_value);
+		}
+
+		// can't select
+		/*
 		if( cur_table == 1) {
 			int logicfid = getLogicfidByName(&head, table_array[0]);
 			int physicfid = queryFileID(&head, logicfid);
@@ -196,11 +211,9 @@ select
 				c_result.insertAttribute(select_attributes[i], head.redef[physicfid].getAttributeByName(select_attributes[i]).getType(), head.redef[physicfid].getAttributeByName(select_attributes[i]).getLength());
 				printf("%s %d %d\n", select_attributes[i], head.redef[physicfid].getAttributeByName(select_attributes[i]).getType(), head.redef[physicfid].getAttributeByName(select_attributes[i]).getLength());
 			}
-			//c_result.insertAttribute("name", 2, 64);
-			//c_result.insertAttribute("nationkey",1,4);
-			//c_result.insertAttribute("phone", 2, 64);
 			project(&head, &(head.redef[physicfid]), &c_result);
 		}
+		*/
 		
 		cur_condition = 0;
 		cur_sattr = 0;

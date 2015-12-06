@@ -48,6 +48,8 @@ letter			[a-zA-Z]
 ">="	{yylval.val=1; return BBiggerEqual;}
 "LIKE"	{yylval.val=7; return BLike;}
 
+";"	{return END;}
+
 [ |\t]+ ;
 \n ;
 
