@@ -8,7 +8,7 @@
 
 #ifndef _join_Hashjoin_h
 #define _join_Hashjoin_h
-#include "datadictionary.h"
+#include "dataDictionary.h"
 
 class Buffer;
 class BufferManager;

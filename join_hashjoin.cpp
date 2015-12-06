@@ -4,7 +4,7 @@
 
 #include "join_Hashjoin.h"
 #include "cursorForTmptable.h"
-#include "datadictionary.h"
+#include "dataDictionary.h"
 
 #define BUFFER_SIZE                 (1* 1024 * 1024)
 #define VALUE_SIZE                  1024
