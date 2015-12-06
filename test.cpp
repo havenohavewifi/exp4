@@ -19,7 +19,7 @@
 #include "filter.h"
 #include "join_Hashjoin.h"
 #include "nestloop.h"
-#include "deleteTable.h"
+#include "dropTable.h"
 #include "createTable.h"
 #include "sortmergejoin.h"
 #include "insertOneTuple.h"
@@ -162,6 +162,7 @@ int main()
     sysUpdate(&head);
 
     insertOneTuple(&head, "customer", "501|Customer#000000001|IVhzIApeRb ot,c,E|15|25-989-741-2988|711.56|BUILDING|to the even, regular platelets.HHHHHH|");
+//    insertOneTuple(&head, "customer", "2|Customer#000000001|IVhzIApeRb ot,c,E|15|25-989-741-2988|711.56|BUILDING|to the even, regular platelets.HHHHHH|");
     sysUpdate(&head);
     //Scan Table
     TableScan(&head, FIRST_FID, temp_data_dict);
@@ -355,15 +356,15 @@ int main()
         printf("tableScanScopeFilter()\n");
     }
 */
-/*
+
     showFileDesc(&head);
-    deleteTable(&head,"customer");
-    deleteTable(&head,"nation");
-*/
+    dropTable(&head,"customer");
+//    deleteTable(&head,"nation");
 
 
+/*
    if(true == createIndexOn(&head, FIRST_FID, "custkey")){
-        char* index_filename = "b_plus_tree_index_1custkey.dat";
+        char* index_filename = "/Users/Irene/Desktop/b_plus_tree_index_1custkey.dat";
         FILE* fp;
         int pos;
 
@@ -402,7 +403,8 @@ int main()
 
         }
     }//end of createIndexOn if
-
+*/
+    sysUpdate(&head);
     showFileDesc(&head);
     exit_database(&head);
 	system("pause");

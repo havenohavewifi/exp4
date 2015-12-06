@@ -190,6 +190,14 @@ char *relation::getRelationName()
 {
     return this->relationName;
 }
+
+int relation::deleteRelation()
+{
+    strcpy(this->relationName, "\0");
+    strcpy(this->constructor, "\0");
+    return true;
+}
+
 /*
 int initTable(struct dbSysHead *head, long fid)
 {

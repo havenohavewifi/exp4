@@ -50,6 +50,7 @@ public:
     int getAttributeNum();
     int getRecordLength();
     int getRecordNum();
+    int deleteRelation();
     attribute getAttributeByName(char *name);
     attribute getAttributeByNo(int no);
     
