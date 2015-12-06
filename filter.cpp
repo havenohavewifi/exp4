@@ -15,8 +15,7 @@ extern "C"{
 //#include "b_plus_tree.h"
 
 
-
-bool tableScanEqualFilter(struct dbSysHead * head, int fileID, relation * temp_data_dict, char* attributeName, char* value,relation * new_temp_datadic){
+bool tableScanEqualFilter(struct dbSysHead * head , relation * old_temp_data_dict, char* attributeName, char* value,relation * new_temp_datadic){
 
     int my_buffer_id_ ;
     int i;
@@ -30,85 +29,83 @@ bool tableScanEqualFilter(struct dbSysHead * head, int fileID, relation * temp_d
     }
     if (i == BUFF_NUM) {
         cout<<"No Buffer Can be Used!"<<endl;
-	return false;
+        return false;
     }
     else{
 	//read the scanned table according to the temp_data_dict
-	
-        int buffer_ID_ = - temp_data_dict[0].fileID;   //find which buffer
-        int record_num_ = temp_data_dict[0].getRecordNum();
-        int record_len_ = temp_data_dict[0].getRecordLength();
-	attribute tempAttr;
-	tempAttr = temp_data_dict[0].getAttributeByName(attributeName);
-	int offset = tempAttr.getRecordDeviation();
-	int type = tempAttr.getType();
-	int lengthOfAttr = tempAttr.getLength();
-        RecordCursorTmp t1(head,1,record_len_,buffer_ID_,record_num_);
+        int buffer_ID_ = - old_temp_data_dict->fileID;   //find which buffer
+        int record_num_ = old_temp_data_dict->getRecordNum();
+        int record_len_ = old_temp_data_dict->getRecordLength();
+        attribute tempAttr;
+        tempAttr = old_temp_data_dict->getAttributeByName(attributeName);
+        int offset = tempAttr.getRecordDeviation();
+        int type = tempAttr.getType();
+        int lengthOfAttr = tempAttr.getLength();
+        RecordCursorTmp t1(head,old_temp_data_dict->fileID,record_len_,buffer_ID_,record_num_);
         //cout<<buffer_ID_<<"~"<<record_len_<<"~"<<record_num_<<endl;
 
-	Buffer t(head, -2);
-	int hitRecordCount = 0;
-	
+        Buffer t(head, -2);
+        int hitRecordCount = 0;
+        //printf("type %d\n",type);
         char * one_Row_ = (char *)malloc(sizeof(char)*record_len_);
         while (true == t1.getNextRecord(one_Row_)) { //only scan
 	    //compare the current record with the wanting value, write in buffer if it hits
-            switch(type){
+        switch(type){
 		case INT:{
 		    int recordValue = *((int *)(one_Row_ + offset));
 		    //int compareValue = *((int *)value);
 		    int compareValue = atoi(value);
-//		    printf("record:%d\tcompare:%d\n",recordValue,compareValue);
 		    if (recordValue == compareValue){
-                        printf("record:%d\tcompare:%d\n",recordValue,compareValue);
-			//getOneRecord(one_Row_, &temp_data_dict[0]);
-			hitRecordCount++;
-			if(false == t.AppendBuffer(one_Row_, record_len_)){
-				t.writeBufferPage(t.filehead,my_buffer_id_ ,t.data_, t.current_size_);
-				t.pageID++;
-				if (t.pageID == SIZE_BUFF) {
-				    std::cout<<"this buffer full"<<std::endl;
-				    break;
-				}
-				memset(t.data_, 0, SIZE_PER_PAGE);
-				memcpy(t.data_, one_Row_, record_len_);
-				t.pointer_ = t.data_+record_len_;
-				t.current_size_ = record_len_;
-			}
-		    } 	    
+                printf("int record:%d\tcompare:%d\n",recordValue,compareValue);
+                hitRecordCount++;
+                if(false == t.AppendBuffer(one_Row_, record_len_)){
+                    t.writeBufferPage(t.filehead,my_buffer_id_ ,t.data_, t.current_size_);
+                    t.pageID++;
+                    if (t.pageID == SIZE_BUFF) {
+                        std::cout<<"this buffer full"<<std::endl;
+                        break;
+                    }
+                    memset(t.data_, 0, SIZE_PER_PAGE);
+                    memcpy(t.data_, one_Row_, record_len_);
+                    t.pointer_ = t.data_+record_len_;
+                    t.current_size_ = record_len_;
+                }
+		    }
+            break;
 		}
 		case CHAR:{
-                    char* recordValue = (char *)malloc(sizeof(char)*lengthOfAttr);
-                    memcpy(recordValue,one_Row_ + offset,lengthOfAttr);
-                    //int compareValue = *((int *)value);
-                    char* compareValue = value;
-//                  printf("record:%d\tcompare:%d\n",recordValue,compareValue);
-                    if (strcmp(recordValue,compareValue) == 0){
-                        printf("record:%s\tcompare:%s\n",recordValue,compareValue);
-                        //getOneRecord(one_Row_, &temp_data_dict[0]);
-                        hitRecordCount++;
-                        if(false == t.AppendBuffer(one_Row_, record_len_)){
-                                t.writeBufferPage(t.filehead,my_buffer_id_ ,t.data_, t.current_size_);
-                                t.pageID++;
-                                if (t.pageID == SIZE_BUFF) {
-                                    std::cout<<"this buffer full"<<std::endl;
-                                    break;
-                                }
-                                memset(t.data_, 0, SIZE_PER_PAGE);
-                                memcpy(t.data_, one_Row_, record_len_);
-                                t.pointer_ = t.data_+record_len_;
-                                t.current_size_ = record_len_;
+            char* recordValue = (char *)malloc(sizeof(char)*lengthOfAttr);
+            memcpy(recordValue,one_Row_ + offset,lengthOfAttr);
+            //int compareValue = *((int *)value);
+            char* compareValue = value;
+            if (strcmp(recordValue,compareValue) == 0){
+                printf("char record:%s\tcompare:%s\n",recordValue,compareValue);
+                //getOneRecord(one_Row_, &temp_data_dict[0]);
+                hitRecordCount++;
+                if(false == t.AppendBuffer(one_Row_, record_len_)){
+                        t.writeBufferPage(t.filehead,my_buffer_id_ ,t.data_, t.current_size_);
+                        t.pageID++;
+                        if (t.pageID == SIZE_BUFF) {
+                            std::cout<<"this buffer full"<<std::endl;
+                            break;
                         }
-                    }
+                        memset(t.data_, 0, SIZE_PER_PAGE);
+                        memcpy(t.data_, one_Row_, record_len_);
+                        t.pointer_ = t.data_+record_len_;
+                        t.current_size_ = record_len_;
+                }
+            }
+            break;
 		}
 		case DATE:{
-
+            break;
 		}
 	    }//end switch
             
     	}//end while
-	t.writeBufferPage(t.filehead,my_buffer_id_ ,t.data_, t.current_size_);
+        t.writeBufferPage(t.filehead,my_buffer_id_ ,t.data_, t.current_size_);
         free(one_Row_);
-        *new_temp_datadic = temp_data_dict[0]; //wrong, need to wait class copy
+        new_temp_datadic = old_temp_data_dict; //wrong, need to wait class copy
         new_temp_datadic->fileID = -my_buffer_id_; //negative number for temp datadict, value is for which buffer
         new_temp_datadic->changeRecordNum(hitRecordCount);
         //!!!free the old buffer
@@ -192,7 +189,7 @@ bool indexScanEqualFilter(struct dbSysHead * head, int fileID, char* attributeNa
 }
 
 
-bool tableScanSemiscopeFilter(struct dbSysHead * head, int fileID, relation * temp_data_dict, char* attributeName, char* value,int sign,relation * new_temp_datadic){
+bool tableScanSemiscopeFilter(struct dbSysHead * head, relation * old_temp_data_dict, char* attributeName, char* value,int sign,relation * new_temp_datadic){
 
     int my_buffer_id_ ;
     int i;
@@ -211,49 +208,48 @@ bool tableScanSemiscopeFilter(struct dbSysHead * head, int fileID, relation * te
     else{
 	//read the scanned table according to the temp_data_dict
 	
-        int buffer_ID_ = - temp_data_dict[0].fileID;   //find which buffer
-        int record_num_ = temp_data_dict[0].getRecordNum();
-        int record_len_ = temp_data_dict[0].getRecordLength();
-	attribute tempAttr;
-	tempAttr = temp_data_dict[0].getAttributeByName(attributeName);
-	int offset = tempAttr.getRecordDeviation();
-	int type = tempAttr.getType();
-	int lengthOfAttr = tempAttr.getLength();
-        RecordCursorTmp t1(head,1,record_len_,buffer_ID_,record_num_);
+        int buffer_ID_ = - old_temp_data_dict->fileID;   //find which buffer
+        int record_num_ = old_temp_data_dict->getRecordNum();
+        int record_len_ = old_temp_data_dict->getRecordLength();
+        attribute tempAttr;
+        tempAttr = old_temp_data_dict->getAttributeByName(attributeName);
+        int offset = tempAttr.getRecordDeviation();
+        int type = tempAttr.getType();
+        int lengthOfAttr = tempAttr.getLength();
+        RecordCursorTmp t1(head, old_temp_data_dict->fileID,record_len_,buffer_ID_,record_num_);
         //cout<<buffer_ID_<<"~"<<record_len_<<"~"<<record_num_<<endl;
 
-	Buffer t(head, -2);
-	int hitRecordCount = 0;
+        Buffer t(head, -2);
+        int hitRecordCount = 0;
 	
         char * one_Row_ = (char *)malloc(sizeof(char)*record_len_);
         while (true == t1.getNextRecord(one_Row_)) { //only scan
 	    //compare the current record with the wanting value, write in buffer if it hits
-            switch(type){
+        switch(type){
 		case INT:{
 		    int recordValue = *((int *)(one_Row_ + offset));
 		    //int compareValue = *((int *)value);
 		    int compareValue = atoi(value);
-//		    printf("record:%d\tcompare:%d\n",recordValue,compareValue);
-                    switch(sign){
+            switch(sign){
 			case LESS_THAN:{
-	                    if (recordValue < compareValue){
-        	                printf("less_than_:record:%d\tcompare:%d\n",recordValue,compareValue);
-                	        //getOneRecord(one_Row_, &temp_data_dict[0]);
-                        	hitRecordCount++;
-	                        if(false == t.AppendBuffer(one_Row_, record_len_)){
-        		                t.writeBufferPage(t.filehead,my_buffer_id_ ,t.data_, t.current_size_);
-                        	        t.pageID++;
-                                	if (t.pageID == SIZE_BUFF) {
-                                    	    std::cout<<"this buffer full"<<std::endl;
-                                            break;
-                                	}
-                                	memset(t.data_, 0, SIZE_PER_PAGE);
-                                	memcpy(t.data_, one_Row_, record_len_);
-                                	t.pointer_ = t.data_+record_len_;
-                                	t.current_size_ = record_len_;
-                        	}
-                    	    }  //end if
-                            break;
+                    if (recordValue < compareValue){
+                        printf("less_than_:record:%d\tcompare:%d\n",recordValue,compareValue);
+                        //getOneRecord(one_Row_, &temp_data_dict[0]);
+                        hitRecordCount++;
+                        if(false == t.AppendBuffer(one_Row_, record_len_)){
+                            t.writeBufferPage(t.filehead,my_buffer_id_ ,t.data_, t.current_size_);
+                                t.pageID++;
+                                if (t.pageID == SIZE_BUFF) {
+                                        std::cout<<"this buffer full"<<std::endl;
+                                        break;
+                                }
+                                memset(t.data_, 0, SIZE_PER_PAGE);
+                                memcpy(t.data_, one_Row_, record_len_);
+                                t.pointer_ = t.data_+record_len_;
+                                t.current_size_ = record_len_;
+                        }
+                        }  //end if
+                        break;
 			}
 			case MORE_THAN:{
                             if (recordValue > compareValue){
@@ -370,9 +366,9 @@ bool tableScanSemiscopeFilter(struct dbSysHead * head, int fileID, relation * te
 	    }//end switch
             
     	}//end while
-	t.writeBufferPage(t.filehead,my_buffer_id_ ,t.data_, t.current_size_);
+        t.writeBufferPage(t.filehead,my_buffer_id_ ,t.data_, t.current_size_);
         free(one_Row_);
-        *new_temp_datadic = temp_data_dict[0]; //wrong, need to wait class copy
+        new_temp_datadic = old_temp_data_dict; //wrong, need to wait class copy
         new_temp_datadic->fileID = -my_buffer_id_; //negative number for temp datadict, value is for which buffer
         new_temp_datadic->changeRecordNum(hitRecordCount);
         //!!!free the old buffer
@@ -381,8 +377,7 @@ bool tableScanSemiscopeFilter(struct dbSysHead * head, int fileID, relation * te
     }
 }
 
-bool tableScanScopeFilter(struct dbSysHead * head, int fileID, relation * temp_data_dict, char* attributeName, char* value1,int sign1,char* value2,int sign2,relation * new_temp_datadic){
-
+bool tableScanScopeFilter(struct dbSysHead * head,  relation * old_temp_data_dict, char* attributeName, char* value1,int sign1,char* value2,int sign2,relation * new_temp_datadic){
 
     int my_buffer_id_ ;
     int i;
@@ -400,23 +395,22 @@ bool tableScanScopeFilter(struct dbSysHead * head, int fileID, relation * temp_d
     }
     else{
 	//read the scanned table according to the temp_data_dict
-	
-        int buffer_ID_ = - temp_data_dict[0].fileID;   //find which buffer
-        int record_num_ = temp_data_dict[0].getRecordNum();
-        int record_len_ = temp_data_dict[0].getRecordLength();
-	attribute tempAttr;
-	tempAttr = temp_data_dict[0].getAttributeByName(attributeName);
-	int offset = tempAttr.getRecordDeviation();
-	int type = tempAttr.getType();
-	int lengthOfAttr = tempAttr.getLength();
-        RecordCursorTmp t1(head,1,record_len_,buffer_ID_,record_num_);
+        int buffer_ID_ = - old_temp_data_dict->fileID;   //find which buffer
+        int record_num_ = old_temp_data_dict->getRecordNum();
+        int record_len_ = old_temp_data_dict->getRecordLength();
+        attribute tempAttr;
+        tempAttr = old_temp_data_dict->getAttributeByName(attributeName);
+        int offset = tempAttr.getRecordDeviation();
+        int type = tempAttr.getType();
+        int lengthOfAttr = tempAttr.getLength();
+        RecordCursorTmp t1(head,old_temp_data_dict->fileID,record_len_,buffer_ID_,record_num_);
         //cout<<buffer_ID_<<"~"<<record_len_<<"~"<<record_num_<<endl;
         if(type != INT){
             printf("Cannnot call tableScanScopeFilter when the attribute is not INT type.\n");
             return false;
         }	
-	Buffer t(head, -2);
-	int hitRecordCount = 0;
+        Buffer t(head, -2);
+        int hitRecordCount = 0;
 	
         char * one_Row_ = (char *)malloc(sizeof(char)*record_len_);
         while (true == t1.getNextRecord(one_Row_)) { //only scan
@@ -527,9 +521,9 @@ bool tableScanScopeFilter(struct dbSysHead * head, int fileID, relation * temp_d
 		}
            }//end of switch sign1 
     	}//end while
-	t.writeBufferPage(t.filehead,my_buffer_id_ ,t.data_, t.current_size_);
+        t.writeBufferPage(t.filehead,my_buffer_id_ ,t.data_, t.current_size_);
         free(one_Row_);
-        *new_temp_datadic = temp_data_dict[0]; //wrong, need to wait class copy
+        new_temp_datadic = old_temp_data_dict; //wrong, need to wait class copy
         new_temp_datadic->fileID = -my_buffer_id_; //negative number for temp datadict, value is for which buffer
         new_temp_datadic->changeRecordNum(hitRecordCount);
         //!!!free the old buffer

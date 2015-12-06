@@ -13,10 +13,11 @@ extern "C"{
 #define MORE_THAN 2
 #define NOT_MORE_THAN 3
 #define NOT_EQUAL 4
+#define EQUAL 5
 
-bool tableScanEqualFilter(struct dbSysHead * head, int fileID, relation * temp_datadic, char* attributeName, char * value,relation * new_temp_datadic);
+bool tableScanEqualFilter(struct dbSysHead * head, relation * temp_datadic, char* attributeName, char * value,relation * new_temp_datadic);
 
 bool indexScanEqualFilter(struct dbSysHead * head, int fileID, char* attributeName, char* value,relation * new_temp_datadic);
 
-bool tableScanSemiscopeFilter(struct dbSysHead * head, int fileID, relation * temp_data_dict, char* attributeName, char* value,int sign,relation * new_temp_datadic);
-bool tableScanScopeFilter(struct dbSysHead * head, int fileID, relation * temp_data_dict, char* attributeName, char* value1,int sign1,char* value2,int sign2,relation * new_temp_datadic);
+bool tableScanSemiscopeFilter(struct dbSysHead * head, relation * temp_data_dict, char* attributeName, char* value,int sign,relation * new_temp_datadic);
+bool tableScanScopeFilter(struct dbSysHead * head, relation * temp_data_dict, char* attributeName, char* value1,int sign1,char* value2,int sign2,relation * new_temp_datadic);
