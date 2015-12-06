@@ -12,6 +12,8 @@
 #include "indexOpt.h"
 #include "dataDictionary.h"
 #include <iostream>
+using namespace std;
+
 //need to add input control, check error
 long insertOneRecord(struct dbSysHead *head , int fileID, char * oneRow){
     int fPhysicalID = queryFileID(head , fileID);
