@@ -17,7 +17,7 @@
 #include "cursorForTmptable.h"
 #include "project.h"
 #include "filter.h"
-#include "join_hashjoin.h"
+#include "join_Hashjoin.h"
 #include "nestloop.h"
 #include "deleteTable.h"
 #include "createTable.h"

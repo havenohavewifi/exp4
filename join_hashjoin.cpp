@@ -2,11 +2,12 @@
 #include <cstring>
 #include <iostream>
 
-#include "join_hashjoin.h"
+#include "join_Hashjoin.h"
 #include "cursorForTmptable.h"
 #include "dataDictionary.h"
 #include "Buffer.h"
 
+#define nullptr 0
 #define hashjoinBuffer_SIZE                 (1* 1024 * 1024)
 #define VALUE_SIZE                  1024
 #define HASH_TABLE_BUCKET_COUNT     32

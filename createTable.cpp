@@ -9,7 +9,7 @@
 #include "createTable.h"
 #include "file.h"
 #include "dbHead.h"
-#include "datadictionary.h"
+#include "dataDictionary.h"
 
 //add some param such as tablename and attribute array?
 int createTable(struct dbSysHead *head)
