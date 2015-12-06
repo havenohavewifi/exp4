@@ -6,7 +6,7 @@
 //
 //
 
-#include "deleteTable.h"
+#include "deleteAllTuples.h"
 #include "dataDictionary.h"
 #include "dbHead.h"
 #include "file.h"
@@ -14,7 +14,7 @@
 #include <iostream>
 using namespace std;
 
-int deleteTable(struct dbSysHead *head, const char * tableName){
+int deleteAllTuples(struct dbSysHead *head, const char * tableName){
     int logicfid;
     int i, j;
     for (i = 0; i<MAX_FILE_NUM; i++) {
@@ -40,7 +40,7 @@ int deleteTable(struct dbSysHead *head, const char * tableName){
         }
         else
         {
-            (head->redef)[i].deleteRelation();
+//            (head->redef)[i].deleteRelation();
             cout<<"delete table succeed."<<i<<endl;
             return 0;
         }
