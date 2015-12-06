@@ -163,7 +163,34 @@ int main()
     sysUpdate(&head);
     //Scan Table
     TableScan(&head, FIRST_FID, temp_data_dict);
-/*
+
+    //for each old table, only one time SPJ operator allowed, because it will be freed by this SPJ operator.
+    /*
+    printf("start tableScanEqualFilter()...\n");
+    relation filter_result1;
+    if(true == tableScanEqualFilter(&head, &temp_data_dict[0],"custkey","3", &filter_result1)){
+        printf("tableScanEqualFilter()\n");
+    }
+
+    relation filter_result2;
+    if(true == tableScanEqualFilter(&head, &temp_data_dict[0],"name","Customer#000000009", &filter_result2)){
+        printf("tableScanEqualFilter()\n");
+    }
+
+    relation filter_result3;
+    if(true == tableScanScopeFilter(&head,  &temp_data_dict[0],"custkey","220",NOT_MORE_THAN,"230",LESS_THAN,&filter_result3)){
+        printf("tableScanScopeFilter()\n");
+    }
+    RecordCursorTmp t2(&head,-2,filter_result3.getRecordLength(), - filter_result3.fileID,filter_result3.getRecordNum());
+    char * one_Row_ = (char *)malloc(sizeof(char)* filter_result3.getRecordLength());
+    while (true == t2.getNextRecord(one_Row_)) { //only scan
+        getOneRecord(one_Row_, &filter_result3); //get each attribute value and print
+    }
+    free(one_Row_);
+*/
+    
+    
+    
     //get the output of tablescan, temporarily according to datadict1, other than temp_data_dict[1]
     int buffer_ID_ = - temp_data_dict[0].fileID;   //find which buffer
     int record_num_ = temp_data_dict[0].getRecordNum();
