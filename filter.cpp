@@ -14,8 +14,20 @@ extern "C"{
 #include "filter.h"
 //#include "b_plus_tree.h"
 
-
-bool tableScanEqualFilter(struct dbSysHead * head , relation * old_temp_data_dict, char* attributeName, char* value,relation * new_temp_datadic){
+/**
+ * @brief Equal Filter based on table Scan
+ *
+ * @param [in] head  : struct dbSysHead *
+ * @param [in] old_temp_data_dict : relation*       // results of tablescan
+ * @param [in] attributeName : char*
+ * @param [in] value : char*
+ * @param [in] new_temp_datadic : relation*     //filter results
+ * @return  int         //number of filter result records, -1 means error
+ *
+ * @author weiyu
+ * @date 2015/12/6
+ **/
+int tableScanEqualFilter(struct dbSysHead * head , relation * old_temp_data_dict, char* attributeName, char* value,relation * new_temp_datadic){
 
     int my_buffer_id_ ;
     int i;
@@ -29,7 +41,7 @@ bool tableScanEqualFilter(struct dbSysHead * head , relation * old_temp_data_dic
     }
     if (i == BUFF_NUM) {
         cout<<"No Buffer Can be Used!"<<endl;
-        return false;
+        return -1;
     }
     else{
 	//read the scanned table according to the temp_data_dict
@@ -110,12 +122,24 @@ bool tableScanEqualFilter(struct dbSysHead * head , relation * old_temp_data_dic
         new_temp_datadic->changeRecordNum(hitRecordCount);
         //!!!free the old buffer
         head->buff[buffer_ID_].emptyOrnot = true;
-        return true;
+        return hitRecordCount;
     }
 }
 
-
-bool indexScanEqualFilter(struct dbSysHead * head, int fileID, char* attributeName, char* value,relation * new_temp_datadic){
+/**
+ * @brief Equal Filter based on index
+ *
+ * @param [in] head  : struct dbSysHead *
+ * @param [in] fileID : long
+ * @param [in] attributeName : char*
+ * @param [in] value : char*
+ * @param [in] new_temp_datadic : relation*     //filter results
+ * @return  int         //number of filter result records, -1 means error
+ *
+ * @author weiyu
+ * @date 2015/12/4
+ **/
+int indexScanEqualFilter(struct dbSysHead * head, int fileID, char* attributeName, char* value,relation * new_temp_datadic){
     int my_buffer_id_ ;
     int i;
     for (i = 0 ; i < BUFF_NUM; i++) {
@@ -128,7 +152,7 @@ bool indexScanEqualFilter(struct dbSysHead * head, int fileID, char* attributeNa
     }
     if (i == BUFF_NUM) {
         cout<<"No Buffer Can be Used!"<<endl;
-	return false;
+	return -1;
     }
     int idx;
     idx =  queryFileID(head, fileID);
@@ -145,7 +169,7 @@ bool indexScanEqualFilter(struct dbSysHead * head, int fileID, char* attributeNa
     int type = tempAttr.getType();
     if(type != INT){
 	printf("The attribute is not INT type. Cannot scan by index.\n");
-        return false;
+        return -1;
     }
 
 	//read the scanned table according to the temp_data_dict
@@ -178,18 +202,31 @@ bool indexScanEqualFilter(struct dbSysHead * head, int fileID, char* attributeNa
 		memcpy(t.data_, one_Row_, rec_len_);
 		t.pointer_ = t.data_+rec_len_;
 		t.current_size_ = rec_len_;
-	}
+	    }
      	    
 	t.writeBufferPage(t.filehead,my_buffer_id_ ,t.data_, t.current_size_);
         free(one_Row_);
     }
     new_temp_datadic->changeRecordNum(hitRecordCount);
-    return true;
-    
+    return hitRecordCount;
+
 }
 
-
-bool tableScanSemiscopeFilter(struct dbSysHead * head, relation * old_temp_data_dict, char* attributeName, char* value,int sign,relation * new_temp_datadic){
+/**
+ * @brief semiScope filter based on table scan
+ *
+ * @param [in] head  : struct dbSysHead *
+ * @param [in] old_temp_data_dict : relation*       //scan results
+ * @param [in] attributeName : char*
+ * @param [in] value : char*
+ * @param [in] sign : int                       //LESS_THAN 0, NOT_LESS_THAN 1, MORE_THAN 2, NOT_MORE_THAN 3, NOT_EQUAL 4
+ * @param [in] new_temp_datadic : relation*     //filter results
+ * @return  int         //number of filter result records, -1 means error
+ *
+ * @author weiyu
+ * @date 2015/12/6
+ **/
+int tableScanSemiscopeFilter(struct dbSysHead * head, relation * old_temp_data_dict, char* attributeName, char* value,int sign,relation * new_temp_datadic){
 
     int my_buffer_id_ ;
     int i;
@@ -203,7 +240,7 @@ bool tableScanSemiscopeFilter(struct dbSysHead * head, relation * old_temp_data_
     }
     if (i == BUFF_NUM) {
         cout<<"No Buffer Can be Used!"<<endl;
-	return false;
+	    return -1;
     }
     else{
 	//read the scanned table according to the temp_data_dict
@@ -373,11 +410,29 @@ bool tableScanSemiscopeFilter(struct dbSysHead * head, relation * old_temp_data_
         new_temp_datadic->changeRecordNum(hitRecordCount);
         //!!!free the old buffer
         head->buff[buffer_ID_].emptyOrnot = true;
-        return true;
+        return hitRecordCount;
     }
 }
 
-bool tableScanScopeFilter(struct dbSysHead * head,  relation * old_temp_data_dict, char* attributeName, char* value1,int sign1,char* value2,int sign2,relation * new_temp_datadic){
+/**
+ * @brief  Filter based on table scan
+ *
+ * @param [in] head  : struct dbSysHead *
+ * @param [in] old_temp_data_dict : relation*       //scan results
+ * @param [in] attributeName : char*
+ * @param [in] value1 : char*
+ * @param [in] sign1 : int                      //LESS_THAN 0, NOT_LESS_THAN 1, MORE_THAN 2, NOT_MORE_THAN 3, NOT_EQUAL 4
+ * @param [in] value2 : char*
+ * @param [in] sign2 : int
+ * @param [in] new_temp_datadic : relation*     //filter results
+ * @return  int         //number of filter result records, -1 means error
+ *
+ * @author weiyu
+ * @date 2015/12/6
+ **/
+//e.g. tableScanScopeFilter(head, fid, &temp_data_dict, attributeName, "210",LESS_THAN,"220",NOT_MORE_THAN,&new_temp_datadic)
+//     means to find x that 210 < x <= 220
+int tableScanScopeFilter(struct dbSysHead * head,  relation * old_temp_data_dict, char* attributeName, char* value1,int sign1,char* value2,int sign2,relation * new_temp_datadic){
 
     int my_buffer_id_ ;
     int i;
@@ -391,7 +446,7 @@ bool tableScanScopeFilter(struct dbSysHead * head,  relation * old_temp_data_dic
     }
     if (i == BUFF_NUM) {
         cout<<"No Buffer Can be Used!"<<endl;
-	return false;
+	return -1;
     }
     else{
 	//read the scanned table according to the temp_data_dict
@@ -407,7 +462,7 @@ bool tableScanScopeFilter(struct dbSysHead * head,  relation * old_temp_data_dic
         //cout<<buffer_ID_<<"~"<<record_len_<<"~"<<record_num_<<endl;
         if(type != INT){
             printf("Cannnot call tableScanScopeFilter when the attribute is not INT type.\n");
-            return false;
+            return -1;
         }	
         Buffer t(head, -2);
         int hitRecordCount = 0;
@@ -465,7 +520,7 @@ bool tableScanScopeFilter(struct dbSysHead * head,  relation * old_temp_data_dic
 		    }
                     else{
 			printf("Illegal sign2.\n");
-                        return false;
+                        return -1;
 		    }
 		    break;
 		}
@@ -511,13 +566,13 @@ bool tableScanScopeFilter(struct dbSysHead * head,  relation * old_temp_data_dic
 		    }
                     else{
 			printf("Illegal sign2.\n");
-                        return false;
+                        return -1;
 		    }
 		    break;
 		}
                 default:{
 			printf("Illegal sign1.\n");
-                        return false;
+                        return -1;
 		}
            }//end of switch sign1 
     	}//end while
@@ -528,7 +583,7 @@ bool tableScanScopeFilter(struct dbSysHead * head,  relation * old_temp_data_dic
         new_temp_datadic->changeRecordNum(hitRecordCount);
         //!!!free the old buffer
         head->buff[buffer_ID_].emptyOrnot = true;
-        return true;
+        return hitRecordCount;
     }
 }
 
