@@ -10,5 +10,6 @@
 #define tableScan_h
 #include "dataDictionary.h"
 #include <stdio.h>
+int getLogicfidByName(struct dbSysHead *head, const char * tableName);
 void TableScan(struct dbSysHead * head,int fileID, relation * temp_datadic);
 #endif 

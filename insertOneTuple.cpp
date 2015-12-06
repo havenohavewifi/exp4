@@ -5,10 +5,12 @@
 //  Created by IreneWu on 15/12/6.
 //
 //
-#include "datadictionary.h"
+#include "dataDictionary.h"
 #include "recorder_char_general.h"
 #include "insertOneRecord.h"
 #include "insertOneTuple.h"
+#include <string.h>
+#include <stdlib.h>
 #include <iostream>
 using namespace std;
 

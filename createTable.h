@@ -9,7 +9,7 @@
 #ifndef createTable_h
 #define createTable_h
 #include "file.h"
-#include "dbhead.h"
+#include "dbHead.h"
 #define A_NAME_LENGTH 20
 struct eachAttribute{
     char attribute_name_[A_NAME_LENGTH];

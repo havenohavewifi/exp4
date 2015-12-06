@@ -12,6 +12,25 @@
 #include "file.h"
 #include "dataDictionary.h"
 #include <iostream>
+
+int getLogicfidByName(struct dbSysHead *head, const char * tableName) {
+    int logicfid;
+    int i, j;
+    relation *dic;
+    for (i = 0; i<MAX_FILE_NUM; i++) {
+        if (strcmp((head->redef)[i].getRelationName(),tableName)==0) {
+            dic = &head->redef[i];
+            break;
+        }
+    }
+    if (i == MAX_FILE_NUM) {
+        cout<<"this table not exists. check name plz."<<endl;
+        return -2;
+    }
+    logicfid = (head->desc).fileDesc[i].fileID;
+    return logicfid;
+}
+
 void TableScan(struct dbSysHead * head,int fileID, relation * temp_datadic){
     int fid = queryFileID(head, fileID);
 //    cout<<"test tablescan fid: "<<fid<<endl;

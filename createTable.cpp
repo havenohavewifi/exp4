@@ -9,7 +9,6 @@
 #include "createTable.h"
 #include "file.h"
 #include "dbHead.h"
-#include "datadictionary.h"
 #include "string.h"
 #include <iostream>
 #include "dataDictionary.h"
