@@ -12,6 +12,8 @@
 #include "datadictionary.h"
 #include "string.h"
 #include <iostream>
+#include "dataDictionary.h"
+
 
 using namespace std;
 /*

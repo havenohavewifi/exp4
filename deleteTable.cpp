@@ -7,8 +7,8 @@
 //
 
 #include "deleteTable.h"
-#include "datadictionary.h"
-#include "dbhead.h"
+#include "dataDictionary.h"
+#include "dbHead.h"
 #include "file.h"
 #include "string.h"
 #include <iostream>
