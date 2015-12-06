@@ -35,14 +35,13 @@ void loaddata(struct dbSysHead * head, int fid)
     }
     else{
         int n = queryFileID(head, fid);
-        std::cout<<"datadict: "<<n<<std::endl;
+        std::cout<<"load data by datadict: "<<n<<std::endl;
         relation *dic = &(*head).redef[n];
         int size_per_record = dic->getRecordLength();
-//        int file_id_ = 1;
         char *oneRec = (char *)malloc(sizeof(char)*size_per_record);
         string tmp;
         //use buffer[0] when loading data
-        int buffer_id_ = 0;
+//        int buffer_id_ = 0;
 //        head->buff[buffer_id_].emptyOrnot = false;
         Buffer t(head, fid);
         int k=0;
@@ -69,14 +68,11 @@ void loaddata(struct dbSysHead * head, int fid)
         //write remainder
         t.writeBuffer(head, t.data_, t.current_size_);
 //        head->buff[buffer_id_].emptyOrnot = true;
-//		int fPhysicalID = queryFileID(head, file_id_);
         head->desc.fileDesc[n].filePageEndPos = t.current_size_;
         head->desc.fileDesc[n].filePageNum = t.pageID + 1;
         //Attention
-        dic->changeRecordNum(k);
-        
-        cout<<head->redef[n].getRecordLength()<<"---datadict length / Num:";
-        cout<<head->redef[n].getRecordNum()<<endl;;
+        head->redef[n].changeRecordNum(k);
+//        cout<<"k: "<<k <<"---datadict length: "<<head->redef[n].getRecordLength()<<"   Num: "<<cout<<(*head).redef[n].getRecordNum()<<" correct:"<<k<<endl;
         free(oneRec);
         
 //打印几个字符串检查一下

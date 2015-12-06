@@ -190,7 +190,7 @@ char *relation::getRelationName()
 {
     return this->relationName;
 }
-
+/*
 int initTable(struct dbSysHead *head, long fid)
 {
     int n = queryFileID(head, fid);
@@ -221,7 +221,7 @@ int initTable(struct dbSysHead *head, long fid)
     }
     return 0;
 }
-
+*/
 int showTable(struct dbSysHead *head, char* name)
 {
     for (int i = 0; i < MAX_FILE_NUM; i++)

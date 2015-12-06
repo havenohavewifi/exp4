@@ -14,6 +14,7 @@
 #include <iostream>
 void TableScan(struct dbSysHead * head,int fileID, relation * temp_datadic){
     int fid = queryFileID(head, fileID);
+//    cout<<"test tablescan fid: "<<fid<<endl;
     int dictID = fid;
     int original_rec_length = head->redef[fid].getRecordLength(); //record_length in original table
     int size_per_record = original_rec_length;   //each record length in new temp table, in case SPJ use
@@ -24,7 +25,7 @@ void TableScan(struct dbSysHead * head,int fileID, relation * temp_datadic){
         if (head->buff[i].emptyOrnot == true) {
             buffer_id_ = i;
             head->buff[i].emptyOrnot = false;   // ready for writein
-            std::cout<<"bufferID: "<<i<<std::endl;
+            std::cout<<"TableScan bufferID: "<<i<<"  logicfileid: "<<fileID<<endl;
             break;
         }
     }
@@ -32,7 +33,6 @@ void TableScan(struct dbSysHead * head,int fileID, relation * temp_datadic){
         cout<<"No Buffer Can be Used!"<<endl;
     }
     else{
-        cout<<"fileid: "<<fileID<<endl;
         RecordCursor scanTable(head, fileID, original_rec_length, 0); //0 for readin data buffer
         char * one_Row_ = (char *)malloc(sizeof(char) * size_per_record);
         Buffer t(head, -2); //to avoid positive number, no meaning
@@ -58,9 +58,10 @@ void TableScan(struct dbSysHead * head,int fileID, relation * temp_datadic){
         //write remainder
         t.writeBufferPage(t.filehead,buffer_id_ ,t.data_, t.current_size_);
         free(one_Row_);
-        temp_datadic[dictID] = head->redef[fid]; //wrong, need to wait class copy
+        temp_datadic[dictID] = head->redef[fid]; //correct, class copy succeed
         temp_datadic[dictID].fileID = -buffer_id_; //negative number for temp datadict, value is for which buffer
         temp_datadic[dictID].changeRecordNum (k);
+//        cout<<"temp dd length:" <<temp_datadic[dictID].getRecordLength()<<endl;
 //        temp_datadic[dictID].recordLength = size_per_record;
 //        strcpy(temp_datadic[dictID].relationName ,"temp datadict 1");
     }

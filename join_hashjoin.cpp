@@ -2,40 +2,41 @@
 #include <cstring>
 #include <iostream>
 
-#include "join_Hashjoin.h"
+#include "join_hashjoin.h"
 #include "cursorForTmptable.h"
 #include "dataDictionary.h"
+#include "Buffer.h"
 
-#define BUFFER_SIZE                 (1* 1024 * 1024)
+#define hashjoinBuffer_SIZE                 (1* 1024 * 1024)
 #define VALUE_SIZE                  1024
 #define HASH_TABLE_BUCKET_COUNT     32
 #define TUPLE_COUNT_PER_BUCKET      8
 #define OUTPUT_INIT_CAPACITY        (1 * 1024)
 using namespace std;
 
-class Buffer
+class hashjoinBuffer
 {
     public:
-        Buffer(size_t size)
+        hashjoinBuffer(size_t size)
         :   size_(size),
             next_(nullptr)
         {
             pos_ = data_ = new char[size];
         }
 
-        ~Buffer()
+        ~hashjoinBuffer()
         {
             if (next_ != nullptr)
                 delete next_;
             delete data_;
         }
 
-        Buffer* getNext()
+        hashjoinBuffer* getNext()
         {
             return next_;
         }
 
-        void setNext(Buffer* next)
+        void setNext(hashjoinBuffer* next)
         {
             next_ = next;
         }
@@ -57,26 +58,26 @@ class Buffer
         char* data_;
         char* pos_;
         size_t size_;
-        Buffer* next_;
+        hashjoinBuffer* next_;
 };
 
-class BufferManager
+class hashjoinBufferManager
 {
     public:
-        BufferManager()
-        :   current_(new Buffer(BUFFER_SIZE))
+        hashjoinBufferManager()
+        :   current_(new hashjoinBuffer(hashjoinBuffer_SIZE))
         {}
 
-        ~BufferManager()
+        ~hashjoinBufferManager()
         {
             delete current_;
         }
 
         char* allocate(size_t size)
         {
-            if (size > BUFFER_SIZE)
+            if (size > hashjoinBuffer_SIZE)
             {
-                Buffer* extra = new Buffer(size);
+                hashjoinBuffer* extra = new hashjoinBuffer(size);
                 extra->setNext(current_->getNext());
                 current_->setNext(extra);
 
@@ -84,9 +85,9 @@ class BufferManager
             }
             else if (size > current_->getAvailable())
             {
-                Buffer* new_buffer = new Buffer(BUFFER_SIZE);
-                new_buffer->setNext(current_);
-                current_ = new_buffer;
+                hashjoinBuffer* new_hashjoinBuffer = new hashjoinBuffer(hashjoinBuffer_SIZE);
+                new_hashjoinBuffer->setNext(current_);
+                current_ = new_hashjoinBuffer;
 
                 return current_->allocate(size);
             }
@@ -95,7 +96,7 @@ class BufferManager
         }
 
     private:
-        Buffer* current_;
+        hashjoinBuffer* current_;
 };
 
 class InputTuple
@@ -108,13 +109,13 @@ class InputTuple
 class InputRelation
 {
     public:
-        InputRelation(BufferManager& buffer_manager, int tuple_num_)
+        InputRelation(hashjoinBufferManager& hashjoinBuffer_manager, int tuple_num_)
         :   input_tuples_(nullptr),
             input_tuple_count_(0),
             input_tuple_capacity_(tuple_num_),
-            buffer_manager_(buffer_manager)
+            hashjoinBuffer_manager_(hashjoinBuffer_manager)
         {
-            input_tuples_ = (InputTuple *) buffer_manager_.allocate(                     input_tuple_capacity_ * sizeof(InputTuple));
+            input_tuples_ = (InputTuple *) hashjoinBuffer_manager_.allocate(                     input_tuple_capacity_ * sizeof(InputTuple));
         }
 
         ~InputRelation()
@@ -140,7 +141,7 @@ class InputRelation
         InputTuple* input_tuples_;
         int input_tuple_count_;
         int input_tuple_capacity_;
-        BufferManager& buffer_manager_;
+        hashjoinBufferManager& hashjoinBuffer_manager_;
 };
 
 class InputView
@@ -180,11 +181,11 @@ class OutputTuple
 class OutputRelation
 {
     public:
-        OutputRelation(BufferManager& buffer_manager)
+        OutputRelation(hashjoinBufferManager& hashjoinBuffer_manager)
         :   output_tuples_(nullptr),
             output_tuple_count_(0),
             output_tuple_capacity_(0),
-            buffer_manager_(buffer_manager)
+            hashjoinBuffer_manager_(hashjoinBuffer_manager)
         {}
 
         ~OutputRelation()
@@ -207,7 +208,7 @@ class OutputRelation
                 else
                     output_tuple_capacity_ <<= 1;
 
-                output_tuples_ = (OutputTuple *) buffer_manager_.allocate(
+                output_tuples_ = (OutputTuple *) hashjoinBuffer_manager_.allocate(
                         output_tuple_capacity_ * sizeof(OutputTuple));
 
                 memcpy(output_tuples_,
@@ -218,11 +219,12 @@ class OutputRelation
             output_tuples_[output_tuple_count_ ++] = output_tuple;
         }
 
-    private:
+    public:
         OutputTuple* output_tuples_;
+    private:
         int output_tuple_count_;
         int output_tuple_capacity_;
-        BufferManager& buffer_manager_;
+        hashjoinBufferManager& hashjoinBuffer_manager_;
 };
 
 class HeapInputTuple
@@ -235,12 +237,12 @@ class HeapInputTuple
 class HashTable
 {
     public:
-        HashTable(BufferManager& buffer_manager)
+        HashTable(hashjoinBufferManager& hashjoinBuffer_manager)
         :   input_tuple_count_(0),
             bucket_count_(HASH_TABLE_BUCKET_COUNT),
-            buffer_manager_(buffer_manager)
+            hashjoinBuffer_manager_(hashjoinBuffer_manager)
         {
-            buckets_ = (HeapInputTuple **) buffer_manager_.allocate(
+            buckets_ = (HeapInputTuple **) hashjoinBuffer_manager_.allocate(
                     HASH_TABLE_BUCKET_COUNT * sizeof(HeapInputTuple *));
             for (int i = 0; i < bucket_count_; i ++)
                 buckets_[i] = nullptr;
@@ -252,7 +254,7 @@ class HashTable
         void insert(InputTuple& input_tuple)
         {
             HeapInputTuple* heap_input_tuple = (HeapInputTuple *)
-                    buffer_manager_.allocate(sizeof(HeapInputTuple));
+                    hashjoinBuffer_manager_.allocate(sizeof(HeapInputTuple));
             heap_input_tuple->input_tuple = input_tuple;
 
             int index = hash(input_tuple.key);
@@ -307,7 +309,7 @@ class HashTable
             while (bucket_count_ * TUPLE_COUNT_PER_BUCKET < input_tuple_count_)
                 bucket_count_ <<= 1;
 
-            buckets_ = (HeapInputTuple **) buffer_manager_.allocate(
+            buckets_ = (HeapInputTuple **) hashjoinBuffer_manager_.allocate(
                     bucket_count_ * sizeof(HeapInputTuple *));
             for (int i = 0; i < bucket_count_; i ++)
                 buckets_[i] = nullptr;
@@ -329,7 +331,7 @@ class HashTable
         int input_tuple_count_;
         HeapInputTuple** buckets_;
         int bucket_count_;
-        BufferManager& buffer_manager_;
+        hashjoinBufferManager& hashjoinBuffer_manager_;
 };
 
 class HashJoin
@@ -338,10 +340,10 @@ class HashJoin
         HashJoin(InputView& left_view,
                 InputView& right_view,
                 OutputRelation& output_relation,
-                BufferManager& buffer_manager)
+                hashjoinBufferManager& hashjoinBuffer_manager)
         :   left_view_(left_view),
             right_view_(right_view),
-            hash_table_(buffer_manager),
+            hash_table_(hashjoinBuffer_manager),
             output_relation_(output_relation)
         {}
 
@@ -388,24 +390,24 @@ class HashJoin
         OutputRelation& output_relation_;
 };
 
-void hashjoin(struct dbSysHead *head, relation *temp_datadic1, relation *temp_datadic2 ,relation *result,char *name){
-    int original_rec_length1 = temp_datadic1->getRecordLength(); //record_length in original table*
+void hashjoin(struct dbSysHead *head, relation *temp_datadic1, relation *temp_datadic2 ,relation *result,const char *name){
+    int original_rec_length1 = temp_datadic1->getRecordLength();
     int original_rec_length2 = temp_datadic2->getRecordLength();
     int original_attribute_length1=temp_datadic1->getAttributeNum();
     int original_attribute_length2=temp_datadic2->getAttributeNum();
-    int new_rec_length = result->getRecordLength();   //each record length in new temp table, in case SPJ use
+//    int new_rec_length = result->getRecordLength();   //each record length in new temp table, in case SPJ use
     //look up which buffer is empty
     int buffer_id_;
     int i;
-    for (i = 0; i < 3; i++) {
+    for (i = 0; i < BUFF_NUM; i++) {
         if (head->buff[i].emptyOrnot == true) {
             buffer_id_ = i;
             head->buff[i].emptyOrnot = false;   // ready for writein
-            std::cout << "bufferID: " << i << std::endl;
+            std::cout << "BufferID: " << i << std::endl;
             break;
         }
     }
-    if (i == 3) {
+    if (i == BUFF_NUM) {
         cout << "No Buffer Can be Used!" << endl;
     }
     else{
@@ -413,32 +415,31 @@ void hashjoin(struct dbSysHead *head, relation *temp_datadic1, relation *temp_da
         
         char * one_Row_1 = (char *)malloc(sizeof(char) * original_rec_length1);
         char * one_Row_2 = (char *)malloc(sizeof(char) * original_rec_length2);
-        char * new_Row_ = (char *)malloc(sizeof(char) * new_rec_length);
-//        Buffer t(head, -2); //to avoid positive number, no meaning
-
         
-        BufferManager* buffer_manager = new BufferManager();
-        InputRelation* left_relation = new InputRelation(*buffer_manager, temp_datadic1->getRecordNum());
-        InputRelation* right_relation = new InputRelation(*buffer_manager, temp_datadic2->getRecordNum());
-        
+        hashjoinBufferManager* hashjoinBuffer_manager = new hashjoinBufferManager();
+        InputRelation* left_relation = new InputRelation(*hashjoinBuffer_manager, temp_datadic1->getRecordNum());
+        InputRelation* right_relation = new InputRelation(*hashjoinBuffer_manager, temp_datadic2->getRecordNum());
+        cout<<"left relation num :"<<temp_datadic1->getRecordNum() << "  right relation num :"<<temp_datadic2->getRecordNum() <<endl;
         //creat <key, pos> pair
         RecordCursorTmp scanTable1(head, temp_datadic1->fileID, original_rec_length1, -temp_datadic1->fileID, temp_datadic1->getRecordNum());
-        while (true == scanTable1.getNextRecord(one_Row_1)) { //only scan
+        while (true == scanTable1.getNextRecord(one_Row_1)) {
             for(int i=0;i<original_attribute_length1;i++){
                 if(strcmp(temp_datadic1->getAttributeByNo(i).getName(),name)==0){
                     start1=temp_datadic1->getAttributeByNo(i).getRecordDeviation();
-                    k1=*((int*)(one_Row_1+start1));
+                    k1=*((int*)(one_Row_1+start1));  //debug for key
+                    cout<<k1<<endl;
                     left_relation->addInputTuple(k1,one_Row_1);
                     break;
                 }
             }
         }
-        RecordCursorTmp scanTable2(head, temp_datadic2->fileID, original_rec_length1, -temp_datadic2->fileID, temp_datadic2->getRecordNum());
+        RecordCursorTmp scanTable2(head, temp_datadic2->fileID, original_rec_length2, -temp_datadic2->fileID, temp_datadic2->getRecordNum());
         while (true == scanTable2.getNextRecord(one_Row_2)){
             for(int i=0;i<original_attribute_length2;i++){
                 if(strcmp(temp_datadic2->getAttributeByNo(i).getName(),name)==0){
                     start2=temp_datadic2->getAttributeByNo(i).getRecordDeviation();
-                    k2=*((int*)(one_Row_2+start2));
+                    k2=*((int*)(one_Row_2+start2));  //debug for key
+                    cout<<k2<<endl;
                     right_relation->addInputTuple(k2,one_Row_2);
                     break;
                 }
@@ -446,17 +447,48 @@ void hashjoin(struct dbSysHead *head, relation *temp_datadic1, relation *temp_da
         }
         InputView* left_view = new InputView(*left_relation);
         InputView* right_view = new InputView(*right_relation);
-        OutputRelation* output_relation = new OutputRelation(*buffer_manager);
+        OutputRelation* output_relation = new OutputRelation(*hashjoinBuffer_manager);
                
         HashJoin* hash_join = new HashJoin(*left_view,
                                                   *right_view,
                                                   *output_relation,
-                                                  *buffer_manager);
+                                                  *hashjoinBuffer_manager);
                
         hash_join->build();
         hash_join->probe();
                
         cout << "matches: " << output_relation->getOutputTupleCount() << "." << endl;
+        
+        Buffer t(head, -2); //to avoid positive number, no meaning
+        int new_rec_length = VALUE_SIZE + VALUE_SIZE;
+        char * new_Row_ = (char *)malloc(sizeof(char) * new_rec_length);
+        for (int i; i< output_relation->getOutputTupleCount(); i++) {
+            memcpy(output_relation->output_tuples_[i].left_value,new_Row_,VALUE_SIZE);
+            memcpy(output_relation->output_tuples_[i].right_value,new_Row_ + VALUE_SIZE,VALUE_SIZE);
+            //if more than one page, write to file and reset Buffer t
+            if (false == t.AppendBuffer(new_Row_, new_rec_length))
+            {
+                t.writeBufferPage(t.filehead, buffer_id_, t.data_, t.current_size_);
+                t.pageID++;
+                if (t.pageID == SIZE_BUFF) {
+                    std::cout << "this buffer full" << std::endl;
+                    break;
+                }
+                memset(t.data_, 0, SIZE_PER_PAGE);
+                memcpy(t.data_, new_Row_, new_rec_length);
+                t.pointer_ = t.data_ + new_rec_length;
+                t.current_size_ = new_rec_length;
+            }
+        }
+        //write remainder
+        t.writeBufferPage(t.filehead, buffer_id_, t.data_, t.current_size_);
+        
+        free(new_Row_);
+        
+        result->fileID = -buffer_id_;
+        result->changeRecordNum(output_relation->getOutputTupleCount());
+        head->buff[-temp_datadic1->fileID].emptyOrnot = true;
+        head->buff[-temp_datadic2->fileID].emptyOrnot = true;
         delete hash_join;
         delete output_relation;
         delete left_view;
