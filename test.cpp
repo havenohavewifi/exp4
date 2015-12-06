@@ -23,6 +23,8 @@
 #include "createTable.h"
 #include "sortmergejoin.h"
 #include "insertOneTuple.h"
+#include "deleteRecords.h"
+
 int init_database(struct dbSysHead *head)
 {
 	initSys(head);
@@ -163,7 +165,7 @@ int main()
     sysUpdate(&head);
     //Scan Table
     TableScan(&head, FIRST_FID, temp_data_dict);
-/*
+
     //get the output of tablescan, temporarily according to datadict1, other than temp_data_dict[1]
     int buffer_ID_ = - temp_data_dict[0].fileID;   //find which buffer
     int record_num_ = temp_data_dict[0].getRecordNum();
@@ -331,6 +333,49 @@ int main()
     deleteTable(&head,"customer");
     deleteTable(&head,"nation");
 */
+
+
+   if(true == createIndexOn(&head, FIRST_FID, "custkey")){
+        char* index_filename = "b_plus_tree_index_1custkey.dat";
+        FILE* fp;
+        int pos;
+
+        if( !(fp = fopen(index_filename,"rb+")))
+                printf("error indexFile name.\n");
+        printf("search(fp,-10):%d\n",search(fp,-10));
+        printf("search(fp,1):%d\n",search(fp,1));
+        printf("search(fp,2):%d\n",search(fp,2));
+        printf("search(fp,50):%d\n",search(fp,50));
+        //display(fp);
+
+
+        deleteRecordWhere(&head, FIRST_FID, "name", "Customer#000000005",LESS_THAN,0);
+        pos = search(fp,5);
+
+        fclose(fp);
+        printf("%d\n",pos);
+
+        printf("start indexScanEqualFilter()...\n");
+        if(true == indexScanEqualFilter(&head, FIRST_FID, "custkey","4",&temp_data_dict[5])){
+          printf("indexScanEqualFilter(9) end!\n");
+
+          buffer_ID_ = - temp_data_dict[5].fileID;   //find which buffer
+          record_num_ = temp_data_dict[5].getRecordNum();
+          record_len_ = temp_data_dict[5].getRecordLength();
+          RecordCursorTmp t3(&head,1,record_len_,buffer_ID_,record_num_);
+          cout<<buffer_ID_<<"~"<<record_len_<<"~"<<record_num_<<endl;
+          one_Row_ = (char *)malloc(sizeof(char)*record_len_);
+          while (true == t3.getNextRecord(one_Row_)) { //only scan
+                if(one_Row_[0] == '$')
+                        printf("empty\n");
+           //getOneRecord(one_Row_, &temp_data_dict[5]); //get each attribute value and print
+          }
+          free(one_Row_);
+          head.buff[buffer_ID_].emptyOrnot = true;
+
+        }
+    }//end of createIndexOn if
+
     showFileDesc(&head);
     exit_database(&head);
 	system("pause");

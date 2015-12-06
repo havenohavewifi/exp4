@@ -13,6 +13,7 @@ extern "C"{
 #define MORE_THAN 2
 #define NOT_MORE_THAN 3
 #define NOT_EQUAL 4
+#define EQUAL 5
 
 bool tableScanEqualFilter(struct dbSysHead * head, int fileID, relation * temp_datadic, char* attributeName, char * value,relation * new_temp_datadic);
 
