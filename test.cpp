@@ -167,17 +167,8 @@ int main()
     //Scan Table
     TableScan(&head, FIRST_FID, temp_data_dict);
 
-    struct eachAttribute * prj_cus = new struct eachAttribute[3];
-    strcpy(prj_cus[0].attribute_name_,"address");
-    prj_cus[0].attribute_type_ = 2;
-    prj_cus[0].attribute_length_ = 40;
-    strcpy(prj_cus[1].attribute_name_,"name");
-    prj_cus[1].attribute_type_ = 2;
-    prj_cus[1].attribute_length_ =32;
-    strcpy(prj_cus[2].attribute_name_,"custkey");
-    prj_cus[2].attribute_type_ = 1;
-    prj_cus[2].attribute_length_ = 4;
-    if(project(&head, temp_data_dict, 0, 3, prj_cus)>=0)
+    char attribute_list[3][NAMELENGTH] = {"address", "name", "custkey"};
+    if(project(&head, temp_data_dict, 0, 3, attribute_list)>=0)
         printf("project succed!\n");
     //for each old table, only one time SPJ operator allowed, because it will be freed by this SPJ operator.
     /*

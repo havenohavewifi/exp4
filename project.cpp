@@ -15,7 +15,7 @@
 #include "createTable.h"
 #include <iostream>
 using namespace std;
-int project(struct dbSysHead *head, relation *temp_datadic, int old_relation, int attribute_num, struct eachAttribute * attribute_list){
+int project(struct dbSysHead *head, relation *temp_datadic, int old_relation, int attribute_num, char  attribute_list[][NAMELENGTH]){
     //find empty temp_datadic
     int new_relation ;
     for (int i = 0; i < MAX_FILE_NUM; i++) {
@@ -31,8 +31,8 @@ int project(struct dbSysHead *head, relation *temp_datadic, int old_relation, in
     int insert_num_ = 0;
     for (int i = 0; i < temp_datadic[old_relation].getAttributeNum(); i++) {
         for (int j = 0; j < attribute_num; j++) {
-            if (strcmp(attribute_list[j].attribute_name_, temp_datadic[old_relation].getAttributeByNo(i).getName()) == 0) {
-                temp_datadic[new_relation].insertAttribute(attribute_list[j].attribute_name_, attribute_list[j].attribute_type_, attribute_list[j].attribute_length_);
+            if (strcmp(attribute_list[j], temp_datadic[old_relation].getAttributeByNo(i).getName()) == 0) {
+                temp_datadic[new_relation].insertAttribute(temp_datadic[old_relation].getAttributeByNo(i).getName(), temp_datadic[old_relation].getAttributeByNo(i).getType(), temp_datadic[old_relation].getAttributeByNo(i).getLength());
                 insert_num_ ++;
             }
         }
