@@ -12,4 +12,5 @@
 #include <stdio.h>
 int getLogicfidByName(struct dbSysHead *head, const char * tableName);
 void TableScan(struct dbSysHead * head,int fileID, relation * temp_datadic);
+int TableScan(struct dbSysHead * head, relation * temp_datadic, const char * tableName);
 #endif 

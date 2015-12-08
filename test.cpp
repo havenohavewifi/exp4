@@ -165,11 +165,14 @@ int main()
 //    insertOneTuple(&head, "customer", "2|Customer#000000001|IVhzIApeRb ot,c,E|15|25-989-741-2988|711.56|BUILDING|to the even, regular platelets.HHHHHH|");
     sysUpdate(&head);
     //Scan Table
-    TableScan(&head, FIRST_FID, temp_data_dict);
-
+    int customer_scan = -1;
+    customer_scan = TableScan(&head, temp_data_dict, "customer");
+    if (customer_scan>=0) {
+        printf("tablescan succeed!\n");
+    }
     char attribute_list[3][NAMELENGTH] = {"address", "name", "custkey"};
-    if(project(&head, temp_data_dict, 0, 3, attribute_list)>=0)
-        printf("project succed!\n");
+    if(project(&head, temp_data_dict, customer_scan, 3, attribute_list)>=0)
+        printf("project succeed!\n");
     //for each old table, only one time SPJ operator allowed, because it will be freed by this SPJ operator.
     /*
     printf("start tableScanEqualFilter()...\n");

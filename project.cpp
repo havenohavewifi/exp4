@@ -26,7 +26,10 @@ int project(struct dbSysHead *head, relation *temp_datadic, int old_relation, in
             break;
         }
     }
-    
+    if (new_relation == MAX_FILE_NUM) {
+        cout<<"no temp datadict for use!"<<endl;
+        return -3;
+    }
     //input error control
     int insert_num_ = 0;
     for (int i = 0; i < temp_datadic[old_relation].getAttributeNum(); i++) {
