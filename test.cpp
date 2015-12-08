@@ -126,7 +126,7 @@ int main()
         printf("Create Table failed\n");
     if(createTable(&head) == -1)
         printf("Create Table failed\n");
-  */
+ */
     struct eachAttribute * nation_att = new struct eachAttribute[12];
     strcpy(nation_att[0].attribute_name_,"custkey");
     nation_att[0].attribute_type_ = 1;
@@ -167,6 +167,18 @@ int main()
     //Scan Table
     TableScan(&head, FIRST_FID, temp_data_dict);
 
+    struct eachAttribute * prj_cus = new struct eachAttribute[3];
+    strcpy(prj_cus[0].attribute_name_,"address");
+    prj_cus[0].attribute_type_ = 2;
+    prj_cus[0].attribute_length_ = 40;
+    strcpy(prj_cus[1].attribute_name_,"name");
+    prj_cus[1].attribute_type_ = 2;
+    prj_cus[1].attribute_length_ =32;
+    strcpy(prj_cus[2].attribute_name_,"custkey");
+    prj_cus[2].attribute_type_ = 1;
+    prj_cus[2].attribute_length_ = 4;
+    if(project(&head, temp_data_dict, 0, 3, prj_cus)>=0)
+        printf("project succed!\n");
     //for each old table, only one time SPJ operator allowed, because it will be freed by this SPJ operator.
     /*
     printf("start tableScanEqualFilter()...\n");
@@ -192,17 +204,17 @@ int main()
     free(one_Row_);
 */
     
-    
+
 
     //get the output of tablescan, temporarily according to datadict1, other than temp_data_dict[1]
-    int buffer_ID_ = - temp_data_dict[0].fileID;   //find which buffer
-    int record_num_ = temp_data_dict[0].getRecordNum();
-    int record_len_ = temp_data_dict[0].getRecordLength();
+    int buffer_ID_ = - temp_data_dict[1].fileID;   //find which buffer
+    int record_num_ = temp_data_dict[1].getRecordNum();
+    int record_len_ = temp_data_dict[1].getRecordLength();
     RecordCursorTmp t1(&head,1,record_len_,buffer_ID_,record_num_);
     cout<<buffer_ID_<<"~"<<record_len_<<"~"<<record_num_<<endl;
     char * one_Row_ = (char *)malloc(sizeof(char)*record_len_);
     while (true == t1.getNextRecord(one_Row_)) { //only scan
-        getOneRecord(one_Row_, &temp_data_dict[0]); //get each attribute value and print
+        getOneRecord(one_Row_, &temp_data_dict[1]); //get each attribute value and print
     }
     free(one_Row_);
 
@@ -358,7 +370,7 @@ int main()
 */
 
     showFileDesc(&head);
-    dropTable(&head,"customer");
+//    dropTable(&head,"customer");
 //    deleteTable(&head,"nation");
 
 

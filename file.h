@@ -3,8 +3,8 @@
 
 //  ˝æ›ø‚◊Ó∂‡»›ƒ…¡ø192M
 //#define SIZE_DATA_SPACE (12*1024*1024)
-// √ø“≥¥Û–°4K
-
+#define ATTRIBUTENUM  12
+#define NAMELENGTH  32
 // ¬†Àù√¶‚Ä∫√∏‚Äö‚óä√ì‚àÇ‚Ä°¬ª‚Ä∫∆í‚Ä¶¬°√∏192M
 #define SIZE_DATA_SPACE (16*1024*1024)
 // ‚àö√∏‚Äú‚â•¬•√õ‚Äì¬∞4K
@@ -126,4 +126,24 @@ typedef struct
 	int month;
 	int day;
 } date;//»’∆⁄–Õ
+
+
+struct attribute_disk
+{
+    char attributeName[NAMELENGTH];//属性名
+    int type;//属性类型
+    int length;//属性长度
+    int recordDeviation;//记录内偏移
+};
+struct relation_disk
+{
+    long fileID;//文件标识
+    char relationName[NAMELENGTH];//关系名
+    char constructor[NAMELENGTH];//建立者
+    int attributeNum;//属性个数
+    int recordLength;//记录长度
+    int recordNum;//记录个数
+    attribute_disk atb[ATTRIBUTENUM];//属性表
+};
+
 #endif

@@ -44,6 +44,10 @@ int initSys(struct dbSysHead *head)
         head->buff[k].emptyOrnot = true;
 	}
     
+    rewind(fp);
+    fseek(fp, head->desc.dataDictionaryAddr, SEEK_SET);
+    fread(&(head->redef),sizeof(class relation)*MAX_FILE_NUM, 1, fp);
+    
 	fclose(fp);
 	return 0;
 }
