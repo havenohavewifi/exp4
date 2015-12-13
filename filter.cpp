@@ -14,20 +14,22 @@ extern "C"{
 #include "filter.h"
 //#include "b_plus_tree.h"
 
-/**
- * @brief Equal Filter based on table Scan
- *
- * @param [in] head  : struct dbSysHead *
- * @param [in] old_temp_data_dict : relation*       // results of tablescan
- * @param [in] attributeName : char*
- * @param [in] value : char*
- * @param [in] new_temp_datadic : relation*     //filter results
- * @return  int         //number of filter result records, -1 means error
- *
- * @author weiyu
- * @date 2015/12/6
- **/
-int tableScanEqualFilter(struct dbSysHead * head , relation * old_temp_data_dict, char* attributeName, char* value,relation * new_temp_datadic){
+
+int tableScanEqualFilter(struct dbSysHead * head , relation * temp_data_dic, int old_relation, char* attributeName, char* value){
+    //find  empty temp_datadic for filter results
+    int new_relation ;
+    for (int i = 0; i < MAX_FILE_NUM; i++) {
+        if (strcmp(temp_data_dic[i].getRelationName(),"") == 0) {
+            new_relation = i;
+            cout<<"new relation id: "<<new_relation<<endl;
+            temp_data_dic[new_relation].init("temp_datadict","XXX");
+            break;
+        }
+    }
+    if (new_relation == MAX_FILE_NUM) {
+        cout<<"no temp datadict for use!"<<endl;
+        return -3;
+    }
 
     int my_buffer_id_ ;
     int i;
@@ -43,24 +45,24 @@ int tableScanEqualFilter(struct dbSysHead * head , relation * old_temp_data_dict
         cout<<"No Buffer Can be Used!"<<endl;
         return -1;
     }
-    else{
+
 	//read the scanned table according to the temp_data_dict
-        int buffer_ID_ = - old_temp_data_dict->fileID;   //find which buffer
-        int record_num_ = old_temp_data_dict->getRecordNum();
-        int record_len_ = old_temp_data_dict->getRecordLength();
-        attribute tempAttr;
-        tempAttr = old_temp_data_dict->getAttributeByName(attributeName);
-        int offset = tempAttr.getRecordDeviation();
-        int type = tempAttr.getType();
-        int lengthOfAttr = tempAttr.getLength();
-        RecordCursorTmp t1(head,old_temp_data_dict->fileID,record_len_,buffer_ID_,record_num_);
+    int buffer_ID_ = - temp_data_dic[old_relation].fileID;   //find which buffer
+    int record_num_ = temp_data_dic[old_relation].getRecordNum();
+    int record_len_ = temp_data_dic[old_relation].getRecordLength();
+    attribute tempAttr;
+    tempAttr = temp_data_dic[old_relation].getAttributeByName(attributeName);
+    int offset = tempAttr.getRecordDeviation();
+    int type = tempAttr.getType();
+    int lengthOfAttr = tempAttr.getLength();
+    RecordCursorTmp t1(head,temp_data_dic[old_relation].fileID,record_len_,buffer_ID_,record_num_);
         //cout<<buffer_ID_<<"~"<<record_len_<<"~"<<record_num_<<endl;
 
-        Buffer t(head, -2);
-        int hitRecordCount = 0;
-        //printf("type %d\n",type);
-        char * one_Row_ = (char *)malloc(sizeof(char)*record_len_);
-        while (true == t1.getNextRecord(one_Row_)) { //only scan
+    Buffer t(head, -2);
+    int hitRecordCount = 0;
+    //printf("type %d\n",type);
+    char * one_Row_ = (char *)malloc(sizeof(char)*record_len_);
+    while (true == t1.getNextRecord(one_Row_)) { //only scan
 	    //compare the current record with the wanting value, write in buffer if it hits
         switch(type){
 		case INT:{
@@ -68,62 +70,60 @@ int tableScanEqualFilter(struct dbSysHead * head , relation * old_temp_data_dict
 		    //int compareValue = *((int *)value);
 		    int compareValue = atoi(value);
 		    if (recordValue == compareValue){
-                printf("int record:%d\tcompare:%d\n",recordValue,compareValue);
-                hitRecordCount++;
-                if(false == t.AppendBuffer(one_Row_, record_len_)){
-                    t.writeBufferPage(t.filehead,my_buffer_id_ ,t.data_, t.current_size_);
-                    t.pageID++;
-                    if (t.pageID == SIZE_BUFF) {
-                        std::cout<<"this buffer full"<<std::endl;
-                        break;
-                    }
-                    memset(t.data_, 0, SIZE_PER_PAGE);
-                    memcpy(t.data_, one_Row_, record_len_);
-                    t.pointer_ = t.data_+record_len_;
-                    t.current_size_ = record_len_;
-                }
+                	printf("int record:%d\tcompare:%d\n",recordValue,compareValue);
+                	hitRecordCount++;
+                	if(false == t.AppendBuffer(one_Row_, record_len_)){
+                    		t.writeBufferPage(t.filehead,my_buffer_id_ ,t.data_, t.current_size_);
+                    		t.pageID++;
+                    		if (t.pageID == SIZE_BUFF) {
+                        		std::cout<<"this buffer full"<<std::endl;
+                        		break;
+                    		}	
+                    		memset(t.data_, 0, SIZE_PER_PAGE);
+                    		memcpy(t.data_, one_Row_, record_len_);
+                    		t.pointer_ = t.data_+record_len_;
+                    		t.current_size_ = record_len_;
+                	}
 		    }
-            break;
+            	    break;
 		}
-		case CHAR:{
-            char* recordValue = (char *)malloc(sizeof(char)*lengthOfAttr);
-            memcpy(recordValue,one_Row_ + offset,lengthOfAttr);
-            //int compareValue = *((int *)value);
-            char* compareValue = value;
-            if (strcmp(recordValue,compareValue) == 0){
-                printf("char record:%s\tcompare:%s\n",recordValue,compareValue);
-                //getOneRecord(one_Row_, &temp_data_dict[0]);
-                hitRecordCount++;
-                if(false == t.AppendBuffer(one_Row_, record_len_)){
-                        t.writeBufferPage(t.filehead,my_buffer_id_ ,t.data_, t.current_size_);
-                        t.pageID++;
-                        if (t.pageID == SIZE_BUFF) {
-                            std::cout<<"this buffer full"<<std::endl;
-                            break;
-                        }
-                        memset(t.data_, 0, SIZE_PER_PAGE);
-                        memcpy(t.data_, one_Row_, record_len_);
-                        t.pointer_ = t.data_+record_len_;
-                        t.current_size_ = record_len_;
-                }
-            }
-            break;
-		}
+		case CHAR:
 		case DATE:{
-            break;
+            		char* recordValue = (char *)malloc(sizeof(char)*lengthOfAttr);
+            		memcpy(recordValue,one_Row_ + offset,lengthOfAttr);
+
+            		char* compareValue = value;
+            		if (strcmp(recordValue,compareValue) == 0){
+                		printf("char record:%s\tcompare:%s\n",recordValue,compareValue);
+                //getOneRecord(one_Row_, &temp_data_dic[0]);
+                		hitRecordCount++;
+                		if(false == t.AppendBuffer(one_Row_, record_len_)){
+                        		t.writeBufferPage(t.filehead,my_buffer_id_ ,t.data_, t.current_size_);
+                        		t.pageID++;
+                        		if (t.pageID == SIZE_BUFF) {
+                            			std::cout<<"this buffer full"<<std::endl;
+                            			break;
+                        		}
+                        		memset(t.data_, 0, SIZE_PER_PAGE);
+                        		memcpy(t.data_, one_Row_, record_len_);
+                        		t.pointer_ = t.data_+record_len_;
+                        		t.current_size_ = record_len_;
+                		}
+            		}
+            		break;
 		}
 	    }//end switch
             
     	}//end while
         t.writeBufferPage(t.filehead,my_buffer_id_ ,t.data_, t.current_size_);
         free(one_Row_);
-        new_temp_datadic = old_temp_data_dict; //wrong, need to wait class copy
-        new_temp_datadic->fileID = -my_buffer_id_; //negative number for temp datadict, value is for which buffer
-        new_temp_datadic->changeRecordNum(hitRecordCount);
+        temp_data_dic[new_relation] = temp_data_dic[old_relation]; //wrong, need to wait class copy
+        temp_data_dic[new_relation].fileID = -my_buffer_id_; //negative number for temp datadict, value is for which buffer
+        temp_data_dic[new_relation].changeRecordNum(hitRecordCount);
         //!!!free the old buffer
         head->buff[buffer_ID_].emptyOrnot = true;
-        return hitRecordCount;
-    }
+        return new_relation;
+    
 }
 
 /**
@@ -133,13 +133,28 @@ int tableScanEqualFilter(struct dbSysHead * head , relation * old_temp_data_dict
  * @param [in] fileID : long
  * @param [in] attributeName : char*
  * @param [in] value : char*
- * @param [in] new_temp_datadic : relation*     //filter results
- * @return  int         //number of filter result records, -1 means error
+ * @param [in] temp_datadic : relation*     //
+ * @return  int         //filter results, # in temp_datadic
  *
  * @author weiyu
- * @date 2015/12/4
+ * @date 2015/12/13
  **/
-int indexScanEqualFilter(struct dbSysHead * head, int fileID, char* attributeName, char* value,relation * new_temp_datadic){
+int indexScanEqualFilter(struct dbSysHead * head, int fileID, char* attributeName, char* value, relation * temp_data_dic){
+    //find  empty temp_datadic for filter results
+    int new_relation ;
+    for (int i = 0; i < MAX_FILE_NUM; i++) {
+        if (strcmp(temp_data_dic[i].getRelationName(),"") == 0) {
+            new_relation = i;
+            cout<<"new relation id: "<<new_relation<<endl;
+            temp_data_dic[new_relation].init("temp_datadict","XXX");
+            break;
+        }
+    }
+    if (new_relation == MAX_FILE_NUM) {
+        cout<<"no temp datadict for use!"<<endl;
+        return -3;
+    }
+
     int my_buffer_id_ ;
     int i;
     for (i = 0 ; i < BUFF_NUM; i++) {
@@ -160,8 +175,8 @@ int indexScanEqualFilter(struct dbSysHead * head, int fileID, char* attributeNam
         isAvail(NULL,"createIndexOn",ARRAY);
     }
     int rec_len_ = head->redef[idx].getRecordLength();
-    *new_temp_datadic = head->redef[idx]; //wrong, need to wait class copy
-    new_temp_datadic->fileID = -my_buffer_id_; //negative number for temp datadict, value is for which buffer
+    temp_data_dic[new_relation] = head->redef[idx]; //wrong, need to wait class copy
+    temp_data_dic[new_relation].fileID = -my_buffer_id_; //negative number for temp datadict, value is for which buffer
     
     attribute tempAttr;
     tempAttr = head->redef[idx].getAttributeByName(attributeName);
@@ -180,7 +195,7 @@ int indexScanEqualFilter(struct dbSysHead * head, int fileID, char* attributeNam
 
     int hitRecordCount = 0;
     if(pos ==-1){
-        //
+        //do nothing
         int a;
     }
     else{
@@ -207,27 +222,26 @@ int indexScanEqualFilter(struct dbSysHead * head, int fileID, char* attributeNam
 	t.writeBufferPage(t.filehead,my_buffer_id_ ,t.data_, t.current_size_);
         free(one_Row_);
     }
-    new_temp_datadic->changeRecordNum(hitRecordCount);
-    return hitRecordCount;
+    temp_data_dic[new_relation].changeRecordNum(hitRecordCount);
+    return new_relation;
 
 }
 
-/**
- * @brief semiScope filter based on table scan
- *
- * @param [in] head  : struct dbSysHead *
- * @param [in] old_temp_data_dict : relation*       //scan results
- * @param [in] attributeName : char*
- * @param [in] value : char*
- * @param [in] sign : int                       //LESS_THAN 0, NOT_LESS_THAN 1, MORE_THAN 2, NOT_MORE_THAN 3, NOT_EQUAL 4
- * @param [in] new_temp_datadic : relation*     //filter results
- * @return  int         //number of filter result records, -1 means error
- *
- * @author weiyu
- * @date 2015/12/6
- **/
-int tableScanSemiscopeFilter(struct dbSysHead * head, relation * old_temp_data_dict, char* attributeName, char* value,int sign,relation * new_temp_datadic){
-
+//return new_datadic# 
+int tableScanSemiscopeFilter(struct dbSysHead * head, relation * temp_data_dic, int old_relation, char* attributeName, char* value,int sign){
+    int new_relation ;
+    for (int i = 0; i < MAX_FILE_NUM; i++) {
+        if (strcmp(temp_data_dic[i].getRelationName(),"") == 0) {
+            new_relation = i;
+            cout<<"new relation id: "<<new_relation<<endl;
+            temp_data_dic[new_relation].init("temp_datadict","XXX");
+            break;
+        }
+    }
+    if (new_relation == MAX_FILE_NUM) {
+        cout<<"no temp datadict for use!"<<endl;
+        return -3;
+    }
     int my_buffer_id_ ;
     int i;
     for (i = 0 ; i < BUFF_NUM; i++) {
@@ -245,21 +259,22 @@ int tableScanSemiscopeFilter(struct dbSysHead * head, relation * old_temp_data_d
     else{
 	//read the scanned table according to the temp_data_dict
 	
-        int buffer_ID_ = - old_temp_data_dict->fileID;   //find which buffer
-        int record_num_ = old_temp_data_dict->getRecordNum();
-        int record_len_ = old_temp_data_dict->getRecordLength();
+        int buffer_ID_ = - temp_data_dic[old_relation].fileID;   //find which buffer
+        int record_num_ = temp_data_dic[old_relation].getRecordNum();
+        int record_len_ = temp_data_dic[old_relation].getRecordLength();
         attribute tempAttr;
-        tempAttr = old_temp_data_dict->getAttributeByName(attributeName);
+        tempAttr = temp_data_dic[old_relation].getAttributeByName(attributeName);
         int offset = tempAttr.getRecordDeviation();
         int type = tempAttr.getType();
         int lengthOfAttr = tempAttr.getLength();
-        RecordCursorTmp t1(head, old_temp_data_dict->fileID,record_len_,buffer_ID_,record_num_);
-        //cout<<buffer_ID_<<"~"<<record_len_<<"~"<<record_num_<<endl;
+        RecordCursorTmp t1(head, temp_data_dic[old_relation].fileID,record_len_,buffer_ID_,record_num_);
+        cout<<"RecordCursorTmp t1"<<buffer_ID_<<"~"<<record_len_<<"~"<<record_num_<<endl;
 
         Buffer t(head, -2);
         int hitRecordCount = 0;
 	
         char * one_Row_ = (char *)malloc(sizeof(char)*record_len_);
+        strcpy(one_Row_,"\0");
         while (true == t1.getNextRecord(one_Row_)) { //only scan
 	    //compare the current record with the wanting value, write in buffer if it hits
         switch(type){
@@ -268,29 +283,46 @@ int tableScanSemiscopeFilter(struct dbSysHead * head, relation * old_temp_data_d
 		    //int compareValue = *((int *)value);
 		    int compareValue = atoi(value);
             switch(sign){
+			case EQUAL:{
+                    		if (recordValue == compareValue){
+                       			//getOneRecord(one_Row_, &temp_data_dict[0]);
+                        		hitRecordCount++;
+                        		if(false == t.AppendBuffer(one_Row_, record_len_)){
+                            			t.writeBufferPage(t.filehead,my_buffer_id_ ,t.data_, t.current_size_);
+                                		t.pageID++;
+                                		if (t.pageID == SIZE_BUFF) {
+                                        		std::cout<<"this buffer full"<<std::endl;
+                                        		break;
+                                		}
+                                		memset(t.data_, 0, SIZE_PER_PAGE);
+                                		memcpy(t.data_, one_Row_, record_len_);
+                                		t.pointer_ = t.data_+record_len_;
+                                		t.current_size_ = record_len_;
+                        		}
+                        	}  //end if
+                        	break;
+			}
 			case LESS_THAN:{
-                    if (recordValue < compareValue){
-                        printf("less_than_:record:%d\tcompare:%d\n",recordValue,compareValue);
-                        //getOneRecord(one_Row_, &temp_data_dict[0]);
-                        hitRecordCount++;
-                        if(false == t.AppendBuffer(one_Row_, record_len_)){
-                            t.writeBufferPage(t.filehead,my_buffer_id_ ,t.data_, t.current_size_);
-                                t.pageID++;
-                                if (t.pageID == SIZE_BUFF) {
-                                        std::cout<<"this buffer full"<<std::endl;
-                                        break;
-                                }
-                                memset(t.data_, 0, SIZE_PER_PAGE);
-                                memcpy(t.data_, one_Row_, record_len_);
-                                t.pointer_ = t.data_+record_len_;
-                                t.current_size_ = record_len_;
-                        }
-                        }  //end if
-                        break;
+                    		if (recordValue < compareValue){
+                       			//getOneRecord(one_Row_, &temp_data_dict[0]);
+                        		hitRecordCount++;
+                        		if(false == t.AppendBuffer(one_Row_, record_len_)){
+                            			t.writeBufferPage(t.filehead,my_buffer_id_ ,t.data_, t.current_size_);
+                                		t.pageID++;
+                                		if (t.pageID == SIZE_BUFF) {
+                                        		std::cout<<"this buffer full"<<std::endl;
+                                        		break;
+                                		}
+                                		memset(t.data_, 0, SIZE_PER_PAGE);
+                                		memcpy(t.data_, one_Row_, record_len_);
+                                		t.pointer_ = t.data_+record_len_;
+                                		t.current_size_ = record_len_;
+                        		}
+                        	}  //end if
+                        	break;
 			}
 			case MORE_THAN:{
                             if (recordValue > compareValue){
-                                printf("MORE_THAN:record:%d\tcompare:%d\n",recordValue,compareValue);
                                 //getOneRecord(one_Row_, &temp_data_dict[0]);
                                 hitRecordCount++;
                                 if(false == t.AppendBuffer(one_Row_, record_len_)){
@@ -310,7 +342,6 @@ int tableScanSemiscopeFilter(struct dbSysHead * head, relation * old_temp_data_d
 			}
 			case NOT_MORE_THAN:{
                             if (recordValue <= compareValue){
-                                printf("NOT_MORE_THAN:record:%d\tcompare:%d\n",recordValue,compareValue);
                                 //getOneRecord(one_Row_, &temp_data_dict[0]);
                                 hitRecordCount++;
                                 if(false == t.AppendBuffer(one_Row_, record_len_)){
@@ -330,8 +361,6 @@ int tableScanSemiscopeFilter(struct dbSysHead * head, relation * old_temp_data_d
 			}
 			case NOT_LESS_THAN:{
                             if (recordValue >= compareValue){
-                                printf("NOT_LESS_THAN:record:%d\tcompare:%d\n",recordValue,compareValue);
-                                //getOneRecord(one_Row_, &temp_data_dict[0]);
                                 hitRecordCount++;
                                 if(false == t.AppendBuffer(one_Row_, record_len_)){
                                         t.writeBufferPage(t.filehead,my_buffer_id_ ,t.data_, t.current_size_);
@@ -350,8 +379,7 @@ int tableScanSemiscopeFilter(struct dbSysHead * head, relation * old_temp_data_d
 			}
 			case NOT_EQUAL:{
                             if (recordValue != compareValue){
-                                printf("NOT_EQUAL:record:%d\tcompare:%d\n",recordValue,compareValue);
-                                //getOneRecord(one_Row_, &temp_data_dict[0]);
+
                                 hitRecordCount++;
                                 if(false == t.AppendBuffer(one_Row_, record_len_)){
                                         t.writeBufferPage(t.filehead,my_buffer_id_ ,t.data_, t.current_size_);
@@ -372,45 +400,142 @@ int tableScanSemiscopeFilter(struct dbSysHead * head, relation * old_temp_data_d
 		    }//end switch sign
                     break;
 		}
+		case DATE:{
+			//same with char type
+		}
 		case CHAR:{
                     char* recordValue = (char *)malloc(sizeof(char)*lengthOfAttr);
                     memcpy(recordValue,one_Row_ + offset,lengthOfAttr);
-                    //int compareValue = *((int *)value);
                     char* compareValue = value;
-//                  printf("record:%d\tcompare:%d\n",recordValue,compareValue);
-                    if (strcmp(recordValue,compareValue) == 0){
-                        printf("record:%s\tcompare:%s\n",recordValue,compareValue);
-                        //getOneRecord(one_Row_, &temp_data_dict[0]);
-                        hitRecordCount++;
-                        if(false == t.AppendBuffer(one_Row_, record_len_)){
-                                t.writeBufferPage(t.filehead,my_buffer_id_ ,t.data_, t.current_size_);
-                                t.pageID++;
-                                if (t.pageID == SIZE_BUFF) {
-                                    std::cout<<"this buffer full"<<std::endl;
-                                    break;
+                    switch(sign){
+			case EQUAL:{
+                    		if (strcmp(recordValue,compareValue) == 0){
+                       			//getOneRecord(one_Row_, &temp_data_dict[0]);
+                        		hitRecordCount++;
+                        		if(false == t.AppendBuffer(one_Row_, record_len_)){
+                            			t.writeBufferPage(t.filehead,my_buffer_id_ ,t.data_, t.current_size_);
+                                		t.pageID++;
+                                		if (t.pageID == SIZE_BUFF) {
+                                        		std::cout<<"this buffer full"<<std::endl;
+                                        		break;
+                                		}
+                                		memset(t.data_, 0, SIZE_PER_PAGE);
+                                		memcpy(t.data_, one_Row_, record_len_);
+                                		t.pointer_ = t.data_+record_len_;
+                                		t.current_size_ = record_len_;
+                        		}
+                        	}  //end if
+                        	break;
+			}
+			case LESS_THAN:{
+                    		if (strcmp(recordValue,compareValue) < 0){
+                        		hitRecordCount++;
+                        		if(false == t.AppendBuffer(one_Row_, record_len_)){
+                            			t.writeBufferPage(t.filehead,my_buffer_id_ ,t.data_, t.current_size_);
+                                		t.pageID++;
+                                		if (t.pageID == SIZE_BUFF) {
+                                        		std::cout<<"this buffer full"<<std::endl;
+                                        		break;
+                                		}
+                                		memset(t.data_, 0, SIZE_PER_PAGE);
+                                		memcpy(t.data_, one_Row_, record_len_);
+                                		t.pointer_ = t.data_+record_len_;
+                                		t.current_size_ = record_len_;
+                        		}
+                        	}  //end if
+                        	break;
+			}
+			case MORE_THAN:{
+                            if (strcmp(recordValue,compareValue) > 0){
+                                //getOneRecord(one_Row_, &temp_data_dict[0]);
+                                hitRecordCount++;
+                                if(false == t.AppendBuffer(one_Row_, record_len_)){
+                                        t.writeBufferPage(t.filehead,my_buffer_id_ ,t.data_, t.current_size_);
+                                        t.pageID++;
+                                        if (t.pageID == SIZE_BUFF) {
+                                            std::cout<<"this buffer full"<<std::endl;
+                                            break;
+                                        }
+                                        memset(t.data_, 0, SIZE_PER_PAGE);
+                                        memcpy(t.data_, one_Row_, record_len_);
+                                        t.pointer_ = t.data_+record_len_;
+                                        t.current_size_ = record_len_;
                                 }
-                                memset(t.data_, 0, SIZE_PER_PAGE);
-                                memcpy(t.data_, one_Row_, record_len_);
-                                t.pointer_ = t.data_+record_len_;
-                                t.current_size_ = record_len_;
-                        }
-                    }
+                            }  //end if
+			    break;
+			}
+			case NOT_MORE_THAN:{
+			
+                            if (strcmp(recordValue,compareValue) <= 0){
+                                hitRecordCount++;
+                                if(false == t.AppendBuffer(one_Row_, record_len_)){
+                                        t.writeBufferPage(t.filehead,my_buffer_id_ ,t.data_, t.current_size_);
+                                        t.pageID++;
+                                        if (t.pageID == SIZE_BUFF) {
+                                            std::cout<<"this buffer full"<<std::endl;
+                                            break;
+                                        }
+                                        memset(t.data_, 0, SIZE_PER_PAGE);
+                                        memcpy(t.data_, one_Row_, record_len_);
+                                        t.pointer_ = t.data_+record_len_;
+                                        t.current_size_ = record_len_;
+                                }
+                            }  //end if
+			    break;
+			}
+			case NOT_LESS_THAN:{
+                            if (strcmp(recordValue,compareValue) >= 0){
+                                hitRecordCount++;
+                                if(false == t.AppendBuffer(one_Row_, record_len_)){
+                                        t.writeBufferPage(t.filehead,my_buffer_id_ ,t.data_, t.current_size_);
+                                        t.pageID++;
+                                        if (t.pageID == SIZE_BUFF) {
+                                            std::cout<<"this buffer full"<<std::endl;
+                                            break;
+                                        }
+                                        memset(t.data_, 0, SIZE_PER_PAGE);
+                                        memcpy(t.data_, one_Row_, record_len_);
+                                        t.pointer_ = t.data_+record_len_;
+                                        t.current_size_ = record_len_;
+                                }
+                            }  //end if
+			    break;
+			}
+			case NOT_EQUAL:{
+                            if (strcmp(recordValue,compareValue) != 0){
+                                hitRecordCount++;
+                                if(false == t.AppendBuffer(one_Row_, record_len_)){
+                                        t.writeBufferPage(t.filehead,my_buffer_id_ ,t.data_, t.current_size_);
+                                        t.pageID++;
+                                        if (t.pageID == SIZE_BUFF) {
+                                            std::cout<<"this buffer full"<<std::endl;
+                                            break;
+                                        }
+                                        memset(t.data_, 0, SIZE_PER_PAGE);
+                                        memcpy(t.data_, one_Row_, record_len_);
+                                        t.pointer_ = t.data_+record_len_;
+                                        t.current_size_ = record_len_;
+                                }
+                            }  //end if
+
+			}
+
+		    }//end switch sign
                     break;
 		}
-		case DATE:{
 
-		}
 	    }//end switch
             
     	}//end while
         t.writeBufferPage(t.filehead,my_buffer_id_ ,t.data_, t.current_size_);
         free(one_Row_);
-        new_temp_datadic = old_temp_data_dict; //wrong, need to wait class copy
-        new_temp_datadic->fileID = -my_buffer_id_; //negative number for temp datadict, value is for which buffer
-        new_temp_datadic->changeRecordNum(hitRecordCount);
+        temp_data_dic[new_relation] = temp_data_dic[old_relation]; //wrong, need to wait class copy
+        temp_data_dic[new_relation].fileID = -my_buffer_id_; //negative number for temp datadict, value is for which buffer
+        temp_data_dic[new_relation].changeRecordNum(hitRecordCount);
+        printf("hitRecordCount:%d\n",temp_data_dic[new_relation].getRecordNum());
         //!!!free the old buffer
         head->buff[buffer_ID_].emptyOrnot = true;
-        return hitRecordCount;
+        return new_relation;
     }
 }
 
@@ -418,21 +543,34 @@ int tableScanSemiscopeFilter(struct dbSysHead * head, relation * old_temp_data_d
  * @brief  Filter based on table scan
  *
  * @param [in] head  : struct dbSysHead *
- * @param [in] old_temp_data_dict : relation*       //scan results
+ * @param [in] temp_data_dict : relation*       //temp_data_dictionary
+ * @param [in] old_relation : int       	//scan results, # in temp_data_dict
  * @param [in] attributeName : char*
  * @param [in] value1 : char*
  * @param [in] sign1 : int                      //LESS_THAN 0, NOT_LESS_THAN 1, MORE_THAN 2, NOT_MORE_THAN 3, NOT_EQUAL 4
  * @param [in] value2 : char*
  * @param [in] sign2 : int
- * @param [in] new_temp_datadic : relation*     //filter results
- * @return  int         //number of filter result records, -1 means error
+ * @return  int         //new_relation, # in temp_data_dict
  *
  * @author weiyu
- * @date 2015/12/6
+ * @date 2015/12/13
  **/
-//e.g. tableScanScopeFilter(head, fid, &temp_data_dict, attributeName, "210",LESS_THAN,"220",NOT_MORE_THAN,&new_temp_datadic)
+//e.g. int filterFlag = tableScanScopeFilter(head, fid, &temp_data_dict, old_relation, attributeName, "210",LESS_THAN,"220",NOT_MORE_THAN)
 //     means to find x that 210 < x <= 220
-int tableScanScopeFilter(struct dbSysHead * head,  relation * old_temp_data_dict, char* attributeName, char* value1,int sign1,char* value2,int sign2,relation * new_temp_datadic){
+int tableScanScopeFilter(struct dbSysHead * head,  relation * temp_data_dic, int old_relation, char* attributeName, char* value1,int sign1,char* value2,int sign2){
+    int new_relation ;
+    for (int i = 0; i < MAX_FILE_NUM; i++) {
+        if (strcmp(temp_data_dic[i].getRelationName(),"") == 0) {
+            new_relation = i;
+            cout<<"new relation id: "<<new_relation<<endl;
+            temp_data_dic[new_relation].init("temp_datadict","XXX");
+            break;
+        }
+    }
+    if (new_relation == MAX_FILE_NUM) {
+        cout<<"no temp datadict for use!"<<endl;
+        return -3;
+    }
 
     int my_buffer_id_ ;
     int i;
@@ -450,15 +588,15 @@ int tableScanScopeFilter(struct dbSysHead * head,  relation * old_temp_data_dict
     }
     else{
 	//read the scanned table according to the temp_data_dict
-        int buffer_ID_ = - old_temp_data_dict->fileID;   //find which buffer
-        int record_num_ = old_temp_data_dict->getRecordNum();
-        int record_len_ = old_temp_data_dict->getRecordLength();
+        int buffer_ID_ = - temp_data_dic[old_relation].fileID;   //find which buffer
+        int record_num_ = temp_data_dic[old_relation].getRecordNum();
+        int record_len_ = temp_data_dic[old_relation].getRecordLength();
         attribute tempAttr;
-        tempAttr = old_temp_data_dict->getAttributeByName(attributeName);
+        tempAttr = temp_data_dic[old_relation].getAttributeByName(attributeName);
         int offset = tempAttr.getRecordDeviation();
         int type = tempAttr.getType();
         int lengthOfAttr = tempAttr.getLength();
-        RecordCursorTmp t1(head,old_temp_data_dict->fileID,record_len_,buffer_ID_,record_num_);
+        RecordCursorTmp t1(head,temp_data_dic[old_relation].fileID,record_len_,buffer_ID_,record_num_);
         //cout<<buffer_ID_<<"~"<<record_len_<<"~"<<record_num_<<endl;
         if(type != INT){
             printf("Cannnot call tableScanScopeFilter when the attribute is not INT type.\n");
@@ -480,7 +618,6 @@ int tableScanScopeFilter(struct dbSysHead * head,  relation * old_temp_data_dict
                     if(sign2 == LESS_THAN){
 			if (compareValue1 < recordValue && recordValue < compareValue2){
                                 printf("compareValue1 < recordValue < compareValue2:record:%d\n",recordValue);
-                                //getOneRecord(one_Row_, &temp_data_dict[0]);
                                 hitRecordCount++;
                                 if(false == t.AppendBuffer(one_Row_, record_len_)){
                                         t.writeBufferPage(t.filehead,my_buffer_id_ ,t.data_, t.current_size_);
@@ -500,7 +637,6 @@ int tableScanScopeFilter(struct dbSysHead * head,  relation * old_temp_data_dict
 		    else if(sign2 == NOT_MORE_THAN){
                         if (compareValue1 < recordValue && recordValue<= compareValue2){
                                 printf("c1 < recordValue <= c2:record:%d\n",recordValue);
-                                //getOneRecord(one_Row_, &temp_data_dict[0]);
                                 hitRecordCount++;
                                 if(false == t.AppendBuffer(one_Row_, record_len_)){
                                         t.writeBufferPage(t.filehead,my_buffer_id_ ,t.data_, t.current_size_);
@@ -528,7 +664,6 @@ int tableScanScopeFilter(struct dbSysHead * head,  relation * old_temp_data_dict
                     if(sign2 == LESS_THAN){
 			if (compareValue1 <= recordValue && recordValue< compareValue2){
                                 printf("compareValue1:%d <= recordValue:%d < compareValue2:%d\n",compareValue1,recordValue,compareValue2);
-                                //getOneRecord(one_Row_, &temp_data_dict[0]);
                                 hitRecordCount++;
                                 if(false == t.AppendBuffer(one_Row_, record_len_)){
                                         t.writeBufferPage(t.filehead,my_buffer_id_ ,t.data_, t.current_size_);
@@ -548,7 +683,6 @@ int tableScanScopeFilter(struct dbSysHead * head,  relation * old_temp_data_dict
 		    else if(sign2 == NOT_MORE_THAN){
                         if (compareValue1 <= recordValue && recordValue <= compareValue2){
                                 printf("compareValue1 <= recordValue < compareValue2:record:%d\n",recordValue);
-                                //getOneRecord(one_Row_, &temp_data_dict[0]);
                                 hitRecordCount++;
                                 if(false == t.AppendBuffer(one_Row_, record_len_)){
                                         t.writeBufferPage(t.filehead,my_buffer_id_ ,t.data_, t.current_size_);
@@ -578,12 +712,12 @@ int tableScanScopeFilter(struct dbSysHead * head,  relation * old_temp_data_dict
     	}//end while
         t.writeBufferPage(t.filehead,my_buffer_id_ ,t.data_, t.current_size_);
         free(one_Row_);
-        new_temp_datadic = old_temp_data_dict; //wrong, need to wait class copy
-        new_temp_datadic->fileID = -my_buffer_id_; //negative number for temp datadict, value is for which buffer
-        new_temp_datadic->changeRecordNum(hitRecordCount);
+        temp_data_dic[new_relation] = temp_data_dic[old_relation]; //wrong, need to wait class copy
+        temp_data_dic[new_relation].fileID = -my_buffer_id_; //negative number for temp datadict, value is for which buffer
+        temp_data_dic[new_relation].changeRecordNum(hitRecordCount);
         //!!!free the old buffer
         head->buff[buffer_ID_].emptyOrnot = true;
-        return hitRecordCount;
+        return new_relation;
     }
 }
 
