@@ -12,6 +12,7 @@
 #include "file.h"
 #include "dataDictionary.h"
 #include <iostream>
+#include "getaRecordbyCursor.h"
 
 int getLogicfidByName(struct dbSysHead *head, const char * tableName) {
     int logicfid;
@@ -91,9 +92,17 @@ int TableScan(struct dbSysHead * head, relation * temp_datadic, const char * tab
     free(one_Row_);
     temp_datadic[dictID] = head->redef[fid]; //correct, class copy succeed
     temp_datadic[dictID].fileID = -buffer_id_; //negative number for temp datadict, value is for which buffer
-    temp_datadic[dictID].changeRecordNum (k);
+    temp_datadic[dictID].changeRecordNum(k);
+    printf("temp_datadic[dictID].recordNum::%d\n",temp_datadic[dictID].getRecordNum());
     return dictID;
 }
+
+
+
+
+
+
+
 void TableScan(struct dbSysHead * head,int fileID, relation * temp_datadic){
     int fid = queryFileID(head, fileID);
 //    cout<<"test tablescan fid: "<<fid<<endl;

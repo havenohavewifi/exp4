@@ -49,9 +49,10 @@ int deleteRecordWhere(struct dbSysHead *head, long fid, char* attributeName, cha
     char * one_Row_ = (char *)malloc(sizeof(char)*rec_length);
     int hitRecordCount = 0;
     char* erase = (char *)malloc(sizeof(char)*rec_length);
-    for(int i=0;i<rec_length;i++){
+    for(int i=0;i<rec_length-1;i++){
 	erase[i]='$';
     }
+    erase[rec_length-1] = '\0';
     int location;
 
     while (true == scanTable.getNextRecord(one_Row_)) { //only scan
@@ -89,6 +90,7 @@ int deleteRecordWhere(struct dbSysHead *head, long fid, char* attributeName, cha
 			break;
 		    }
 		    case MORE_THAN:{
+			//printf("recordValue > compareValue:%d,%d",recordValue,compareValue);
 			if (recordValue > compareValue){
 				hitRecordCount++;
 				location = scanTable.getcLogicLocation()-rec_length;				
@@ -115,6 +117,9 @@ int deleteRecordWhere(struct dbSysHead *head, long fid, char* attributeName, cha
 		}
 		break;
 	    }//end of INT type
+	    case DATE:{
+		//same with char type
+	    }
 	    case CHAR:{
 		char* recordValue = (char *)malloc(sizeof(char)*lengthOfAttr);
                 memcpy(recordValue,one_Row_ + offset,lengthOfAttr);
@@ -171,10 +176,7 @@ int deleteRecordWhere(struct dbSysHead *head, long fid, char* attributeName, cha
 		}
 		break;
 	    }// end of CHAR type
-	    case DATE:{
 
-
-	    }
 
         }//end of switch
         
