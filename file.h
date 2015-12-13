@@ -69,6 +69,7 @@ struct FileDesc
     long fileAddr;				//	≈í∆í¬∫Àõ¬µ∆íSegment¬µ√ø√∑‚àë√∑¬µ¬£¬ÆSegment‚Äù‚àö¬°¬•¬±√å¬•√Ü¬°¬®¬£¬©
     long filePageNum;			//	≈í∆í¬∫Àõ‚Äô¬∫‚Äù‚àö‚àÇ‚Ä°‚Ä¶≈∏‚Äú‚â•
     long filePageEndPos;        //  mark the end position in the final page
+    long filePageForWrite;
 };
 
 struct SysDesc

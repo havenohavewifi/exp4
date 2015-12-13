@@ -24,7 +24,7 @@ using namespace std;
 
 bool RecordCursor::getNextRecord(void *des) {
     // all the data is read
-    if(this->cLogicPage >= this->filePageNum ||((this->cLogicPage == this->filePageNum - 1) && this->bufferOffset >= head->desc.fileDesc[queryFileID(head, fid)].filePageEndPos)) {
+    if(this->cLogicPage > this->filePageNum ||((this->cLogicPage == this->filePageNum ) && this->bufferOffset >= head->desc.fileDesc[queryFileID(head, fid)].filePageEndPos)) {
 //        cout<<this->cLogicPage<<"-" <<this->bufferOffset<<endl;
         return false;
     }

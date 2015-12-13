@@ -70,9 +70,10 @@ void loaddata(struct dbSysHead * head, int fid)
         }
         //write remainder
         t.writeBuffer(head, t.data_, t.current_size_);
+//        t.pageID ++;
 //        head->buff[buffer_id_].emptyOrnot = true;
         head->desc.fileDesc[n].filePageEndPos = t.current_size_;
-        head->desc.fileDesc[n].filePageNum = t.pageID + 1;
+        head->desc.fileDesc[n].filePageForWrite = t.pageID ;
         //Attention
         head->redef[n].changeRecordNum(k);
 //        cout<<"k: "<<k <<"---datadict length: "<<head->redef[n].getRecordLength()<<"   Num: "<<cout<<(*head).redef[n].getRecordNum()<<" correct:"<<k<<endl;

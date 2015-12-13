@@ -48,7 +48,7 @@ public:
         this->cBufferPage = 0;
         this->bufferOffset = 0;
         this->start = true;
-        this->filePageNum = head->desc.fileDesc[idx].filePageNum;
+        this->filePageNum = head->desc.fileDesc[idx].filePageForWrite;
 //        cout<<"ReadCursor "<<idx<<":"<<this->filePageNum<<endl;
     }
 

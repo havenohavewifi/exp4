@@ -171,16 +171,18 @@ int main()
         printf("Create Table failed\n");
     }
     relation * temp_data_dict = new relation[MAX_FILE_NUM];
-    //read customer.tbl and wri
+    //read customer.tbl and write into diskfile
     loaddata(&head, FIRST_FID);
     loaddata(&head, FIRST_FID + 1);
     loaddata(&head, FIRST_FID + 2);
     sysUpdate(&head);
 
-    insertOneTuple(&head, "customer", "501|Customer#000000001|IVhzIApeRb ot,c,E|15|25-989-741-2988|711.56|BUILDING|to the even, regular platelets.HHHHHH|");
-//    insertOneTuple(&head, "customer", "2|Customer#000000001|IVhzIApeRb ot,c,E|15|25-989-741-2988|711.56|BUILDING|to the even, regular platelets.HHHHHH|");
+    insertOneTuple(&head, "customer", "501|Customer#00001001|IVhzIApeRb ot,c,E|15|25-989-741-2988|711.56|BUILDING|to the even, regular platelets.H|");
     sysUpdate(&head);
-    //Scan Table
+    insertOneTuple(&head, "customer", "602|Customer#000001002|IVhzIApeRb ot,c,E|15|25-989-741-2988|711.56|BUILDING|to the even, regular platelets.HH|");
+    sysUpdate(&head);
+    insertOneTuple(&head, "customer", "603|Customer#000001003|IVhzIApeRb ot,c,E|15|25-989-741-2988|711.56|BUILDING|to the even, regular platelets.HHH|");
+    sysUpdate(&head);    //Scan Table
     int customer_scan = -1;
     customer_scan = TableScan(&head, temp_data_dict, "customer");
     if (customer_scan>=0) {
@@ -196,10 +198,24 @@ int main()
     if (region_scan>=0) {
         printf("region tablescan succeed!\n");
     }
+    /*
     int hashjoin_f = -1;
     hashjoin_f = hashjoin(&head, temp_data_dict, nation_scan,region_scan, "regionkey");
     if(hashjoin_f >=0)
         printf("hashjoin succeed! %d\n", hashjoin_f);
+     */
+    //get the output of tablescan, temporarily according to temp_data_dict[1]
+    int buffer_ID_ = - temp_data_dict[0].fileID;   //find which buffer
+    int record_num_ = temp_data_dict[0].getRecordNum();
+    int record_len_ = temp_data_dict[0].getRecordLength();
+    RecordCursorTmp t1(&head,1,record_len_,buffer_ID_,record_num_);
+    cout<<buffer_ID_<<"~"<<record_len_<<"~"<<record_num_<<endl;
+    char * one_Row_ = (char *)malloc(sizeof(char)*record_len_);
+    while (true == t1.getNextRecord(one_Row_)) { //only scan
+        getOneRecord(one_Row_, &temp_data_dict[0]); //get each attribute value and print
+    }
+    free(one_Row_);
+    
 /*    char attribute_list[3][NAMELENGTH] = {"address", "name", "custkey"};
     if(project(&head, temp_data_dict, region_scan, 3, attribute_list)>=0)
         printf("project succeed!\n");
@@ -229,21 +245,7 @@ int main()
     }
     free(one_Row_);
 */
-    
-
-
-    //get the output of tablescan, temporarily according to temp_data_dict[1]
-    int buffer_ID_ = - temp_data_dict[3].fileID;   //find which buffer
-    int record_num_ = temp_data_dict[3].getRecordNum();
-    int record_len_ = temp_data_dict[3].getRecordLength();
-    RecordCursorTmp t1(&head,1,record_len_,buffer_ID_,record_num_);
-    cout<<buffer_ID_<<"~"<<record_len_<<"~"<<record_num_<<endl;
-    char * one_Row_ = (char *)malloc(sizeof(char)*record_len_);
-    while (true == t1.getNextRecord(one_Row_)) { //only scan
-        getOneRecord(one_Row_, &temp_data_dict[3]); //get each attribute value and print
-    }
-    free(one_Row_);
-
+ 
     
 //    TableScan(&head, FIRST_FID + 1, temp_data_dict);
 /*

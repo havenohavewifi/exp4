@@ -13,7 +13,7 @@
 #include <stdlib.h>
 #include <iostream>
 using namespace std;
-
+//need to add input control, check error
 //insert into customer values (‘501’, ‘Customer#000000001’, ‘VhzIApeRb ot,c,E’ ‘1525-989-741-2988’ , ‘711.56’, ‘BUILDING’, ‘to the even, regular platelets. regular, ironic epitHHH’);
 int insertOneTuple(struct dbSysHead *head, const char * tableName, const char* content){
     int logicfid;
