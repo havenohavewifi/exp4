@@ -92,7 +92,7 @@ int TableScan(struct dbSysHead * head, relation * temp_datadic, const char * tab
     temp_datadic[dictID] = head->redef[fid]; //correct, class copy succeed
     temp_datadic[dictID].fileID = -buffer_id_; //negative number for temp datadict, value is for which buffer
     temp_datadic[dictID].changeRecordNum (k);
-    return 0;
+    return dictID;
 }
 void TableScan(struct dbSysHead * head,int fileID, relation * temp_datadic){
     int fid = queryFileID(head, fileID);

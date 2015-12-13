@@ -7,7 +7,7 @@ extern "C"{
 };
 #include "dbHead.h"
 
-#define BUFF_NUM 8
+#define BUFF_NUM 6
 #define NAMELENGTH  32
 #define ATTRIBUTENUM  12
 #define INT 1
@@ -69,7 +69,7 @@ private:
 struct dbSysHead
 {
     struct SysDesc desc;
-    struct buffSpace buff[BUFF_NUM];   // 3 buffers for SPJ operations
+    struct buffSpace buff[BUFF_NUM];   // n buffers for SPJ operations
     
     unsigned long *bitMap;
     relation redef[MAX_FILE_NUM];		//关系数据字典

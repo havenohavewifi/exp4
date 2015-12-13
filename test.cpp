@@ -121,12 +121,13 @@ int main()
     if(showTable(&head, "nation") == -1 )
         printf("2 showTable: nation\n");
 */
-/*
+
     if(createTable(&head) == -1)
         printf("Create Table failed\n");
     if(createTable(&head) == -1)
         printf("Create Table failed\n");
- */
+    
+ /*
     struct eachAttribute * nation_att = new struct eachAttribute[12];
     strcpy(nation_att[0].attribute_name_,"custkey");
     nation_att[0].attribute_type_ = 1;
@@ -155,10 +156,25 @@ int main()
     if (createTable( &head, "customer", "TianzhenWu",  8, nation_att) == -1) {
         printf("Create Table failed\n");
     }
+    */
+    struct eachAttribute * region_att = new struct eachAttribute[3];
+    strcpy(region_att[0].attribute_name_,"regionkey");
+    region_att[0].attribute_type_ = 1;
+    region_att[0].attribute_length_ = 4;
+    strcpy(region_att[1].attribute_name_,"regionname");
+    region_att[1].attribute_type_ = 2;
+    region_att[1].attribute_length_ = 12;
+    strcpy(region_att[2].attribute_name_,"regioncomment");
+    region_att[2].attribute_type_ = 2;
+    region_att[2].attribute_length_ = 152;
+    if (createTable( &head, "region", "Mengxi", 3, region_att) == -1) {
+        printf("Create Table failed\n");
+    }
     relation * temp_data_dict = new relation[MAX_FILE_NUM];
-    //read customer.tbl and write into our file1, 一次性
+    //read customer.tbl and wri
     loaddata(&head, FIRST_FID);
-//    loaddata(&head, FIRST_FID + 1);
+    loaddata(&head, FIRST_FID + 1);
+    loaddata(&head, FIRST_FID + 2);
     sysUpdate(&head);
 
     insertOneTuple(&head, "customer", "501|Customer#000000001|IVhzIApeRb ot,c,E|15|25-989-741-2988|711.56|BUILDING|to the even, regular platelets.HHHHHH|");
@@ -168,11 +184,27 @@ int main()
     int customer_scan = -1;
     customer_scan = TableScan(&head, temp_data_dict, "customer");
     if (customer_scan>=0) {
-        printf("tablescan succeed!\n");
+        printf("customer tablescan succeed!\n");
     }
-    char attribute_list[3][NAMELENGTH] = {"address", "name", "custkey"};
-    if(project(&head, temp_data_dict, customer_scan, 3, attribute_list)>=0)
+    int nation_scan = -1;
+    nation_scan = TableScan(&head, temp_data_dict, "nation");
+    if (nation_scan>=0) {
+        printf("nation tablescan succeed!\n");
+    }
+    int region_scan = -1;
+    region_scan = TableScan(&head, temp_data_dict, "region");
+    if (region_scan>=0) {
+        printf("region tablescan succeed!\n");
+    }
+    int hashjoin_f = -1;
+    hashjoin_f = hashjoin(&head, temp_data_dict, nation_scan,region_scan, "regionkey");
+    if(hashjoin_f >=0)
+        printf("hashjoin succeed! %d\n", hashjoin_f);
+/*    char attribute_list[3][NAMELENGTH] = {"address", "name", "custkey"};
+    if(project(&head, temp_data_dict, region_scan, 3, attribute_list)>=0)
         printf("project succeed!\n");
+*/
+    
     //for each old table, only one time SPJ operator allowed, because it will be freed by this SPJ operator.
     /*
     printf("start tableScanEqualFilter()...\n");
@@ -200,15 +232,15 @@ int main()
     
 
 
-    //get the output of tablescan, temporarily according to datadict1, other than temp_data_dict[1]
-    int buffer_ID_ = - temp_data_dict[1].fileID;   //find which buffer
-    int record_num_ = temp_data_dict[1].getRecordNum();
-    int record_len_ = temp_data_dict[1].getRecordLength();
+    //get the output of tablescan, temporarily according to temp_data_dict[1]
+    int buffer_ID_ = - temp_data_dict[3].fileID;   //find which buffer
+    int record_num_ = temp_data_dict[3].getRecordNum();
+    int record_len_ = temp_data_dict[3].getRecordLength();
     RecordCursorTmp t1(&head,1,record_len_,buffer_ID_,record_num_);
     cout<<buffer_ID_<<"~"<<record_len_<<"~"<<record_num_<<endl;
     char * one_Row_ = (char *)malloc(sizeof(char)*record_len_);
     while (true == t1.getNextRecord(one_Row_)) { //only scan
-        getOneRecord(one_Row_, &temp_data_dict[1]); //get each attribute value and print
+        getOneRecord(one_Row_, &temp_data_dict[3]); //get each attribute value and print
     }
     free(one_Row_);
 

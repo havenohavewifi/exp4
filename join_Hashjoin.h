@@ -20,5 +20,6 @@ class OutputRelation;
 class HeapInputTuple;
 class HashTable;
 class HashJoin;
-void hashjoin(struct dbSysHead *head, relation *temp_datadic1, relation *temp_datadic2 ,relation *result, const char *name);
+//void hashjoin(struct dbSysHead *head, relation *temp_datadic1, relation *temp_datadic2 ,relation *result, const char *name);
+int hashjoin(struct dbSysHead *head, relation *temp_datadic,int old_relation_1, int old_relation_2, const char *name);
 #endif

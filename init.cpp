@@ -34,7 +34,7 @@ int initSys(struct dbSysHead *head)
 	fseek(fp, head->desc.bitMapAddr, SEEK_SET);
 	fread(head->bitMap, 1, head->desc.sizeBitMap, fp);
 
-	for (k=0; k<3; k++) {
+	for (k=0; k<BUFF_NUM; k++) {
 		for (i = 0; i<SIZE_BUFF; i++) {
 			head->buff[k].map[i].pageNo = -1;
 			head->buff[k].map[i].vstTime = 0;

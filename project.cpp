@@ -37,6 +37,7 @@ int project(struct dbSysHead *head, relation *temp_datadic, int old_relation, in
             if (strcmp(attribute_list[j], temp_datadic[old_relation].getAttributeByNo(i).getName()) == 0) {
                 temp_datadic[new_relation].insertAttribute(temp_datadic[old_relation].getAttributeByNo(i).getName(), temp_datadic[old_relation].getAttributeByNo(i).getType(), temp_datadic[old_relation].getAttributeByNo(i).getLength());
                 insert_num_ ++;
+                cout<<attribute_list[j] <<" "<<temp_datadic[old_relation].getAttributeByNo(i).getName() <<endl;
             }
         }
     }
@@ -115,6 +116,8 @@ int project(struct dbSysHead *head, relation *temp_datadic, int old_relation, in
     temp_datadic[new_relation].fileID = -buffer_id_;
     //Attention!!!
     temp_datadic[new_relation].changeRecordNum(k);
+    //delete old relation
+    strcpy(temp_datadic[old_relation].getRelationName(),"");
     head->buff[-temp_datadic[old_relation].fileID].emptyOrnot = true;
     free(one_Row_);
     free(new_Row_);

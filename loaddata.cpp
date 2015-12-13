@@ -23,12 +23,15 @@ extern "C" {
 using namespace std;
 string table1 = Customer_tbl;
 string table2 = Nation_tbl;
+string table3 = Region_tbl;
+
 void loaddata(struct dbSysHead * head, int fid)
 {
     
     ifstream infile;
     if(fid == 1)    infile.open(table1.c_str());
     else if(fid == 2) infile.open(table2.c_str());
+    else if(fid == 3) infile.open(table3.c_str());
     if(!infile)
     {
         cout<<"open file failure"<<endl;
@@ -63,7 +66,7 @@ void loaddata(struct dbSysHead * head, int fid)
                 t.current_size_ = size_per_record;
             }
             k++;
-            if(k>250) break;
+            if(k>270) break;
         }
         //write remainder
         t.writeBuffer(head, t.data_, t.current_size_);

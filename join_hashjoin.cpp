@@ -391,12 +391,43 @@ class HashJoin
         OutputRelation& output_relation_;
 };
 
-void hashjoin(struct dbSysHead *head, relation *temp_datadic1, relation *temp_datadic2 ,relation *result,const char *name){
-    int original_rec_length1 = temp_datadic1->getRecordLength();
-    int original_rec_length2 = temp_datadic2->getRecordLength();
-    int original_attribute_length1=temp_datadic1->getAttributeNum();
-    int original_attribute_length2=temp_datadic2->getAttributeNum();
-//    int new_rec_length = result->getRecordLength();   //each record length in new temp table, in case SPJ use
+int hashjoin(struct dbSysHead *head, relation *temp_datadic,int old_relation_1, int old_relation_2, const char *name){
+    //find empty temp_datadic
+    int new_relation;
+    for (int i = 0; i < MAX_FILE_NUM; i++) {
+        if (strcmp(temp_datadic[i].getRelationName(),"") == 0) {
+            new_relation = i;
+            cout<<"new relation id: "<<new_relation<<endl;
+            temp_datadic[new_relation].init("temp_datadict","XXX");
+            break;
+        }
+    }
+    if (new_relation == MAX_FILE_NUM) {
+        cout<<"no temp datadict for use!"<<endl;
+        return -3;
+    }
+    //input error control
+    int flag = -1;
+    for (int i = 0; i < temp_datadic[old_relation_1].getAttributeNum(); i++) {
+        if (strcmp(name, temp_datadic[old_relation_1].getAttributeByNo(i).getName()) == 0)
+            flag ++;
+         
+    }
+    for (int i = 0; i < temp_datadic[old_relation_2].getAttributeNum(); i++) {
+        if (strcmp(name, temp_datadic[old_relation_2].getAttributeByNo(i).getName()) == 0)
+            flag ++;
+        
+    }
+    if (flag != 1) {
+        cout<<"input attributes error!"<<endl;
+        return -1;
+    }
+    
+    int original_rec_length1 = temp_datadic[old_relation_1].getRecordLength();
+    int original_rec_length2 = temp_datadic[old_relation_2].getRecordLength();
+    int original_attribute_length1=temp_datadic[old_relation_1].getAttributeNum();
+    int original_attribute_length2=temp_datadic[old_relation_2].getAttributeNum();
+
     //look up which buffer is empty
     int buffer_id_;
     int i;
@@ -410,37 +441,37 @@ void hashjoin(struct dbSysHead *head, relation *temp_datadic1, relation *temp_da
     }
     if (i == BUFF_NUM) {
         cout << "No Buffer Can be Used!" << endl;
+        return -2;
     }
     else{
         int start1, start2, k1, k2;
-        
         char * one_Row_1 = (char *)malloc(sizeof(char) * original_rec_length1);
         char * one_Row_2 = (char *)malloc(sizeof(char) * original_rec_length2);
         
         hashjoinBufferManager* hashjoinBuffer_manager = new hashjoinBufferManager();
-        InputRelation* left_relation = new InputRelation(*hashjoinBuffer_manager, temp_datadic1->getRecordNum());
-        InputRelation* right_relation = new InputRelation(*hashjoinBuffer_manager, temp_datadic2->getRecordNum());
-        cout<<"left relation num :"<<temp_datadic1->getRecordNum() << "  right relation num :"<<temp_datadic2->getRecordNum() <<endl;
+        InputRelation* left_relation = new InputRelation(*hashjoinBuffer_manager, temp_datadic[old_relation_1].getRecordNum());
+        InputRelation* right_relation = new InputRelation(*hashjoinBuffer_manager, temp_datadic[old_relation_2].getRecordNum());
+        cout<<"left relation num :"<<temp_datadic[old_relation_1].getRecordNum() << "  right relation num :"<<temp_datadic[old_relation_2].getRecordNum() <<endl;
         //creat <key, pos> pair
-        RecordCursorTmp scanTable1(head, temp_datadic1->fileID, original_rec_length1, -temp_datadic1->fileID, temp_datadic1->getRecordNum());
+        RecordCursorTmp scanTable1(head, temp_datadic[old_relation_1].fileID, original_rec_length1, -temp_datadic[old_relation_1].fileID, temp_datadic[old_relation_1].getRecordNum());
         while (true == scanTable1.getNextRecord(one_Row_1)) {
             for(int i=0;i<original_attribute_length1;i++){
-                if(strcmp(temp_datadic1->getAttributeByNo(i).getName(),name)==0){
-                    start1=temp_datadic1->getAttributeByNo(i).getRecordDeviation();
+                if(strcmp(temp_datadic[old_relation_1].getAttributeByNo(i).getName(),name)==0){
+                    start1=temp_datadic[old_relation_1].getAttributeByNo(i).getRecordDeviation();
                     k1=*((int*)(one_Row_1+start1));  //debug for key
-                    cout<<k1<<endl;
+   //                 cout<<k1<<endl;
                     left_relation->addInputTuple(k1,one_Row_1);
                     break;
                 }
             }
         }
-        RecordCursorTmp scanTable2(head, temp_datadic2->fileID, original_rec_length2, -temp_datadic2->fileID, temp_datadic2->getRecordNum());
+        RecordCursorTmp scanTable2(head, temp_datadic[old_relation_2].fileID, original_rec_length2, -temp_datadic[old_relation_2].fileID, temp_datadic[old_relation_2].getRecordNum());
         while (true == scanTable2.getNextRecord(one_Row_2)){
             for(int i=0;i<original_attribute_length2;i++){
-                if(strcmp(temp_datadic2->getAttributeByNo(i).getName(),name)==0){
-                    start2=temp_datadic2->getAttributeByNo(i).getRecordDeviation();
+                if(strcmp(temp_datadic[old_relation_2].getAttributeByNo(i).getName(),name)==0){
+                    start2=temp_datadic[old_relation_2].getAttributeByNo(i).getRecordDeviation();
                     k2=*((int*)(one_Row_2+start2));  //debug for key
-                    cout<<k2<<endl;
+   //                 cout<<k2<<endl;
                     right_relation->addInputTuple(k2,one_Row_2);
                     break;
                 }
@@ -461,11 +492,11 @@ void hashjoin(struct dbSysHead *head, relation *temp_datadic1, relation *temp_da
         cout << "matches: " << output_relation->getOutputTupleCount() << "." << endl;
         
         Buffer t(head, -2); //to avoid positive number, no meaning
-        int new_rec_length = VALUE_SIZE + VALUE_SIZE;
+        int new_rec_length = original_rec_length1 + original_rec_length2;
         char * new_Row_ = (char *)malloc(sizeof(char) * new_rec_length);
         for (int i; i< output_relation->getOutputTupleCount(); i++) {
-            memcpy(output_relation->output_tuples_[i].left_value,new_Row_,VALUE_SIZE);
-            memcpy(output_relation->output_tuples_[i].right_value,new_Row_ + VALUE_SIZE,VALUE_SIZE);
+            memcpy(new_Row_, output_relation->output_tuples_[i].left_value,original_rec_length1);
+            memcpy(new_Row_ + original_rec_length1, output_relation->output_tuples_[i].right_value,original_rec_length2);
             //if more than one page, write to file and reset Buffer t
             if (false == t.AppendBuffer(new_Row_, new_rec_length))
             {
@@ -483,19 +514,32 @@ void hashjoin(struct dbSysHead *head, relation *temp_datadic1, relation *temp_da
         }
         //write remainder
         t.writeBufferPage(t.filehead, buffer_id_, t.data_, t.current_size_);
-        
         free(new_Row_);
         
-        result->fileID = -buffer_id_;
-        result->changeRecordNum(output_relation->getOutputTupleCount());
-        head->buff[-temp_datadic1->fileID].emptyOrnot = true;
-        head->buff[-temp_datadic2->fileID].emptyOrnot = true;
+        temp_datadic[new_relation].fileID = -buffer_id_;
+        for (int i = 0; i < original_attribute_length1; i++) {
+            temp_datadic[new_relation].insertAttribute( temp_datadic[old_relation_1].getAttributeByNo(i).getName(),  temp_datadic[old_relation_1].getAttributeByNo(i).getType(),  temp_datadic[old_relation_1].getAttributeByNo(i).getLength()) ;
+        }
+        for (int i = 0; i < original_attribute_length2; i++) {
+            temp_datadic[new_relation].insertAttribute( temp_datadic[old_relation_2].getAttributeByNo(i).getName(),  temp_datadic[old_relation_2].getAttributeByNo(i).getType(),  temp_datadic[old_relation_2].getAttributeByNo(i).getLength()) ;
+        }
+        //Attention!!!
+        temp_datadic[new_relation].changeRecordNum(output_relation->getOutputTupleCount());
+        //delete old relation
+        strcpy(temp_datadic[old_relation_1].getRelationName(),"");
+        strcpy(temp_datadic[old_relation_2].getRelationName(),"");
+        head->buff[-temp_datadic[old_relation_1].fileID].emptyOrnot = true;
+        head->buff[-temp_datadic[old_relation_2].fileID].emptyOrnot = true;
+        
         delete hash_join;
         delete output_relation;
         delete left_view;
         delete right_view;
         delete left_relation;
         delete right_relation;
+        std::cout << new_relation<< std::endl;
+//        return new_relation;
         }
+    return new_relation;
 }
 
