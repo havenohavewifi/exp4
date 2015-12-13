@@ -33,16 +33,12 @@ int dropTable(struct dbSysHead *head, const char * tableName){
             }
         }
         logicfid = (head->desc).fileDesc[i].fileID;
+        (head->redef)[i].deleteRelation();
         if(recyFileSpace(head, logicfid)!=  0)
         {
-            cout<<"delete table in disk failed."<<endl;
-            return -1;
+            cout<<"this table is already empty."<<endl;
         }
-        else
-        {
-            (head->redef)[i].deleteRelation();
-            cout<<"delete table succeed."<<i<<endl;
-            return 0;
-        }
+        cout<<"drop table succeed."<<i<<endl;
+        return 0;
     }
 }

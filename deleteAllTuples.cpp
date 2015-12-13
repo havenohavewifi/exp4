@@ -33,15 +33,19 @@ int deleteAllTuples(struct dbSysHead *head, const char * tableName){
             }
         }
         logicfid = (head->desc).fileDesc[i].fileID;
-        if(recyFileSpace(head, logicfid)!=  0)
+        int k = queryFileID(head, logicfid);
+        if(k < 0)
         {
             cout<<"delete table in disk failed."<<endl;
             return -1;
         }
         else
         {
-//            (head->redef)[i].deleteRelation();
-            cout<<"delete table succeed."<<i<<endl;
+            recyPage(head, (head->desc).fileDesc[k].fileAddr);
+            head->desc.fileDesc[k].filePageForWrite = 0;
+            head->desc.fileDesc[k].filePageEndPos = 0;
+            (head->desc).pageAvai += (head->desc).fileDesc[k].filePageNum;
+            cout<<"delete all tuples from this table succeed."<<i<<endl;
             return 0;
         }
     }

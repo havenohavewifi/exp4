@@ -24,6 +24,7 @@
 #include "sortmergejoin.h"
 #include "insertOneTuple.h"
 #include "deleteRecords.h"
+#include "deleteAllTuples.h"
 
 int init_database(struct dbSysHead *head)
 {
@@ -411,9 +412,9 @@ printf("customer_scan:%d\n",customer_scan);
 */
 
     showFileDesc(&head);
-//    dropTable(&head,"customer");
-//    deleteTable(&head,"nation");
-
+    dropTable(&head,"customer");
+    deleteAllTuples(&head,"nation");
+    dropTable(&head,"nation");
 
 /*
    if(true == createIndexOn(&head, FIRST_FID, "custkey")){
