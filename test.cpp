@@ -122,12 +122,12 @@ int main()
     if(showTable(&head, "nation") == -1 )
         printf("2 showTable: nation\n");
 */
-/*
+
     if(createTable(&head) == -1)
         printf("Create Table failed\n");
     if(createTable(&head) == -1)
         printf("Create Table failed\n");
- */
+ /*
     struct eachAttribute * nation_att = new struct eachAttribute[12];
     strcpy(nation_att[0].attribute_name_,"custkey");
     nation_att[0].attribute_type_ = 1;
@@ -156,16 +156,33 @@ int main()
     if (createTable( &head, "customer", "TianzhenWu",  8, nation_att) == -1) {
         printf("Create Table failed\n");
     }
+*/
+    struct eachAttribute * region_att = new struct eachAttribute[3];
+    strcpy(region_att[0].attribute_name_,"regionkey");
+    region_att[0].attribute_type_ = 1;
+    region_att[0].attribute_length_ = 4;
+    strcpy(region_att[1].attribute_name_,"regionname");
+    region_att[1].attribute_type_ = 2;
+    region_att[1].attribute_length_ = 12;
+    strcpy(region_att[2].attribute_name_,"regioncomment");
+    region_att[2].attribute_type_ = 2;
+    region_att[2].attribute_length_ = 152;
+    if (createTable( &head, "region", "Mengxi", 3, region_att) == -1) {
+        printf("Create Table failed\n");
+    }
     relation * temp_data_dict = new relation[MAX_FILE_NUM];
     //read customer.tbl and write into our file1, 一次性
     loaddata(&head, FIRST_FID);
-//    loaddata(&head, FIRST_FID + 1);
+    loaddata(&head, FIRST_FID + 1);
+    loaddata(&head, FIRST_FID + 2);
     sysUpdate(&head);
 
-    insertOneTuple(&head, "customer", "501|Customer#000000501|IVhzIApeRb ot,c,E|15|25-989-741-2988|711.56|BUILDING|to the even, regular platelets.HHHHHH|");
-//    insertOneTuple(&head, "customer", "2|Customer#000000001|IVhzIApeRb ot,c,E|15|25-989-741-2988|711.56|BUILDING|to the even, regular platelets.HHHHHH|");
+    insertOneTuple(&head, "customer", "501|Customer#000000501|IVhzIApeRb ot,c,E|15|25-989-741-2988|711.56|BUILDING|to the even, regular platelets.H|");
+    
+    insertOneTuple(&head, "customer", "1002|Customer#000001001|IVhzIApeRb ot,c,E|15|25-989-741-2988|711.56|BUILDING|to the even, regular platelets.HH|");
+    
+    insertOneTuple(&head, "customer", "1003|Customer#000001002|IVhzIApeRb ot,c,E|15|25-989-741-2988|711.56|BUILDING|to the even, regular platelets.HHH|");
     sysUpdate(&head);
-
 
     //Scan Table
     int customer_scan = -1;
