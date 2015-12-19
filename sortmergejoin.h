@@ -18,7 +18,7 @@ struct sortNode
 };
 
 int Comp(const void *p1,const void *p2);
-void tempSort(struct dbSysHead *head, relation *tempTable, char *attr);
-void sortmergejoin(struct dbSysHead *head, relation *temp_datadic1, relation *temp_datadic2, char *attr, relation *result);
+int tempSort(struct dbSysHead *head, relation *temp_datadic, int old_relation, char *attr);
+int sortmergejoin(struct dbSysHead *head, relation *temp_datadic,int old_relation_1, int old_relation_2, char *attr);
 
 #endif 

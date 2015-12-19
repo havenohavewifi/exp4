@@ -26,12 +26,19 @@ public:
     int getType();
     int getLength();
     int getRecordDeviation();
+	bool isOrdered();
+	bool isIndexed();
+	void changeOrdered(bool s);
+	void changeIndexed(bool s);
+
     
 private:
     char attributeName[NAMELENGTH];//属性名
     int type;//属性类型
     int length;//属性长度
     int recordDeviation;//记录内偏移
+	bool ordered;
+	bool indexed;
 };
 
 
@@ -78,4 +85,5 @@ struct dbSysHead
 
 int initTable(struct dbSysHead *head, long fid);
 int showTable(struct dbSysHead *head, char* name);
+
 #endif

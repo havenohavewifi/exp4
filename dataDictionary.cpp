@@ -66,6 +66,8 @@ int attribute::initAttribute(char *name, int type, int length, int deviation)
     this->type = type;
     this->length = length;
     this->recordDeviation = deviation;
+	this->ordered = false;
+	this->indexed = false;
     return 0;
 }
 
@@ -87,6 +89,26 @@ int attribute::getType()
 int attribute::getRecordDeviation()
 {
     return this->recordDeviation;
+}
+
+bool attribute::isOrdered()
+{
+	return this->ordered;
+}
+
+bool attribute::isIndexed()
+{
+	return this->indexed;
+}
+
+void attribute::changeOrdered(bool s)
+{
+	this->ordered = s;
+}
+
+void attribute::changeIndexed(bool s)
+{
+	this->indexed = s;
 }
 
 int relation::initRelation(struct dbSysHead *head, int fid, const char *relationName, const char *constructorName)
@@ -250,4 +272,6 @@ int showTable(struct dbSysHead *head, char* name)
     }
     return -1;
 }
+
+
 
