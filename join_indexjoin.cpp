@@ -50,7 +50,7 @@ void merge_relation_index(struct dbSysHead *head,relation datadic1,relation data
 	
 }
 
-int indexjoin(struct dbSysHead *head, relation *temp_data_dict,int old_relation_1, int old_relation_2, const char *name,int actual_fid){
+int indexjoin(struct dbSysHead *head, relation *temp_data_dict,int old_relation_1, int old_relation_2, const char *name){
 	//find empty temp_datadic
     int new_relation=0;
 	int temp_num=0;
@@ -119,8 +119,16 @@ int indexjoin(struct dbSysHead *head, relation *temp_data_dict,int old_relation_
             }
 			 char* name_new = new char[100];//×ã¹»³¤
 			  strcpy(name_new,name);
-                    
-					 int pos = searchByColumnAndValue(head,actual_fid,name_new,key);
+			int goal=-1;
+			 for (int i = 0; i<MAX_FILE_NUM; i++) {
+					if (strcmp((head->redef)[i].getRelationName(),temp_data_dict[old_relation_2].getRelationName())==0) {
+						goal=i;
+						break;
+						
+					}
+			 }
+			 int actual=(head->desc).fileDesc[goal].fileID;					 
+			 int pos = searchByColumnAndValue(head,actual,name_new,key);
 		
 			 if(pos<0){
 				continue;
@@ -129,7 +137,11 @@ int indexjoin(struct dbSysHead *head, relation *temp_data_dict,int old_relation_
           
 		     
 			 //rdFile(head, 0, temp_data_dict[old_relation_2].fileID, pos, rec_len_,new_Row_);
-			  rdFile(head, 0, actual_fid, pos, rec_len_,one_Row_2);
+			
+			
+    
+			 //cout<<"actual"<<actual<<endl;
+			  rdFile(head, 0, actual, pos, rec_len_,one_Row_2);
 			  //cout<<"one_row1:"<<one_Row_1<<endl;
 			  for(int i=0;i<original_rec_length1;i++)
 					new_Row_[i]=one_Row_1[i];
