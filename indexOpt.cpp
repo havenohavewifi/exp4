@@ -24,6 +24,8 @@ extern "C"{
  * @date 2015/11/8
  **/
 bool createIndexOn(struct dbSysHead *head, long fid, char* column){
+    
+
     printf("create index on %s....\n",column);
     int idx;
     char* index_filename;
@@ -50,22 +52,24 @@ bool createIndexOn(struct dbSysHead *head, long fid, char* column){
     if( idx<0 ) {
         isAvail(NULL,"createIndexOn",ARRAY);
     }
-    int i;
-    for( i = 0; i <= head->redef[idx].getAttributeNum(); i++) {
-        if( strcmp(column, head->redef[idx].getAttributeByNo(i).getName()) == 0)
-            break;
-    }
-    //i属性序号超出属性个数
-    if(i > head->redef[idx].getAttributeNum()){
+/*
+    if(head->redef[idx].getAttributeByName(column) == NULL){
         printf("No such attribute.\n");
         return false;
     }
+*/
+    //if indexed
+    if(head->redef[idx].getIndexedByName(column) == true){
+	printf("Index on %s is already existed. Rebuilding the index!\n", column);
+        //return true;
+    }
     
     //属性不是整型时，不建立索引，返回false
-    if( head->redef[idx].getAttributeByNo(i).getType() != INT){
+    if( head->redef[idx].getAttributeByName(column).getType() != INT){
         printf("Not an int attribute.\n");
         return false;
     }
+
     
     //打开索引文件
     fp_create = fopen(index_filename,"wb");
@@ -85,7 +89,7 @@ bool createIndexOn(struct dbSysHead *head, long fid, char* column){
     RecordCursor scanTable(head, fid, rec_length,0);
     char * one_Row_ = (char *)malloc(sizeof(char)*rec_length);
     while (true == scanTable.getNextRecord(one_Row_)) { //only scan
-        offset = head->redef[idx].getAttributeByNo(i).getRecordDeviation();
+        offset = head->redef[idx].getAttributeByName(column).getRecordDeviation();
         key = *((int *)(one_Row_ + offset));
         //getcLogicLocation() is the location of ccursor, not the record!
         location = scanTable.getcLogicLocation()-rec_length;
@@ -111,7 +115,8 @@ bool createIndexOn(struct dbSysHead *head, long fid, char* column){
      printf("search(fp,50):%d\n",search(fp,50));
      */
     fclose(fp);
-    
+    //modify the data dictionary
+    head->redef[idx].changeIndexedByName(column,true);
     return true;
 }
 
@@ -125,10 +130,21 @@ bool createIndexOn(struct dbSysHead *head, long fid, char* column){
  * @return  bool
  *
  * @author weiyu
- * @date 2015/11/6
+ * @date 2015/12/20
  **/
 bool deleteIndex(struct dbSysHead *head, long fid, char* column){
     //check
+    //查询数据字典，获取属性
+    int idx;
+    idx =  queryFileID(head, fid);
+    if( idx<0 ) {
+        isAvail(NULL,"createIndexOn",ARRAY);
+    }
+    //if indexed
+    if(head->redef[idx].getIndexedByName(column) == false){
+	printf("No index on attribute:%s.\n", column);
+        return false;
+    }
     printf("删除索引....\n");
     
     char* index_filename;
@@ -141,11 +157,12 @@ bool deleteIndex(struct dbSysHead *head, long fid, char* column){
     index_filename = strcat(index_filename,".dat");
     
     if( remove(index_filename) == 0 ){
-        printf("Removed %s.", index_filename);
+        printf("Removed index on attribute:%s.\n", column);
+	head->redef[idx].changeIndexedByName(column,false);
         return true;
     }
     else{
-        perror("remove");
+        perror("remove index");
         return false;
     }
 }
@@ -179,7 +196,10 @@ bool insertInIndex(struct dbSysHead *head, long fid, int position){
     if( idx<0 ) {
         isAvail(NULL,"createIndexOn",ARRAY);
     }
-    
+    if(head->redef[idx].getIndexedByName(column) == false){
+        printf("No such index on attribute:%s.\n", column);
+        return false;
+    }
     int i;
     int offset;
     int key;
@@ -188,6 +208,9 @@ bool insertInIndex(struct dbSysHead *head, long fid, int position){
     rdFile( head, 0, fid, position, rec_length,one_Row_);
     
     for( i = 0; i <= head->redef[idx].getAttributeNum(); i++) {
+        if (head->redef[idx].getIndexedByName(column) == false)
+		continue;//no index on the attribute
+	//insert in the current index
         index_filename = (char *)malloc( 3*NAMELENGTH );
         *index_filename = '\0';
         column = (char *)malloc( NAMELENGTH );
@@ -197,8 +220,9 @@ bool insertInIndex(struct dbSysHead *head, long fid, int position){
         index_filename = strcat(index_filename,column);
         index_filename = strcat(index_filename,".dat");
         fp = fopen(index_filename,"rb+");
-        if( fp==NULL){	//no index on current column
-            break;
+        if( fp==NULL){	
+            printf("error in inserting index:%s.\n",head->redef[idx].getAttributeByNo(i).getName());
+	    continue;
         }
         
         offset = head->redef[idx].getAttributeByNo(i).getRecordDeviation();
@@ -252,6 +276,10 @@ bool deleteInIndex(struct dbSysHead *head, long fid, int position){
     rdFile( head, 0, fid, position, rec_length,one_Row_);
     
     for( i = 0; i <= head->redef[idx].getAttributeNum(); i++) {
+	//no index on the attribute
+        if (head->redef[idx].getIndexedByName(column) == false)
+		continue;
+	//delete in the current index
         index_filename = (char *)malloc( 3*NAMELENGTH );
         *index_filename = '\0';
         column = (char *)malloc( NAMELENGTH );
@@ -261,8 +289,9 @@ bool deleteInIndex(struct dbSysHead *head, long fid, int position){
         index_filename = strcat(index_filename,column);
         index_filename = strcat(index_filename,".dat");
         fp = fopen(index_filename,"rb+");
-        if( fp==NULL){	//no index on current column
-            break;
+        if( fp==NULL){
+            printf("error in deleting in index:%s.\n",head->redef[idx].getAttributeByNo(i).getName());
+	    continue;
         }
         
         offset = head->redef[idx].getAttributeByNo(i).getRecordDeviation();
@@ -291,6 +320,18 @@ bool deleteInIndex(struct dbSysHead *head, long fid, int position){
  * @date 2015/11/21
  **/
 int searchByColumnAndValue(struct dbSysHead *head, long fid, char* column, int value){
+    //check if there is an index on column
+    int idx;
+    idx =  queryFileID(head, fid);
+    if( idx<0 ) {
+        isAvail(NULL,"createIndexOn",ARRAY);
+    }
+    //if indexed
+    if(head->redef[idx].getIndexedByName(column) == false){
+	printf("No index on attribute:%s.\n", column);
+        return -2;
+    }
+
 //    printf("searchByColumnAndValue\n");
     char* index_filename;
     char* indexname = "b_plus_tree_index_";
