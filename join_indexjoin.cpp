@@ -104,7 +104,7 @@ int indexjoin(struct dbSysHead *head, relation *temp_data_dict,int old_relation_
 		int k = 0;
 		int key=-1;
 		int start1=0;
-
+		int result_num=0;
 		while (true == scanTable1.getNextRecord(one_Row_1)) { //only scan
 	
 			 for(int i=0;i<original_attribute_length1;i++){
@@ -135,7 +135,7 @@ int indexjoin(struct dbSysHead *head, relation *temp_data_dict,int old_relation_
 			 }
 			 int rec_len_ = temp_data_dict[old_relation_2].getRecordLength();
           
-		     
+			 result_num++;
 			 //rdFile(head, 0, temp_data_dict[old_relation_2].fileID, pos, rec_len_,new_Row_);
 			
 			
@@ -148,7 +148,7 @@ int indexjoin(struct dbSysHead *head, relation *temp_data_dict,int old_relation_
 				for(int i=0;i<original_rec_length2;i++)
 					new_Row_[i+original_rec_length1]=one_Row_2[i];
 				//getOneRecord(one_Row_1, &(temp_data_dict[old_relation_1]));
-				getOneRecord(new_Row_, &(temp_data_dict[new_relation]));
+				//getOneRecord(new_Row_, &(temp_data_dict[new_relation]));
 			 
 
 				
@@ -174,10 +174,15 @@ int indexjoin(struct dbSysHead *head, relation *temp_data_dict,int old_relation_
 		//write remainder
 		t.writeBufferPage(t.filehead, buffer_id_, t.data_, t.current_size_);
 		temp_data_dict[new_relation].fileID = -buffer_id_;
-		return new_relation;
+		temp_data_dict[new_relation].changeRecordNum(result_num);
+		strcpy(temp_data_dict[old_relation_1].getRelationName(),"");
+        strcpy(temp_data_dict[old_relation_2].getRelationName(),"");
+        head->buff[-temp_data_dict[old_relation_1].fileID].emptyOrnot = true;
+        head->buff[-temp_data_dict[old_relation_2].fileID].emptyOrnot = true;
 		free(one_Row_1);
 		free(one_Row_2);
 		free(new_Row_);
+		return new_relation;
 	}
 
 
