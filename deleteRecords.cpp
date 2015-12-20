@@ -13,6 +13,7 @@ extern "C"{
 #include "getaRecordbyCursor.h"
 #include "indexOpt.h"
 #include "filter.h"
+#include "indexOpt.h"
 
 
 /**
@@ -69,6 +70,7 @@ int deleteRecordWhere(struct dbSysHead *head, long fid, char* attributeName, cha
 				hitRecordCount++;
 				location = scanTable.getcLogicLocation()-rec_length;				
 		    printf("%d\n",location);
+				deleteInIndex(head, fid, location);	//delete in indexes, if there exists indexes
 				wtFile(head, bufferID, fid, location, rec_length, erase);
 			}
 			break;
@@ -76,7 +78,8 @@ int deleteRecordWhere(struct dbSysHead *head, long fid, char* attributeName, cha
 		    case NOT_EQUAL:{
 			if (recordValue != compareValue){
 				hitRecordCount++;
-				location = scanTable.getcLogicLocation()-rec_length;				
+				location = scanTable.getcLogicLocation()-rec_length;	
+				deleteInIndex(head, fid, location);	//delete in indexes, if there exists indexes			
 				wtFile(head, bufferID, fid, location, rec_length, erase);
 			}
 			break;
@@ -84,7 +87,8 @@ int deleteRecordWhere(struct dbSysHead *head, long fid, char* attributeName, cha
 		    case LESS_THAN:{
 			if (recordValue < compareValue){
 				hitRecordCount++;
-				location = scanTable.getcLogicLocation()-rec_length;				
+				location = scanTable.getcLogicLocation()-rec_length;	
+				deleteInIndex(head, fid, location);	//delete in indexes, if there exists indexes			
 				wtFile(head, bufferID, fid, location, rec_length, erase);
 			}
 			break;
@@ -93,7 +97,8 @@ int deleteRecordWhere(struct dbSysHead *head, long fid, char* attributeName, cha
 			//printf("recordValue > compareValue:%d,%d",recordValue,compareValue);
 			if (recordValue > compareValue){
 				hitRecordCount++;
-				location = scanTable.getcLogicLocation()-rec_length;				
+				location = scanTable.getcLogicLocation()-rec_length;		
+				deleteInIndex(head, fid, location);	//delete in indexes, if there exists indexes		
 				wtFile(head, bufferID, fid, location, rec_length, erase);
 			}
 			break;
@@ -101,7 +106,8 @@ int deleteRecordWhere(struct dbSysHead *head, long fid, char* attributeName, cha
 		    case NOT_LESS_THAN:{
 			if (recordValue >= compareValue){
 				hitRecordCount++;
-				location = scanTable.getcLogicLocation()-rec_length;				
+				location = scanTable.getcLogicLocation()-rec_length;	
+				deleteInIndex(head, fid, location);	//delete in indexes, if there exists indexes			
 				wtFile(head, bufferID, fid, location, rec_length, erase);
 			}
 			break;
@@ -109,7 +115,8 @@ int deleteRecordWhere(struct dbSysHead *head, long fid, char* attributeName, cha
 		    case NOT_MORE_THAN:{
 			if (recordValue <= compareValue){
 				hitRecordCount++;
-				location = scanTable.getcLogicLocation()-rec_length;				
+				location = scanTable.getcLogicLocation()-rec_length;	
+				deleteInIndex(head, fid, location);	//delete in indexes, if there exists indexes			
 				wtFile(head, bufferID, fid, location, rec_length, erase);
 			}
 			break;
@@ -128,7 +135,8 @@ int deleteRecordWhere(struct dbSysHead *head, long fid, char* attributeName, cha
 		    case EQUAL:{
 			if (strcmp(recordValue,compareValue) == 0){
 				hitRecordCount++;
-				location = scanTable.getcLogicLocation()-rec_length;				
+				location = scanTable.getcLogicLocation()-rec_length;		
+				deleteInIndex(head, fid, location);	//delete in indexes, if there exists indexes		
 				wtFile(head, bufferID, fid, location, rec_length, erase);
 			}
 			break;
@@ -136,7 +144,8 @@ int deleteRecordWhere(struct dbSysHead *head, long fid, char* attributeName, cha
 		    case NOT_EQUAL:{
 			if (strcmp(recordValue,compareValue) != 0){
 				hitRecordCount++;
-				location = scanTable.getcLogicLocation()-rec_length;				
+				location = scanTable.getcLogicLocation()-rec_length;		
+				deleteInIndex(head, fid, location);	//delete in indexes, if there exists indexes		
 				wtFile(head, bufferID, fid, location, rec_length, erase);
 			}
 			break;
@@ -145,6 +154,7 @@ int deleteRecordWhere(struct dbSysHead *head, long fid, char* attributeName, cha
 			if (strcmp(recordValue,compareValue) < 0){
 				hitRecordCount++;
 				location = scanTable.getcLogicLocation()-rec_length;				
+				deleteInIndex(head, fid, location);	//delete in indexes, if there exists indexes
 				wtFile(head, bufferID, fid, location, rec_length, erase);
 			}
 			break;
@@ -152,7 +162,8 @@ int deleteRecordWhere(struct dbSysHead *head, long fid, char* attributeName, cha
 		    case MORE_THAN:{
 			if (strcmp(recordValue,compareValue) > 0){
 				hitRecordCount++;
-				location = scanTable.getcLogicLocation()-rec_length;				
+				location = scanTable.getcLogicLocation()-rec_length;			
+				deleteInIndex(head, fid, location);	//delete in indexes, if there exists indexes	
 				wtFile(head, bufferID, fid, location, rec_length, erase);
 			}
 			break;
@@ -161,6 +172,7 @@ int deleteRecordWhere(struct dbSysHead *head, long fid, char* attributeName, cha
 			if (strcmp(recordValue,compareValue) >= 0){
 				hitRecordCount++;
 				location = scanTable.getcLogicLocation()-rec_length;				
+				deleteInIndex(head, fid, location);	//delete in indexes, if there exists indexes
 				wtFile(head, bufferID, fid, location, rec_length, erase);
 			}
 			break;
@@ -168,7 +180,8 @@ int deleteRecordWhere(struct dbSysHead *head, long fid, char* attributeName, cha
 		    case NOT_MORE_THAN:{
 			if (strcmp(recordValue,compareValue) <= 0){
 				hitRecordCount++;
-				location = scanTable.getcLogicLocation()-rec_length;				
+				location = scanTable.getcLogicLocation()-rec_length;			
+				deleteInIndex(head, fid, location);	//delete in indexes, if there exists indexes	
 				wtFile(head, bufferID, fid, location, rec_length, erase);
 			}
 			break;
