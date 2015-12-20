@@ -6,7 +6,9 @@
 #include "cursorForTmptable.h"
 #include "dataDictionary.h"
 #include "Buffer.h"
-
+#include <sys/time.h>
+#include <sys/wait.h>
+#include "getaRecordbyCursor.h"
 #define nullptr 0
 #define hashjoinBuffer_SIZE                 (1* 1024 * 1024)
 #define VALUE_SIZE                  1024
@@ -459,7 +461,7 @@ int hashjoin(struct dbSysHead *head, relation *temp_datadic,int old_relation_1, 
                 if(strcmp(temp_datadic[old_relation_1].getAttributeByNo(i).getName(),name)==0){
                     start1=temp_datadic[old_relation_1].getAttributeByNo(i).getRecordDeviation();
                     k1=*((int*)(one_Row_1+start1));  //debug for key
-   //                 cout<<k1<<endl;
+         //           cout<<k1<<endl;
                     left_relation->addInputTuple(k1,one_Row_1);
                     break;
                 }
@@ -471,7 +473,7 @@ int hashjoin(struct dbSysHead *head, relation *temp_datadic,int old_relation_1, 
                 if(strcmp(temp_datadic[old_relation_2].getAttributeByNo(i).getName(),name)==0){
                     start2=temp_datadic[old_relation_2].getAttributeByNo(i).getRecordDeviation();
                     k2=*((int*)(one_Row_2+start2));  //debug for key
-   //                 cout<<k2<<endl;
+          //          cout<<k2<<endl;
                     right_relation->addInputTuple(k2,one_Row_2);
                     break;
                 }
@@ -490,13 +492,31 @@ int hashjoin(struct dbSysHead *head, relation *temp_datadic,int old_relation_1, 
         hash_join->probe();
                
         cout << "matches: " << output_relation->getOutputTupleCount() << "." << endl;
+        temp_datadic[new_relation].fileID = -buffer_id_;
+        for (int i = 0; i < original_attribute_length1; i++) {
+            temp_datadic[new_relation].insertAttribute( temp_datadic[old_relation_1].getAttributeByNo(i).getName(),  temp_datadic[old_relation_1].getAttributeByNo(i).getType(),  temp_datadic[old_relation_1].getAttributeByNo(i).getLength()) ;
+        }
+        for (int i = 0; i < original_attribute_length2; i++) {
+            temp_datadic[new_relation].insertAttribute( temp_datadic[old_relation_2].getAttributeByNo(i).getName(),  temp_datadic[old_relation_2].getAttributeByNo(i).getType(),  temp_datadic[old_relation_2].getAttributeByNo(i).getLength()) ;
+        }
         
         Buffer t(head, -2); //to avoid positive number, no meaning
         int new_rec_length = original_rec_length1 + original_rec_length2;
         char * new_Row_ = (char *)malloc(sizeof(char) * new_rec_length);
-        for (int i; i< output_relation->getOutputTupleCount(); i++) {
+        for (int i = 0; i< output_relation->getOutputTupleCount(); i++) {
             memcpy(new_Row_, output_relation->output_tuples_[i].left_value,original_rec_length1);
             memcpy(new_Row_ + original_rec_length1, output_relation->output_tuples_[i].right_value,original_rec_length2);
+            /*
+            for(int j=0;j<original_rec_length1;j++)
+            new_Row_[j]=output_relation->output_tuples_[i].left_value[j];
+            for(int j=0;j<original_rec_length2;j++)
+            new_Row_[j+original_rec_length1]=output_relation->output_tuples_[i].right_value[j];
+            */
+             //cout<<new_Row_<<endl;
+            //cout<<new_Row_[4]<<new_Row_[5]<<endl;
+            //cout<<"~~~~"<<endl;
+            //getOneRecord(new_Row_,&temp_datadic[new_relation]);
+            //delay(10);
             //if more than one page, write to file and reset Buffer t
             if (false == t.AppendBuffer(new_Row_, new_rec_length))
             {
@@ -515,7 +535,7 @@ int hashjoin(struct dbSysHead *head, relation *temp_datadic,int old_relation_1, 
         //write remainder
         t.writeBufferPage(t.filehead, buffer_id_, t.data_, t.current_size_);
         free(new_Row_);
-        
+        /*
         temp_datadic[new_relation].fileID = -buffer_id_;
         for (int i = 0; i < original_attribute_length1; i++) {
             temp_datadic[new_relation].insertAttribute( temp_datadic[old_relation_1].getAttributeByNo(i).getName(),  temp_datadic[old_relation_1].getAttributeByNo(i).getType(),  temp_datadic[old_relation_1].getAttributeByNo(i).getLength()) ;
@@ -523,6 +543,7 @@ int hashjoin(struct dbSysHead *head, relation *temp_datadic,int old_relation_1, 
         for (int i = 0; i < original_attribute_length2; i++) {
             temp_datadic[new_relation].insertAttribute( temp_datadic[old_relation_2].getAttributeByNo(i).getName(),  temp_datadic[old_relation_2].getAttributeByNo(i).getType(),  temp_datadic[old_relation_2].getAttributeByNo(i).getLength()) ;
         }
+         */
         //Attention!!!
         temp_datadic[new_relation].changeRecordNum(output_relation->getOutputTupleCount());
         //delete old relation
@@ -531,6 +552,7 @@ int hashjoin(struct dbSysHead *head, relation *temp_datadic,int old_relation_1, 
         head->buff[-temp_datadic[old_relation_1].fileID].emptyOrnot = true;
         head->buff[-temp_datadic[old_relation_2].fileID].emptyOrnot = true;
         
+            
         delete hash_join;
         delete output_relation;
         delete left_view;

@@ -219,15 +219,27 @@ int main()
 		
 		//head.redef[goal].changeIndexedByName("nationkey",true);
 		
-		int new_relation=choosejoin(&head,temp_data_dict,nation_scan,customer_scan,"nationkey");
+		int new_relation=choosejoin(&head,temp_data_dict,customer_scan,nation_scan,"nationkey");
 		showRelation(&temp_data_dict[new_relation]);
-		cout<<"output:"<<endl;
+		cout<<"output:"<<new_relation<<endl;
 		cout<<"fileid:"<<temp_data_dict[new_relation].fileID<<endl;
-		RecordCursorTmp t2(&head,temp_data_dict[new_relation].fileID,temp_data_dict[new_relation].getRecordLength(), - temp_data_dict[new_relation].fileID,temp_data_dict[new_relation].getRecordNum());
+    /*
+        int buffer_ID_ = - temp_data_dict[2].fileID;   //find which buffer
+        int record_num_ = temp_data_dict[2].getRecordNum();
+        int record_len_ = temp_data_dict[2].getRecordLength();
+    RecordCursorTmp t1(&head,1,record_len_,buffer_ID_,record_num_);
+    cout<<buffer_ID_<<"~"<<record_len_<<"~"<<record_num_<<endl;
+    char * one_Row_ = (char *)malloc(sizeof(char)*record_len_);
+    while (true == t1.getNextRecord(one_Row_)) { //only scan
+             getOneRecord(one_Row_, &temp_data_dict[2]); //get each attribute value and print
+    }*/
+
+		RecordCursorTmp t2(&head,1,temp_data_dict[new_relation].getRecordLength(), - temp_data_dict[new_relation].fileID,temp_data_dict[new_relation].getRecordNum());
 		char * one_Row_ = (char *)malloc(sizeof(char)* temp_data_dict[new_relation].getRecordLength());
 		 while (true == t2.getNextRecord(one_Row_)) { //only scan
 				getOneRecord(one_Row_, &temp_data_dict[new_relation]); //get each attribute value and print
 		 }
+    
 		free(one_Row_);
 	//}
 
