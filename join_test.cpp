@@ -27,6 +27,8 @@
 #include "deleteAllTuples.h"
 #include "join_indexjoin.h"
 #include "join.h"
+#include "printTempTable.h"
+
 int init_database(struct dbSysHead *head)
 {
 	initSys(head);
@@ -223,6 +225,8 @@ int main()
 		showRelation(&temp_data_dict[new_relation]);
 		cout<<"output:"<<new_relation<<endl;
 		cout<<"fileid:"<<temp_data_dict[new_relation].fileID<<endl;
+    
+    printTempTable(&head, temp_data_dict,new_relation);
     /*
         int buffer_ID_ = - temp_data_dict[2].fileID;   //find which buffer
         int record_num_ = temp_data_dict[2].getRecordNum();
@@ -233,7 +237,7 @@ int main()
     while (true == t1.getNextRecord(one_Row_)) { //only scan
              getOneRecord(one_Row_, &temp_data_dict[2]); //get each attribute value and print
     }*/
-
+/*
 		RecordCursorTmp t2(&head,1,temp_data_dict[new_relation].getRecordLength(), - temp_data_dict[new_relation].fileID,temp_data_dict[new_relation].getRecordNum());
 		char * one_Row_ = (char *)malloc(sizeof(char)* temp_data_dict[new_relation].getRecordLength());
 		 while (true == t2.getNextRecord(one_Row_)) { //only scan
@@ -241,7 +245,7 @@ int main()
 		 }
     
 		free(one_Row_);
-	//}
+*/	//}
 
 	//nestloop_equal_new(&head,temp_data_dict,nation_scan,customer_scan,"nationkey");
 	//hashjoin(&head,temp_data_dict,nation_scan,customer_scan,"nationkey");
