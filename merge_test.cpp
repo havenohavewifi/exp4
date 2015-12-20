@@ -93,6 +93,15 @@ int main()
         printf("nation_scan succeed!\n");
     }
 	
+    cout<<"is indexed:"<<head.redef[1].getIndexedByName("nationkey")<<endl;
+    head.redef[1].changeIndexedByName("nationkey",true);
+    cout<<"is indexed:"<<head.redef[1].getIndexedByName("nationkey")<<endl;
+    head.redef[1].changeIndexedByName("nationkey",false);
+    cout<<"is indexed:"<<head.redef[1].getIndexedByName("nationkey")<<endl;
+
+
+
+/*
     int result = sortmergejoin(&head, temp_data_dict, customer_scan, nation_scan, "nationkey");
     
     int buffer_ID_ = - temp_data_dict[result].fileID;   //find which buffer
@@ -104,7 +113,7 @@ int main()
     while (true == t2.getNextRecord(one_Row_)) { //only scan
         getOneRecord(one_Row_, &temp_data_dict[result]); //get each attribute value and print
     }
-    free(one_Row_);
+    free(one_Row_);*/
 
     sysUpdate(&head);
     showFileDesc(&head);

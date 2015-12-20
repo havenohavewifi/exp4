@@ -66,8 +66,6 @@ int attribute::initAttribute(char *name, int type, int length, int deviation)
     this->type = type;
     this->length = length;
     this->recordDeviation = deviation;
-	this->ordered = false;
-	this->indexed = false;
     return 0;
 }
 
@@ -89,26 +87,6 @@ int attribute::getType()
 int attribute::getRecordDeviation()
 {
     return this->recordDeviation;
-}
-
-bool attribute::isOrdered()
-{
-	return this->ordered;
-}
-
-bool attribute::isIndexed()
-{
-	return this->indexed;
-}
-
-void attribute::changeOrdered(bool s)
-{
-	this->ordered = s;
-}
-
-void attribute::changeIndexed(bool s)
-{
-	this->indexed = s;
 }
 
 int relation::initRelation(struct dbSysHead *head, int fid, const char *relationName, const char *constructorName)
@@ -151,6 +129,7 @@ int relation::insertAttribute(char *name, int type, int length)
         printf("too many attributes!\n");
         return -1;
     }
+
     if (this->attributeNum == 0)
     {
         this->atb[this->attributeNum].initAttribute(name, type, length, 0);
@@ -160,9 +139,55 @@ int relation::insertAttribute(char *name, int type, int length)
         int deviation = this->atb[this->attributeNum - 1].getLength() + this->atb[this->attributeNum - 1].getRecordDeviation();
         this->atb[this->attributeNum].initAttribute(name, type, length, deviation);
     }
+    this->isIndexed[this->attributeNum] = false;
+    this->isOrdered[this->attributeNum] = false;
     this->attributeNum++;
     this->recordLength += length;
+ 
     return 0;
+}
+
+void relation::changeIndexedByName(char* name, bool s)
+{
+    for (int i = 0; i < this->attributeNum; i++)
+    {
+        if (strcmp(this->atb[i].getName(), name) == 0)
+        {
+            this->isIndexed[i] = s;
+        }
+    }
+}
+void relation::changeOrderedByName(char* name, bool s)
+{
+    for (int i = 0; i < this->attributeNum; i++)
+    {
+        if (strcmp(this->atb[i].getName(), name) == 0)
+        {
+            this->isOrdered[i] = s;
+        }
+    }
+}
+
+bool relation:: getIndexedByName(char* name)
+{
+    for (int i = 0; i < this->attributeNum; i++)
+    {
+        if (strcmp(this->atb[i].getName(), name) == 0)
+        {
+            return this->isIndexed[i];
+        }
+    } 
+}
+
+bool relation:: getOrderedByName(char* name)
+{
+    for (int i = 0; i < this->attributeNum; i++)
+    {
+        if (strcmp(this->atb[i].getName(), name) == 0)
+        {
+            return this->isOrdered[i];
+        }
+    } 
 }
 
 attribute relation::getAttributeByName(char *name)

@@ -26,19 +26,12 @@ public:
     int getType();
     int getLength();
     int getRecordDeviation();
-	bool isOrdered();
-	bool isIndexed();
-	void changeOrdered(bool s);
-	void changeIndexed(bool s);
-
     
 private:
     char attributeName[NAMELENGTH];//属性名
     int type;//属性类型
     int length;//属性长度
     int recordDeviation;//记录内偏移
-	bool ordered;
-	bool indexed;
 };
 
 
@@ -58,6 +51,10 @@ public:
     int getRecordLength();
     int getRecordNum();
     int deleteRelation();
+    void changeIndexedByName(char* name, bool s);
+    void changeOrderedByName(char* name, bool s);
+    bool getIndexedByName(char* name);
+    bool getOrderedByName(char* name);
     attribute getAttributeByName(char *name);
     attribute getAttributeByNo(int no);
     
@@ -71,6 +68,8 @@ private:
     int recordLength;//记录长度
     int recordNum;//记录个数
     attribute atb[ATTRIBUTENUM];//属性表
+    bool isIndexed[ATTRIBUTENUM];
+    bool isOrdered[ATTRIBUTENUM];
 };
 
 struct dbSysHead
