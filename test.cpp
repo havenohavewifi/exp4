@@ -125,9 +125,11 @@ int main()
 */
 
     if(createTable(&head) == -1)
-        printf("Create Table failed\n");
+        printf("Create Table1 failed\n");
     if(createTable(&head) == -1)
-        printf("Create Table failed\n");
+        printf("Create Table2 failed\n");
+    if(createTable(&head) == -1)
+        printf("Create Table3 failed\n");
  /*
     struct eachAttribute * nation_att = new struct eachAttribute[12];
     strcpy(nation_att[0].attribute_name_,"custkey");
@@ -157,7 +159,7 @@ int main()
     if (createTable( &head, "customer", "TianzhenWu",  8, nation_att) == -1) {
         printf("Create Table failed\n");
     }
-*/
+
     struct eachAttribute * region_att = new struct eachAttribute[3];
     strcpy(region_att[0].attribute_name_,"regionkey");
     region_att[0].attribute_type_ = 1;
@@ -171,6 +173,7 @@ int main()
     if (createTable( &head, "region", "Mengxi", 3, region_att) == -1) {
         printf("Create Table failed\n");
     }
+    */
     relation * temp_data_dict = new relation[MAX_FILE_NUM];
     //read customer.tbl and write into our file1, 一次性
     loaddata(&head, FIRST_FID);
@@ -232,7 +235,7 @@ int main()
         getOneRecord(one_Row_, &temp_data_dict[1]); //get each attribute value and print
     }
     free(one_Row_);
-*/
+*//*
 printf("customer_scan:%d\n",customer_scan);
     	deleteRecordWhere(&head, FIRST_FID, "name", "Customer#000000005",LESS_THAN,0);
 
