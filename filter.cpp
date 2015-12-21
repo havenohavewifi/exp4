@@ -21,7 +21,7 @@ int tableScanEqualFilter(struct dbSysHead * head , relation * temp_data_dic, int
     for (int i = 0; i < MAX_FILE_NUM; i++) {
         if (strcmp(temp_data_dic[i].getRelationName(),"") == 0) {
             new_relation = i;
-            cout<<"new relation id: "<<new_relation<<endl;
+       //     cout<<"new relation id: "<<new_relation<<endl;
             temp_data_dic[new_relation].init("temp_datadict","XXX");
             break;
         }
@@ -37,7 +37,7 @@ int tableScanEqualFilter(struct dbSysHead * head , relation * temp_data_dic, int
         if (head->buff[i].emptyOrnot == true) {
             my_buffer_id_ = i;
             head->buff[i].emptyOrnot = false;   // ready for writein
-            std::cout<<"bufferID: "<<i<<std::endl;
+       //     std::cout<<"bufferID: "<<i<<std::endl;
             break;
         }
     }
@@ -145,7 +145,7 @@ int indexScanEqualFilter(struct dbSysHead * head, int fileID, char* attributeNam
     for (int i = 0; i < MAX_FILE_NUM; i++) {
         if (strcmp(temp_data_dic[i].getRelationName(),"") == 0) {
             new_relation = i;
-            cout<<"new relation id: "<<new_relation<<endl;
+         //   cout<<"new relation id: "<<new_relation<<endl;
             temp_data_dic[new_relation].init("temp_datadict","XXX");
             break;
         }
@@ -161,7 +161,7 @@ int indexScanEqualFilter(struct dbSysHead * head, int fileID, char* attributeNam
         if (head->buff[i].emptyOrnot == true) {
             my_buffer_id_ = i;
             head->buff[i].emptyOrnot = false;   // ready for writein
-            std::cout<<"bufferID: "<<i<<std::endl;
+        //    std::cout<<"bufferID: "<<i<<std::endl;
             break;
         }
     }
@@ -233,7 +233,7 @@ int tableScanSemiscopeFilter(struct dbSysHead * head, relation * temp_data_dic, 
     for (int i = 0; i < MAX_FILE_NUM; i++) {
         if (strcmp(temp_data_dic[i].getRelationName(),"") == 0) {
             new_relation = i;
-            cout<<"new relation id: "<<new_relation<<endl;
+        //    cout<<"new relation id: "<<new_relation<<endl;
             temp_data_dic[new_relation].init("temp_datadict","XXX");
             break;
         }
@@ -248,7 +248,7 @@ int tableScanSemiscopeFilter(struct dbSysHead * head, relation * temp_data_dic, 
         if (head->buff[i].emptyOrnot == true) {
             my_buffer_id_ = i;
             head->buff[i].emptyOrnot = false;   // ready for writein
-            std::cout<<"bufferID: "<<i<<std::endl;
+       //     std::cout<<"bufferID: "<<i<<std::endl;
             break;
         }
     }
@@ -268,7 +268,7 @@ int tableScanSemiscopeFilter(struct dbSysHead * head, relation * temp_data_dic, 
         int type = tempAttr.getType();
         int lengthOfAttr = tempAttr.getLength();
         RecordCursorTmp t1(head, temp_data_dic[old_relation].fileID,record_len_,buffer_ID_,record_num_);
-        cout<<"RecordCursorTmp t1"<<buffer_ID_<<"~"<<record_len_<<"~"<<record_num_<<endl;
+    //    cout<<"RecordCursorTmp t1"<<buffer_ID_<<"~"<<record_len_<<"~"<<record_num_<<endl;
 
         Buffer t(head, -2);
         int hitRecordCount = 0;
@@ -562,7 +562,7 @@ int tableScanScopeFilter(struct dbSysHead * head,  relation * temp_data_dic, int
     for (int i = 0; i < MAX_FILE_NUM; i++) {
         if (strcmp(temp_data_dic[i].getRelationName(),"") == 0) {
             new_relation = i;
-            cout<<"new relation id: "<<new_relation<<endl;
+       //     cout<<"new relation id: "<<new_relation<<endl;
             temp_data_dic[new_relation].init("temp_datadict","XXX");
             break;
         }

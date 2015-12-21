@@ -399,7 +399,7 @@ int hashjoin(struct dbSysHead *head, relation *temp_datadic,int old_relation_1, 
     for (int i = 0; i < MAX_FILE_NUM; i++) {
         if (strcmp(temp_datadic[i].getRelationName(),"") == 0) {
             new_relation = i;
-            cout<<"new relation id: "<<new_relation<<endl;
+  //          cout<<"new relation id: "<<new_relation<<endl;
             temp_datadic[new_relation].init("temp_datadict","XXX");
             break;
         }

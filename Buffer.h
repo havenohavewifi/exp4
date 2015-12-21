@@ -19,7 +19,7 @@ public:
     Buffer(){};
     ~Buffer(){
         free(data_);
-        std::cout<<"free Buffer"<<std::endl;
+    //    std::cout<<"free Buffer"<<std::endl;
     };
     //initialize with data_ NULL
     Buffer(struct dbSysHead * head, int fid);

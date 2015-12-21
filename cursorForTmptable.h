@@ -27,7 +27,7 @@ public:
         this->recordNum = rowNum;
         this->recordCurrent = 0;
         this->start = true;
-        std::cout<<"Init cursorForTmptable:"<<std::endl;
+    //    std::cout<<"Init cursorForTmptable:"<<std::endl;
     }
     
     bool getNextRecord(void *des);

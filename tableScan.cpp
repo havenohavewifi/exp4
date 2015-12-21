@@ -42,7 +42,7 @@ int TableScan(struct dbSysHead * head, relation * temp_datadic, const char * tab
     for (int i = 0; i < MAX_FILE_NUM; i++) {
         if (strcmp(temp_datadic[i].getRelationName(),"") == 0) {
             dictID = i;
-            cout<<"new relation id for tablescan: "<<dictID<<endl;
+     //       cout<<"new relation id for tablescan: "<<dictID<<endl;
             break;
         }
     }
@@ -57,7 +57,7 @@ int TableScan(struct dbSysHead * head, relation * temp_datadic, const char * tab
         if (head->buff[i].emptyOrnot == true) {
             buffer_id_ = i;
             head->buff[i].emptyOrnot = false;   // ready for writein
-            std::cout<<"TableScan bufferID: "<<i<<"  logicfileid: "<<logicfid<<endl;
+       //     std::cout<<"TableScan bufferID: "<<i<<"  logicfileid: "<<logicfid<<endl;
             break;
         }
     }
@@ -93,7 +93,7 @@ int TableScan(struct dbSysHead * head, relation * temp_datadic, const char * tab
     temp_datadic[dictID] = head->redef[fid]; //correct, class copy succeed
     temp_datadic[dictID].fileID = -buffer_id_; //negative number for temp datadict, value is for which buffer
     temp_datadic[dictID].changeRecordNum(k);
-    printf("temp_datadic[dictID].recordNum::%d\n",temp_datadic[dictID].getRecordNum());
+  //  printf("temp_datadic[dictID].recordNum::%d\n",temp_datadic[dictID].getRecordNum());
     return dictID;
 }
 
@@ -116,7 +116,7 @@ void TableScan(struct dbSysHead * head,int fileID, relation * temp_datadic){
         if (head->buff[i].emptyOrnot == true) {
             buffer_id_ = i;
             head->buff[i].emptyOrnot = false;   // ready for writein
-            std::cout<<"TableScan bufferID: "<<i<<"  logicfileid: "<<fileID<<endl;
+       //     std::cout<<"TableScan bufferID: "<<i<<"  logicfileid: "<<fileID<<endl;
             break;
         }
     }

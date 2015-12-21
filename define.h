@@ -23,11 +23,15 @@
 #include "insertOneTuple.h"
 #include "deleteRecords.h"
 #include "createTable.h"
+#include "printTempTable.h"
+#include "join.h"
+#include "sortmergejoin.h"
+#include "join_indexjoin.h"
 
 
 #ifndef YYSTYPE
 typedef union {
-	char name[100];
+	char name[NAMELENGTH];
 	int val;
 } yystype;
 # define YYSTYPE yystype
@@ -35,21 +39,22 @@ typedef union {
 #endif
 
 typedef struct attribute_info {
-	char name[100];
+	char name[NAMELENGTH];
 	int type;
 	int length;
 }attribute_info;
 
 typedef struct where_condition {
-	char attribute_name[100];
-	char attribute_value[100];
+	char attribute_name[NAMELENGTH];
+	char attribute_value[NAMELENGTH];
 	int operation;
+	bool isjoin;
 } where_condition;
 
 void yyerror(char *str);
 
 struct dbSysHead head;
-relation * temp_data_dict = new relation[MAX_FILE_NUM];
+relation *temp_data_dict = new relation[MAX_FILE_NUM]();
 
 // in order to create table
 attribute_info table_attributes[12];
@@ -63,10 +68,12 @@ int cur_value = 0;
 where_condition condition_array[10];
 int cur_condition = 0;
 
-char select_attributes[10][100];
+char select_attributes[10][NAMELENGTH];
 int cur_sattr = 0;
 
-char table_array[10][100];
+char table_array[10][NAMELENGTH];
 int cur_table = 0;
 
 void add_attribute(char *name, int type, int length);
+int find_empty_tempdict(relation *temp_data_dict);
+bool is_in_table(relation *temp_data_dict, int dict_id, char *attr_name);

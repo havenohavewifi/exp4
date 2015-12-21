@@ -42,7 +42,7 @@ int exit_database(struct dbSysHead *head)
 	return 0;
 }
 
-
+/*
 int showRelation(relation *r)
 {
 	printf("TableName: %s\n", r->getRelationName());
@@ -55,6 +55,7 @@ int showRelation(relation *r)
 	printf("RecordLength: %d\n", r->getRecordLength());
 	return 0;
 }
+*/
 
 int main()
 {

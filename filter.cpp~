@@ -21,7 +21,7 @@ int tableScanEqualFilter(struct dbSysHead * head , relation * temp_data_dic, int
     for (int i = 0; i < MAX_FILE_NUM; i++) {
         if (strcmp(temp_data_dic[i].getRelationName(),"") == 0) {
             new_relation = i;
-            cout<<"new relation id: "<<new_relation<<endl;
+       //     cout<<"new relation id: "<<new_relation<<endl;
             temp_data_dic[new_relation].init("temp_datadict","XXX");
             break;
         }
@@ -37,7 +37,7 @@ int tableScanEqualFilter(struct dbSysHead * head , relation * temp_data_dic, int
         if (head->buff[i].emptyOrnot == true) {
             my_buffer_id_ = i;
             head->buff[i].emptyOrnot = false;   // ready for writein
-            std::cout<<"bufferID: "<<i<<std::endl;
+       //     std::cout<<"bufferID: "<<i<<std::endl;
             break;
         }
     }
@@ -145,7 +145,7 @@ int indexScanEqualFilter(struct dbSysHead * head, int fileID, char* attributeNam
     for (int i = 0; i < MAX_FILE_NUM; i++) {
         if (strcmp(temp_data_dic[i].getRelationName(),"") == 0) {
             new_relation = i;
-            cout<<"new relation id: "<<new_relation<<endl;
+         //   cout<<"new relation id: "<<new_relation<<endl;
             temp_data_dic[new_relation].init("temp_datadict","XXX");
             break;
         }
@@ -161,7 +161,7 @@ int indexScanEqualFilter(struct dbSysHead * head, int fileID, char* attributeNam
         if (head->buff[i].emptyOrnot == true) {
             my_buffer_id_ = i;
             head->buff[i].emptyOrnot = false;   // ready for writein
-            std::cout<<"bufferID: "<<i<<std::endl;
+        //    std::cout<<"bufferID: "<<i<<std::endl;
             break;
         }
     }
@@ -233,7 +233,7 @@ int tableScanSemiscopeFilter(struct dbSysHead * head, relation * temp_data_dic, 
     for (int i = 0; i < MAX_FILE_NUM; i++) {
         if (strcmp(temp_data_dic[i].getRelationName(),"") == 0) {
             new_relation = i;
-            cout<<"new relation id: "<<new_relation<<endl;
+        //    cout<<"new relation id: "<<new_relation<<endl;
             temp_data_dic[new_relation].init("temp_datadict","XXX");
             break;
         }
@@ -248,7 +248,7 @@ int tableScanSemiscopeFilter(struct dbSysHead * head, relation * temp_data_dic, 
         if (head->buff[i].emptyOrnot == true) {
             my_buffer_id_ = i;
             head->buff[i].emptyOrnot = false;   // ready for writein
-            std::cout<<"bufferID: "<<i<<std::endl;
+       //     std::cout<<"bufferID: "<<i<<std::endl;
             break;
         }
     }
@@ -285,7 +285,6 @@ int tableScanSemiscopeFilter(struct dbSysHead * head, relation * temp_data_dic, 
             switch(sign){
 			case EQUAL:{
                     		if (recordValue == compareValue){
-                        		printf("equal:record:%d\tcompare:%d\n",recordValue,compareValue);
                        			//getOneRecord(one_Row_, &temp_data_dict[0]);
                         		hitRecordCount++;
                         		if(false == t.AppendBuffer(one_Row_, record_len_)){
@@ -305,7 +304,6 @@ int tableScanSemiscopeFilter(struct dbSysHead * head, relation * temp_data_dic, 
 			}
 			case LESS_THAN:{
                     		if (recordValue < compareValue){
-                        		printf("less_than_:record:%d\tcompare:%d\n",recordValue,compareValue);
                        			//getOneRecord(one_Row_, &temp_data_dict[0]);
                         		hitRecordCount++;
                         		if(false == t.AppendBuffer(one_Row_, record_len_)){
@@ -325,7 +323,6 @@ int tableScanSemiscopeFilter(struct dbSysHead * head, relation * temp_data_dic, 
 			}
 			case MORE_THAN:{
                             if (recordValue > compareValue){
-                                printf("MORE_THAN:record:%d\tcompare:%d\n",recordValue,compareValue);
                                 //getOneRecord(one_Row_, &temp_data_dict[0]);
                                 hitRecordCount++;
                                 if(false == t.AppendBuffer(one_Row_, record_len_)){
@@ -345,7 +342,6 @@ int tableScanSemiscopeFilter(struct dbSysHead * head, relation * temp_data_dic, 
 			}
 			case NOT_MORE_THAN:{
                             if (recordValue <= compareValue){
-                                printf("NOT_MORE_THAN:record:%d\tcompare:%d\n",recordValue,compareValue);
                                 //getOneRecord(one_Row_, &temp_data_dict[0]);
                                 hitRecordCount++;
                                 if(false == t.AppendBuffer(one_Row_, record_len_)){
@@ -365,8 +361,6 @@ int tableScanSemiscopeFilter(struct dbSysHead * head, relation * temp_data_dic, 
 			}
 			case NOT_LESS_THAN:{
                             if (recordValue >= compareValue){
-                                printf("NOT_LESS_THAN:record:%d\tcompare:%d\n",recordValue,compareValue);
-                                //getOneRecord(one_Row_, &temp_data_dict[0]);
                                 hitRecordCount++;
                                 if(false == t.AppendBuffer(one_Row_, record_len_)){
                                         t.writeBufferPage(t.filehead,my_buffer_id_ ,t.data_, t.current_size_);
@@ -385,8 +379,7 @@ int tableScanSemiscopeFilter(struct dbSysHead * head, relation * temp_data_dic, 
 			}
 			case NOT_EQUAL:{
                             if (recordValue != compareValue){
-                                printf("NOT_EQUAL:record:%d\tcompare:%d\n",recordValue,compareValue);
-                                //getOneRecord(one_Row_, &temp_data_dict[0]);
+
                                 hitRecordCount++;
                                 if(false == t.AppendBuffer(one_Row_, record_len_)){
                                         t.writeBufferPage(t.filehead,my_buffer_id_ ,t.data_, t.current_size_);
@@ -436,8 +429,6 @@ int tableScanSemiscopeFilter(struct dbSysHead * head, relation * temp_data_dic, 
 			}
 			case LESS_THAN:{
                     		if (strcmp(recordValue,compareValue) < 0){
-                        		printf("less_than_:record:%s\tcompare:%s\n",recordValue,compareValue);
-                       			//getOneRecord(one_Row_, &temp_data_dict[0]);
                         		hitRecordCount++;
                         		if(false == t.AppendBuffer(one_Row_, record_len_)){
                             			t.writeBufferPage(t.filehead,my_buffer_id_ ,t.data_, t.current_size_);
@@ -456,7 +447,6 @@ int tableScanSemiscopeFilter(struct dbSysHead * head, relation * temp_data_dic, 
 			}
 			case MORE_THAN:{
                             if (strcmp(recordValue,compareValue) > 0){
-                                printf("MORE_THAN:record:%s\tcompare:%s\n",recordValue,compareValue);
                                 //getOneRecord(one_Row_, &temp_data_dict[0]);
                                 hitRecordCount++;
                                 if(false == t.AppendBuffer(one_Row_, record_len_)){
@@ -475,10 +465,8 @@ int tableScanSemiscopeFilter(struct dbSysHead * head, relation * temp_data_dic, 
 			    break;
 			}
 			case NOT_MORE_THAN:{
-			printf("??????NOT_MORE_THAN:record:%s\tcompare:%s\n",recordValue,compareValue);
+			
                             if (strcmp(recordValue,compareValue) <= 0){
-                                printf("NOT_MORE_THAN:record:%s\tcompare:%s\n",recordValue,compareValue);
-                                //getOneRecord(one_Row_, &temp_data_dict[0]);
                                 hitRecordCount++;
                                 if(false == t.AppendBuffer(one_Row_, record_len_)){
                                         t.writeBufferPage(t.filehead,my_buffer_id_ ,t.data_, t.current_size_);
@@ -497,8 +485,6 @@ int tableScanSemiscopeFilter(struct dbSysHead * head, relation * temp_data_dic, 
 			}
 			case NOT_LESS_THAN:{
                             if (strcmp(recordValue,compareValue) >= 0){
-                                printf("NOT_LESS_THAN:record:%s\tcompare:%s\n",recordValue,compareValue);
-                                //getOneRecord(one_Row_, &temp_data_dict[0]);
                                 hitRecordCount++;
                                 if(false == t.AppendBuffer(one_Row_, record_len_)){
                                         t.writeBufferPage(t.filehead,my_buffer_id_ ,t.data_, t.current_size_);
@@ -517,8 +503,6 @@ int tableScanSemiscopeFilter(struct dbSysHead * head, relation * temp_data_dic, 
 			}
 			case NOT_EQUAL:{
                             if (strcmp(recordValue,compareValue) != 0){
-                                printf("NOT_EQUAL:record:%s\tcompare:%s\n",recordValue,compareValue);
-                                //getOneRecord(one_Row_, &temp_data_dict[0]);
                                 hitRecordCount++;
                                 if(false == t.AppendBuffer(one_Row_, record_len_)){
                                         t.writeBufferPage(t.filehead,my_buffer_id_ ,t.data_, t.current_size_);
@@ -578,7 +562,7 @@ int tableScanScopeFilter(struct dbSysHead * head,  relation * temp_data_dic, int
     for (int i = 0; i < MAX_FILE_NUM; i++) {
         if (strcmp(temp_data_dic[i].getRelationName(),"") == 0) {
             new_relation = i;
-            cout<<"new relation id: "<<new_relation<<endl;
+  //          cout<<"new relation id: "<<new_relation<<endl;
             temp_data_dic[new_relation].init("temp_datadict","XXX");
             break;
         }

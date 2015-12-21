@@ -69,4 +69,6 @@ int createTable(struct dbSysHead *head)
         head->redef[n].insertAttribute("comment", 2, 160);
     }
     return 0;
+    //SELECT sid, regionkey FROM student,customer, nation WHERE student.custkey=customer.custkey AND nation.nationkey=customer.nationkey AND custkey=1;
+
 }

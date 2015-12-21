@@ -57,7 +57,7 @@ int indexjoin(struct dbSysHead *head, relation *temp_data_dict,int old_relation_
     for (temp_num = 0; temp_num < MAX_FILE_NUM; temp_num++) {
         if (strcmp(temp_data_dict[temp_num].getRelationName(),"") == 0) {
             new_relation = temp_num;
-            cout<<"new relation id: "<<new_relation<<endl;
+      //      cout<<"new relation id: "<<new_relation<<endl;
             temp_data_dict[new_relation].init("temp_datadict_nestloop","WenHui");
 			
 			merge_relation_index(head,temp_data_dict[old_relation_1],temp_data_dict[old_relation_2],& temp_data_dict[new_relation]);
