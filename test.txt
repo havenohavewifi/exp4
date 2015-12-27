@@ -1,0 +1,17 @@
+1. create正确
+语句例子：
+CREATE TABLE student (sid int, sname varchar(10), birth date)
+2. insert语句（这条对，但有时不对）
+INSERT INTO student VALUES (2015, "cc", 1993-12-11)
+SELECT * FROM student
+插入后可选择展示
+3. delete语句
+DELETE * FROM student 结果发现没有删除插入的元素
+DELETE FROM student WHERE sid=2015; （这一句删除了）
+删除后可以再选择展示
+SELECT * FROM student
+
+4. select
+	1）单表
+SELECT cusname, address FROM customer WHERE nationkey=13 AND custkey=2;
+	2）多表连接（都有问题，index找不到）
