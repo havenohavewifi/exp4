@@ -44,5 +44,7 @@ int insertOneTuple(struct dbSysHead *head, const char * tableName, const char* c
         insertOneRecord(head, logicfid, oneRec);
         free(oneRec);
         cout<<"insert finished."<<endl;
+        sysUpdate(head);
+        return 0;
     }
 }

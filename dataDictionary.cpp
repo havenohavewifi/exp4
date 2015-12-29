@@ -51,10 +51,11 @@ relation::relation(relation& RR)
     this->attributeNum = RR.attributeNum;
     this->recordLength = RR.recordLength;
     this->recordNum = RR.recordNum;
-    this->isIndexed = RR.isIndexed;
-    this->isOrdered = RR.isOrdered;
+    
     for (int i = 0; i < this->recordNum; i++) {
         this->atb[i] = RR.atb[i];
+        this->isIndexed[i] = RR.isIndexed[i];
+        this->isOrdered[i] = RR.isOrdered[i];
     }
 }
 relation::~relation()

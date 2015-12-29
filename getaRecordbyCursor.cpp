@@ -17,14 +17,15 @@ void getOneRecord(char *oneRec, relation * dic){
         offset = dic->getAttributeByNo(i).getRecordDeviation();
         if(dic->getAttributeByNo(i).getType() == 1){
             int value= *((int *)(oneRec + offset));
-            cout<<i<<":"<<value<<endl;
+//            cout<<i<<":"<<value<<endl;
+            cout<<value<<"      ";
         }
         if(dic->getAttributeByNo(i).getType() == 2){
             char * valuechar = (char *)malloc(sizeof(char)*dic->getAttributeByNo(i).getLength());
             memcpy(valuechar, oneRec + offset ,dic->getAttributeByNo(i).getLength());
-            cout<<i<<":"<<valuechar<<endl;
+//            cout<<i<<":"<<valuechar<<endl;
+            cout<<valuechar<<"      ";
         }
+        cout<<endl;
     }
 }
-
-

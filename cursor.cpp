@@ -64,7 +64,7 @@ bool RecordCursor::getNextRecord(void *des) {
     char * one_Row_ = (char *)malloc(sizeof(char)*recordLength);
     char* erase = (char *)malloc(sizeof(char)*recordLength);
     for(int i=0;i<recordLength-1;i++){
-	erase[i]='$';
+        erase[i]='$';
     }
     erase[recordLength-1] = '\0';
     memcpy(one_Row_, this->head->buff[this->bufferID].data[this->cBufferPage]+bufferOffset, sizeof(char)*recordLength);
@@ -72,10 +72,10 @@ bool RecordCursor::getNextRecord(void *des) {
     while (strcmp(one_Row_, erase) == 0){
     //printf("one_Row_[0] == erase[0]::%c,%c\n",one_Row_[0] , erase[0]);
     	this->bufferOffset += recordLength;
-	bool flag = getNextRecord(one_Row_);
+        bool flag = getNextRecord(one_Row_);
         if (flag == false)
-		return false;
-	this->bufferOffset -= recordLength;
+            return false;
+        this->bufferOffset -= recordLength;
     }
 
     memcpy(des, this->head->buff[this->bufferID].data[this->cBufferPage]+bufferOffset, sizeof(char)*recordLength);

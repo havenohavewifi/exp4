@@ -559,7 +559,7 @@ int hashjoin(struct dbSysHead *head, relation *temp_datadic,int old_relation_1, 
         delete right_view;
         delete left_relation;
         delete right_relation;
-        std::cout << new_relation<< std::endl;
+//        std::cout << new_relation<< std::endl;
 //        return new_relation;
         }
     return new_relation;

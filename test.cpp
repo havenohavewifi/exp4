@@ -25,6 +25,7 @@
 #include "insertOneTuple.h"
 #include "deleteRecords.h"
 #include "deleteAllTuples.h"
+#include "printTempTable.h"
 
 int init_database(struct dbSysHead *head)
 {
@@ -186,7 +187,7 @@ int main()
     insertOneTuple(&head, "customer", "1002|Customer#000001001|IVhzIApeRb ot,c,E|15|25-989-741-2988|711.56|BUILDING|to the even, regular platelets.HH|");
     
     insertOneTuple(&head, "customer", "1003|Customer#000001002|IVhzIApeRb ot,c,E|15|25-989-741-2988|711.56|BUILDING|to the even, regular platelets.HHH|");
-    sysUpdate(&head);
+//    sysUpdate(&head);
 
     //Scan Table
     int customer_scan = -1;
@@ -194,6 +195,7 @@ int main()
     if (customer_scan>=0) {
         printf("tablescan succeed!\n");
     }
+    printTempTable(&head, temp_data_dict,0);
     //char attribute_list[3][NAMELENGTH] = {"address", "name", "custkey"};
     //if(project(&head, temp_data_dict, customer_scan, 3, attribute_list)>=0)
     //    printf("project succeed!\n");

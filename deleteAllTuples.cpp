@@ -27,11 +27,12 @@ int deleteAllTuples(struct dbSysHead *head, const char * tableName){
         return -2;
     }
     else{
+        /*
         for (j = 0; j<MAX_FILE_NUM; j++) {
             if ((head->desc).fileDesc[j].fileID == i ) {
                 break;
             }
-        }
+        }*/
         logicfid = (head->desc).fileDesc[i].fileID;
         int k = queryFileID(head, logicfid);
         if(k < 0)
@@ -45,7 +46,8 @@ int deleteAllTuples(struct dbSysHead *head, const char * tableName){
             head->desc.fileDesc[k].filePageForWrite = 0;
             head->desc.fileDesc[k].filePageEndPos = 0;
             (head->desc).pageAvai += (head->desc).fileDesc[k].filePageNum;
-            cout<<"delete all tuples from this table succeed."<<i<<endl;
+            cout<<"delete all tuples from this table succeed."<<endl;
+            sysUpdate(head);
             return 0;
         }
     }

@@ -27,18 +27,19 @@ int dropTable(struct dbSysHead *head, const char * tableName){
         return -2;
     }
     else{
+        /*
         for (j = 0; j<MAX_FILE_NUM; j++) {
             if ((head->desc).fileDesc[j].fileID == i ) {
                 break;
             }
-        }
+        }*/
         logicfid = (head->desc).fileDesc[i].fileID;
         (head->redef)[i].deleteRelation();
         if(recyFileSpace(head, logicfid)!=  0)
         {
             cout<<"this table is already empty."<<endl;
         }
-        cout<<"drop table succeed."<<i<<endl;
+        cout<<"drop table succeed."<<endl;
         return 0;
     }
 }

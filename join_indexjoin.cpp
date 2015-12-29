@@ -61,7 +61,7 @@ int indexjoin(struct dbSysHead *head, relation *temp_data_dict,int old_relation_
             temp_data_dict[new_relation].init("temp_datadict_nestloop","WenHui");
 			
 			merge_relation_index(head,temp_data_dict[old_relation_1],temp_data_dict[old_relation_2],& temp_data_dict[new_relation]);
-			showRelation(&temp_data_dict[new_relation]);
+//			showRelation(&temp_data_dict[new_relation]);
 
             break;
         }

@@ -19,7 +19,7 @@ long insertOneRecord(struct dbSysHead *head , int fileID, char * oneRow){
     int fPhysicalID = queryFileID(head , fileID);
 //did this make change??
 //    relation *dic = &head->redef[fPhysicalID];
-    cout<<head->desc.fileDesc[fPhysicalID].filePageEndPos<<endl;
+//    cout<<head->desc.fileDesc[fPhysicalID].filePageEndPos<<endl;
     long pos = (head->desc.fileDesc[fPhysicalID].filePageForWrite ) * SIZE_PER_PAGE + head->desc.fileDesc[fPhysicalID].filePageEndPos;
     if (head->desc.fileDesc[fPhysicalID].filePageEndPos + head->redef[fPhysicalID].getRecordLength() > SIZE_PER_PAGE) {
         head->desc.fileDesc[fPhysicalID].filePageForWrite ++;
@@ -34,7 +34,7 @@ long insertOneRecord(struct dbSysHead *head , int fileID, char * oneRow){
     }
     int k = head->redef[fPhysicalID].getRecordNum() + 1;
     head->redef[fPhysicalID].changeRecordNum(k);
-    
+//if this file has index on this attribute?
 //	if(true==insertInIndex(head, fileID, pos))
 //        std::cout<<"insert in index true"<<std::endl;
 	return pos;
