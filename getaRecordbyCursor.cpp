@@ -26,6 +26,6 @@ void getOneRecord(char *oneRec, relation * dic){
 //            cout<<i<<":"<<valuechar<<endl;
             cout<<valuechar<<"      ";
         }
-        cout<<endl;
     }
+    cout<<endl;
 }

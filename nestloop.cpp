@@ -732,9 +732,9 @@ int showRelation(relation *r)
 	printf("AttributeNum: %d\n", r->getAttributeNum());
 	for (int j = 0; j < r->getAttributeNum(); j++)
 	{
-		printf("%d:%s\n", j + 1, r->getAttributeByNo(j).getName());
+		printf("%s   ",  r->getAttributeByNo(j).getName());
 	}
-	printf("RecordLength: %d\n", r->getRecordLength());
+	printf("\nRecordLength: %d\n", r->getRecordLength());
 	return 0;
 }
 int nestloop_equal_new(struct dbSysHead *head, relation *temp_data_dict, int old_relation_1, int old_relation_2,char *name ){

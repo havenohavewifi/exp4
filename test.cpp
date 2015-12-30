@@ -177,7 +177,7 @@ int main()
     */
     relation * temp_data_dict = new relation[MAX_FILE_NUM];
     //read customer.tbl and write into our file1, 一次性
-    loaddata(&head, FIRST_FID);
+//    loaddata(&head, FIRST_FID);
     loaddata(&head, FIRST_FID + 1);
     loaddata(&head, FIRST_FID + 2);
     sysUpdate(&head);
