@@ -18,7 +18,7 @@ int choosejoin(struct dbSysHead *head, relation *temp_datadic,int old_relation_1
 	int big_num=5;
 	int num_record_1=temp_datadic[old_relation_1].getRecordNum();
 	int num_record_2=temp_datadic[old_relation_2].getRecordNum();
-	cout<<"record_1:"<<num_record_1<<"record_2:"<<num_record_2<<endl;
+//	cout<<"record_1:"<<num_record_1<<"record_2:"<<num_record_2<<endl;
 	int goal_2=-1;
 	 for (int i = 0; i<MAX_FILE_NUM; i++) {
 		if (strcmp((head->redef)[i].getRelationName(),temp_datadic[old_relation_2].getRelationName())==0) {
@@ -39,12 +39,12 @@ int choosejoin(struct dbSysHead *head, relation *temp_datadic,int old_relation_1
 	strcpy(name_new,name);
 	if(num_record_1<small_num&&num_record_2<small_num){
 		//not too big choose nestloop
-		cout<<"choose nestloop"<<endl;
+	//	cout<<"choose nestloop"<<endl;
 		return_num=nestloop_equal_new(head,temp_datadic,old_relation_1,old_relation_2,name_new);
 	}else{
 		//if it has index choose index hash
-		cout<<(int)true<<endl;
-		cout<<"index:"<<head->redef[goal_2].getIndexedByName(name_new)<<endl;
+	//	cout<<(int)true<<endl;
+	//	cout<<"index:"<<head->redef[goal_2].getIndexedByName(name_new)<<endl;
 		
 		/*cout<<temp_datadic[old_relation_1].getAttributeByName(name_new).isIndexed()<<endl;
 		cout<<((head->redef[goal_1].getAttributeByName(name_new).isIndexed())==1)<<endl;*/
@@ -71,7 +71,7 @@ int choosejoin(struct dbSysHead *head, relation *temp_datadic,int old_relation_1
 			}
 		}
 	}
-	cout<<"return_num"<<return_num<<endl;
+	//cout<<"return_num"<<return_num<<endl;
 	return return_num;
 	//sortmergejoin(head,temp_datadic,old_relation_1,old_relation_2,name_new);
 }

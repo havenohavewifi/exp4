@@ -22,7 +22,7 @@ int tableScanEqualFilter(struct dbSysHead * head , relation * temp_data_dic, int
         if (strcmp(temp_data_dic[i].getRelationName(),"") == 0) {
             new_relation = i;
        //     cout<<"new relation id: "<<new_relation<<endl;
-            temp_data_dic[new_relation].init("temp_datadict","XXX");
+    //        temp_data_dic[new_relation].init("temp_datadict","XXX");
             break;
         }
     }
@@ -70,7 +70,7 @@ int tableScanEqualFilter(struct dbSysHead * head , relation * temp_data_dic, int
 		    //int compareValue = *((int *)value);
 		    int compareValue = atoi(value);
 		    if (recordValue == compareValue){
-                	printf("int record:%d\tcompare:%d\n",recordValue,compareValue);
+                //	printf("int record:%d\tcompare:%d\n",recordValue,compareValue);
                 	hitRecordCount++;
                 	if(false == t.AppendBuffer(one_Row_, record_len_)){
                     		t.writeBufferPage(t.filehead,my_buffer_id_ ,t.data_, t.current_size_);
@@ -94,7 +94,7 @@ int tableScanEqualFilter(struct dbSysHead * head , relation * temp_data_dic, int
 
             		char* compareValue = value;
             		if (strcmp(recordValue,compareValue) == 0){
-                		printf("char record:%s\tcompare:%s\n",recordValue,compareValue);
+                //		printf("char record:%s\tcompare:%s\n",recordValue,compareValue);
                 //getOneRecord(one_Row_, &temp_data_dic[0]);
                 		hitRecordCount++;
                 		if(false == t.AppendBuffer(one_Row_, record_len_)){
@@ -118,8 +118,11 @@ int tableScanEqualFilter(struct dbSysHead * head , relation * temp_data_dic, int
         t.writeBufferPage(t.filehead,my_buffer_id_ ,t.data_, t.current_size_);
         free(one_Row_);
         temp_data_dic[new_relation] = temp_data_dic[old_relation]; //wrong, need to wait class copy
+        
         temp_data_dic[new_relation].fileID = -my_buffer_id_; //negative number for temp datadict, value is for which buffer
         temp_data_dic[new_relation].changeRecordNum(hitRecordCount);
+        //delete old relation
+		strcpy(temp_data_dic[old_relation].getRelationName(),"");
         //!!!free the old buffer
         head->buff[buffer_ID_].emptyOrnot = true;
         return new_relation;
@@ -532,8 +535,10 @@ int tableScanSemiscopeFilter(struct dbSysHead * head, relation * temp_data_dic, 
         temp_data_dic[new_relation] = temp_data_dic[old_relation]; //wrong, need to wait class copy
         temp_data_dic[new_relation].fileID = -my_buffer_id_; //negative number for temp datadict, value is for which buffer
         temp_data_dic[new_relation].changeRecordNum(hitRecordCount);
-        printf("hitRecordCount:%d\n",temp_data_dic[new_relation].getRecordNum());
+     //   printf("hitRecordCount:%d\n",temp_data_dic[new_relation].getRecordNum());
         //!!!free the old buffer
+        //delete old relation
+		strcpy(temp_data_dic[old_relation].getRelationName(),"");
         head->buff[buffer_ID_].emptyOrnot = true;
         return new_relation;
     }
@@ -617,7 +622,7 @@ int tableScanScopeFilter(struct dbSysHead * head,  relation * temp_data_dic, int
 		case LESS_THAN:{
                     if(sign2 == LESS_THAN){
 			if (compareValue1 < recordValue && recordValue < compareValue2){
-                                printf("compareValue1 < recordValue < compareValue2:record:%d\n",recordValue);
+                            //    printf("compareValue1 < recordValue < compareValue2:record:%d\n",recordValue);
                                 hitRecordCount++;
                                 if(false == t.AppendBuffer(one_Row_, record_len_)){
                                         t.writeBufferPage(t.filehead,my_buffer_id_ ,t.data_, t.current_size_);
@@ -636,7 +641,7 @@ int tableScanScopeFilter(struct dbSysHead * head,  relation * temp_data_dic, int
 		    }
 		    else if(sign2 == NOT_MORE_THAN){
                         if (compareValue1 < recordValue && recordValue<= compareValue2){
-                                printf("c1 < recordValue <= c2:record:%d\n",recordValue);
+                     //           printf("c1 < recordValue <= c2:record:%d\n",recordValue);
                                 hitRecordCount++;
                                 if(false == t.AppendBuffer(one_Row_, record_len_)){
                                         t.writeBufferPage(t.filehead,my_buffer_id_ ,t.data_, t.current_size_);
@@ -663,7 +668,7 @@ int tableScanScopeFilter(struct dbSysHead * head,  relation * temp_data_dic, int
 		case NOT_MORE_THAN:{
                     if(sign2 == LESS_THAN){
 			if (compareValue1 <= recordValue && recordValue< compareValue2){
-                                printf("compareValue1:%d <= recordValue:%d < compareValue2:%d\n",compareValue1,recordValue,compareValue2);
+                //                printf("compareValue1:%d <= recordValue:%d < compareValue2:%d\n",compareValue1,recordValue,compareValue2);
                                 hitRecordCount++;
                                 if(false == t.AppendBuffer(one_Row_, record_len_)){
                                         t.writeBufferPage(t.filehead,my_buffer_id_ ,t.data_, t.current_size_);

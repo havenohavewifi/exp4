@@ -1,17 +1,32 @@
+语法输入错误会提示，用户可重新继续输入
+例如输入 creat
+
 1. create正确
 语句例子：
 CREATE TABLE student (sid int, sname varchar(10), birth date)
-2. insert语句（这条对，但有时不对）
+2. insert语句
 INSERT INTO student VALUES (2015, "cc", 1993-12-11)
 SELECT * FROM student
 插入后可选择展示
 3. delete语句
-DELETE * FROM student 结果发现没有删除插入的元素
 DELETE FROM student WHERE sid=2015; （这一句删除了）
 删除后可以再选择展示
 SELECT * FROM student
 
+############开新的窗口###################
+
 4. select
-	1）单表
-SELECT cusname, address FROM customer WHERE nationkey=13 AND custkey=2;
-	2）多表连接（都有问题，index找不到）
+	1）单表（AND，等值，非等值）
+SELECT cusname, address FROM customer WHERE nationkey=13 AND custkey<5;
+	2）多表连接
+没有index的时候：hashjoin
+SELECT naname, cusname FROM customer, nation WHERE nation.nationkey=customer.nationkey AND nationkey=15;
+
+有了index：indexjoin
+创建索引
+CREATE INDEX ON customer (custkey)
+CREATE INDEX ON nation (nationkey)
+SELECT naname, cusname FROM customer, nation WHERE nation.nationkey=customer.nationkey AND nationkey=15;
+
+
+EXIT：输入则退出系统

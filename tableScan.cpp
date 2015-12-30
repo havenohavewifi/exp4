@@ -31,6 +31,7 @@ int getLogicfidByName(struct dbSysHead *head, const char * tableName) {
     logicfid = (head->desc).fileDesc[i].fileID;
     return logicfid;
 }
+
 int TableScan(struct dbSysHead * head, relation * temp_datadic, const char * tableName){
     int logicfid = getLogicfidByName(head,tableName);
     if (logicfid == -2) {

@@ -22,7 +22,7 @@ int project(struct dbSysHead *head, relation *temp_datadic, int old_relation, in
         if (strcmp(temp_datadic[i].getRelationName(),"") == 0) {
             new_relation = i;
     //        cout<<"new relation id: "<<new_relation<<endl;
-            temp_datadic[new_relation].init("temp_datadict","XXX");
+            temp_datadic[new_relation].init(temp_datadic[old_relation].getRelationName(),"XXX");
             break;
         }
     }
@@ -36,6 +36,7 @@ int project(struct dbSysHead *head, relation *temp_datadic, int old_relation, in
         for (int j = 0; j < attribute_num; j++) {
             if (strcmp(attribute_list[j], temp_datadic[old_relation].getAttributeByNo(i).getName()) == 0) {
                 temp_datadic[new_relation].insertAttribute(temp_datadic[old_relation].getAttributeByNo(i).getName(), temp_datadic[old_relation].getAttributeByNo(i).getType(), temp_datadic[old_relation].getAttributeByNo(i).getLength());
+                temp_datadic[new_relation].changeIndexedByName(attribute_list[j], temp_datadic[old_relation].getIndexedByName(attribute_list[j]));
                 insert_num_ ++;
                // cout<<attribute_list[j] <<" "<<temp_datadic[old_relation].getAttributeByNo(i).getName() <<endl;
             }

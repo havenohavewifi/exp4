@@ -85,7 +85,7 @@ int indexjoin(struct dbSysHead *head, relation *temp_data_dict,int old_relation_
         if (head->buff[i].emptyOrnot == true) {
             buffer_id_ = i;
             head->buff[i].emptyOrnot = false;   // ready for writein
-            std::cout << "BufferID: " << i << std::endl;
+      //      std::cout << "BufferID: " << i << std::endl;
             break;
         }
     }
@@ -113,7 +113,7 @@ int indexjoin(struct dbSysHead *head, relation *temp_data_dict,int old_relation_
 					
                     start1=temp_data_dict[old_relation_1].getAttributeByNo(i).getRecordDeviation();
                     key=*((int*)(one_Row_1+start1));  //debug for key
-                     cout<<"key:"<<key<<endl;
+              //       cout<<"key:"<<key<<endl;
                     break;
                 }
             }
@@ -121,13 +121,16 @@ int indexjoin(struct dbSysHead *head, relation *temp_data_dict,int old_relation_
 			  strcpy(name_new,name);
 			int goal=-1;
 			 for (int i = 0; i<MAX_FILE_NUM; i++) {
+			//	 cout<<"compare "<<(head->redef)[i].getRelationName()<<" "<<temp_data_dict[old_relation_2].getRelationName()<<endl;
 					if (strcmp((head->redef)[i].getRelationName(),temp_data_dict[old_relation_2].getRelationName())==0) {
 						goal=i;
 						break;
 						
 					}
 			 }
-			 int actual=(head->desc).fileDesc[goal].fileID;					 
+			 int actual=(head->desc).fileDesc[goal].fileID;
+			// cout<<"#######goal "<<goal<<" "<<head->redef[goal].getRelationName()<<endl;		
+		//	 cout<<"#########actual "<<actual<<endl;			 
 			 int pos = searchByColumnAndValue(head,actual,name_new,key);
 		
 			 if(pos<0){

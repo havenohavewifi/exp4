@@ -77,6 +77,6 @@ int createTable(struct dbSysHead *head)
 
     }
     return 0;
-    //SELECT sid, regionkey FROM student,customer, nation WHERE student.custkey=customer.custkey AND nation.nationkey=customer.nationkey AND custkey=1;
+    
 
 }

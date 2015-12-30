@@ -437,7 +437,7 @@ int hashjoin(struct dbSysHead *head, relation *temp_datadic,int old_relation_1, 
         if (head->buff[i].emptyOrnot == true) {
             buffer_id_ = i;
             head->buff[i].emptyOrnot = false;   // ready for writein
-            std::cout << "BufferID: " << i << std::endl;
+    //        std::cout << "BufferID: " << i << std::endl;
             break;
         }
     }
@@ -453,7 +453,7 @@ int hashjoin(struct dbSysHead *head, relation *temp_datadic,int old_relation_1, 
         hashjoinBufferManager* hashjoinBuffer_manager = new hashjoinBufferManager();
         InputRelation* left_relation = new InputRelation(*hashjoinBuffer_manager, temp_datadic[old_relation_1].getRecordNum());
         InputRelation* right_relation = new InputRelation(*hashjoinBuffer_manager, temp_datadic[old_relation_2].getRecordNum());
-        cout<<"left relation num :"<<temp_datadic[old_relation_1].getRecordNum() << "  right relation num :"<<temp_datadic[old_relation_2].getRecordNum() <<endl;
+    //    cout<<"left relation num :"<<temp_datadic[old_relation_1].getRecordNum() << "  right relation num :"<<temp_datadic[old_relation_2].getRecordNum() <<endl;
         //creat <key, pos> pair
         RecordCursorTmp scanTable1(head, temp_datadic[old_relation_1].fileID, original_rec_length1, -temp_datadic[old_relation_1].fileID, temp_datadic[old_relation_1].getRecordNum());
         while (true == scanTable1.getNextRecord(one_Row_1)) {
@@ -491,7 +491,7 @@ int hashjoin(struct dbSysHead *head, relation *temp_datadic,int old_relation_1, 
         hash_join->build();
         hash_join->probe();
                
-        cout << "matches: " << output_relation->getOutputTupleCount() << "." << endl;
+    //    cout << "matches: " << output_relation->getOutputTupleCount() << "." << endl;
         temp_datadic[new_relation].fileID = -buffer_id_;
         for (int i = 0; i < original_attribute_length1; i++) {
             temp_datadic[new_relation].insertAttribute( temp_datadic[old_relation_1].getAttributeByNo(i).getName(),  temp_datadic[old_relation_1].getAttributeByNo(i).getType(),  temp_datadic[old_relation_1].getAttributeByNo(i).getLength()) ;

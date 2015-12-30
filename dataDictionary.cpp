@@ -52,7 +52,7 @@ relation::relation(relation& RR)
     this->recordLength = RR.recordLength;
     this->recordNum = RR.recordNum;
     
-    for (int i = 0; i < this->recordNum; i++) {
+    for (int i = 0; i < this->attributeNum; i++) {
         this->atb[i] = RR.atb[i];
         this->isIndexed[i] = RR.isIndexed[i];
         this->isOrdered[i] = RR.isOrdered[i];

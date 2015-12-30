@@ -25,11 +25,11 @@ int Comp(const void *p1,const void *p2)
 int tempSort(struct dbSysHead *head, relation *temp_datadic, int old_relation, char *attr)
 {
 	int num = temp_datadic[old_relation].getRecordNum();
-	cout<<num<<endl;
+//	cout<<num<<endl;
 	int length = temp_datadic[old_relation].getRecordLength();
-	cout<<length<<endl;
+//	cout<<length<<endl;
 	int dv = temp_datadic[old_relation].getAttributeByName(attr).getRecordDeviation();
-	cout<<dv<<endl;
+//	cout<<dv<<endl;
 	struct sortNode* s;
 	s = (sortNode*)malloc(sizeof(sortNode)*num);
 	RecordCursorTmp scanTable(head, temp_datadic[old_relation].fileID, length, -temp_datadic[old_relation].fileID, num);
@@ -50,7 +50,7 @@ int tempSort(struct dbSysHead *head, relation *temp_datadic, int old_relation, c
 	int buffer_id = -temp_datadic[old_relation].fileID;
 	Buffer t(head, -2);
 	for(int i=0;i<num;i++){
-		cout<<s[i].value<<endl;
+//		cout<<s[i].value<<endl;
 //		getOneRecord(s[i].record, temp_datadic);
 		if (t.AppendBuffer(s[i].record, length) == false){
 			t.writeBufferPage(t.filehead, buffer_id, t.data_, t.current_size_);
@@ -110,7 +110,7 @@ int sortmergejoin(struct dbSysHead *head, relation *temp_datadic,int old_relatio
 		if (head->buff[i].emptyOrnot == true) {
 			buffer_id_ = i;
 			head->buff[i].emptyOrnot = false;   // ready for writein
-			std::cout << "sort merge join bufferID: " << i << std::endl;
+	//		std::cout << "sort merge join bufferID: " << i << std::endl;
 			break;
 		}
 	}
