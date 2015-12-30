@@ -48,11 +48,11 @@ int choosejoin(struct dbSysHead *head, relation *temp_datadic,int old_relation_1
 		
 		/*cout<<temp_datadic[old_relation_1].getAttributeByName(name_new).isIndexed()<<endl;
 		cout<<((head->redef[goal_1].getAttributeByName(name_new).isIndexed())==1)<<endl;*/
-		if(head->redef[goal_1].getIndexedByName(name_new)>0){
+		if(0&&head->redef[goal_1].getIndexedByName(name_new)>0){
 			cout<<"choose index 1 indexjoin"<<endl;
 			return_num=indexjoin(head,temp_datadic,old_relation_2,old_relation_1,name_new);
 		}else{
-			if(head->redef[goal_2].getIndexedByName(name_new)>0){
+			if(0&&head->redef[goal_2].getIndexedByName(name_new)>0){
 				cout<<"choose index 2 indexjoin"<<endl;
 				return_num=indexjoin(head,temp_datadic,old_relation_1,old_relation_2,name_new);
 			}else

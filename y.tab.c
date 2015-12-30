@@ -116,27 +116,29 @@ extern int yydebug;
     WHERE = 265,
     ORDER_BY = 266,
     ATTRIBUTE = 267,
-    BEqual = 268,
-    BUNEqual = 269,
-    BSmaller = 270,
-    BSmallerEqual = 271,
-    BBigger = 272,
-    BBiggerEqual = 273,
-    BLike = 274,
-    LEFT_PARENTHESIS = 275,
-    RIGHT_PARENTHESIS = 276,
-    COMMA = 277,
-    STAR = 278,
-    AND = 279,
-    OR = 280,
-    INT_TYPE = 281,
-    VARCHAR_TYPE = 282,
-    DATE_TYPE = 283,
-    VARIABLE = 284,
-    NUMBER_VALUE = 285,
-    VARCHAR_VALUE = 286,
-    DATE_VALUE = 287,
-    END = 288
+    CREATE_INDEX = 268,
+    BEqual = 269,
+    BUNEqual = 270,
+    BSmaller = 271,
+    BSmallerEqual = 272,
+    BBigger = 273,
+    BBiggerEqual = 274,
+    BLike = 275,
+    LEFT_PARENTHESIS = 276,
+    RIGHT_PARENTHESIS = 277,
+    COMMA = 278,
+    STAR = 279,
+    AND = 280,
+    OR = 281,
+    INT_TYPE = 282,
+    VARCHAR_TYPE = 283,
+    DATE_TYPE = 284,
+    VARIABLE = 285,
+    NUMBER_VALUE = 286,
+    VARCHAR_VALUE = 287,
+    DATE_VALUE = 288,
+    END = 289,
+    EXIT = 290
   };
 #endif
 /* Tokens.  */
@@ -150,27 +152,29 @@ extern int yydebug;
 #define WHERE 265
 #define ORDER_BY 266
 #define ATTRIBUTE 267
-#define BEqual 268
-#define BUNEqual 269
-#define BSmaller 270
-#define BSmallerEqual 271
-#define BBigger 272
-#define BBiggerEqual 273
-#define BLike 274
-#define LEFT_PARENTHESIS 275
-#define RIGHT_PARENTHESIS 276
-#define COMMA 277
-#define STAR 278
-#define AND 279
-#define OR 280
-#define INT_TYPE 281
-#define VARCHAR_TYPE 282
-#define DATE_TYPE 283
-#define VARIABLE 284
-#define NUMBER_VALUE 285
-#define VARCHAR_VALUE 286
-#define DATE_VALUE 287
-#define END 288
+#define CREATE_INDEX 268
+#define BEqual 269
+#define BUNEqual 270
+#define BSmaller 271
+#define BSmallerEqual 272
+#define BBigger 273
+#define BBiggerEqual 274
+#define BLike 275
+#define LEFT_PARENTHESIS 276
+#define RIGHT_PARENTHESIS 277
+#define COMMA 278
+#define STAR 279
+#define AND 280
+#define OR 281
+#define INT_TYPE 282
+#define VARCHAR_TYPE 283
+#define DATE_TYPE 284
+#define VARIABLE 285
+#define NUMBER_VALUE 286
+#define VARCHAR_VALUE 287
+#define DATE_VALUE 288
+#define END 289
+#define EXIT 290
 
 /* Value type.  */
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
@@ -188,7 +192,7 @@ int yyparse (void);
 
 /* Copy the second part of user declarations.  */
 
-#line 192 "y.tab.c" /* yacc.c:358  */
+#line 196 "y.tab.c" /* yacc.c:358  */
 
 #ifdef short
 # undef short
@@ -428,23 +432,23 @@ union yyalloc
 #endif /* !YYCOPY_NEEDED */
 
 /* YYFINAL -- State number of the termination state.  */
-#define YYFINAL  23
+#define YYFINAL  27
 /* YYLAST -- Last index in YYTABLE.  */
-#define YYLAST   75
+#define YYLAST   79
 
 /* YYNTOKENS -- Number of terminals.  */
-#define YYNTOKENS  34
+#define YYNTOKENS  36
 /* YYNNTS -- Number of nonterminals.  */
-#define YYNNTS  22
+#define YYNNTS  23
 /* YYNRULES -- Number of rules.  */
-#define YYNRULES  51
+#define YYNRULES  54
 /* YYNSTATES -- Number of states.  */
-#define YYNSTATES  90
+#define YYNSTATES  97
 
 /* YYTRANSLATE[YYX] -- Symbol number corresponding to YYX as returned
    by yylex, with out-of-bounds checking.  */
 #define YYUNDEFTOK  2
-#define YYMAXUTOK   288
+#define YYMAXUTOK   290
 
 #define YYTRANSLATE(YYX)                                                \
   ((unsigned int) (YYX) <= YYMAXUTOK ? yytranslate[YYX] : YYUNDEFTOK)
@@ -481,19 +485,20 @@ static const yytype_uint8 yytranslate[] =
        2,     2,     2,     2,     2,     2,     1,     2,     3,     4,
        5,     6,     7,     8,     9,    10,    11,    12,    13,    14,
       15,    16,    17,    18,    19,    20,    21,    22,    23,    24,
-      25,    26,    27,    28,    29,    30,    31,    32,    33
+      25,    26,    27,    28,    29,    30,    31,    32,    33,    34,
+      35
 };
 
 #if YYDEBUG
   /* YYRLINE[YYN] -- Source line where rule number YYN was defined.  */
 static const yytype_uint16 yyrline[] =
 {
-       0,    25,    25,    26,    30,    30,    30,    30,    30,    33,
-      59,    60,    64,    65,    66,    70,    75,    86,    87,    91,
-     100,   106,   115,   116,   125,   126,   127,   131,   131,   131,
-     131,   131,   131,   131,   134,   137,   139,   144,   145,   149,
-     150,   154,   158,   165,   190,   495,   496,   500,   501,   505,
-     506,   510
+       0,    26,    26,    27,    31,    31,    31,    31,    31,    31,
+      32,    35,    42,    68,    69,    73,    74,    75,    79,    84,
+      95,    96,   100,   109,   115,   124,   125,   134,   135,   136,
+     140,   140,   140,   140,   140,   140,   140,   143,   146,   148,
+     153,   154,   158,   159,   163,   167,   174,   183,   514,   515,
+     519,   520,   524,   525,   529
 };
 #endif
 
@@ -504,15 +509,16 @@ static const char *const yytname[] =
 {
   "$end", "error", "$undefined", "CREATE_TABLE", "DROP_TABLE", "INSERT",
   "VALUES", "DELETE", "SELECT", "FROM", "WHERE", "ORDER_BY", "ATTRIBUTE",
-  "BEqual", "BUNEqual", "BSmaller", "BSmallerEqual", "BBigger",
-  "BBiggerEqual", "BLike", "LEFT_PARENTHESIS", "RIGHT_PARENTHESIS",
-  "COMMA", "STAR", "AND", "OR", "INT_TYPE", "VARCHAR_TYPE", "DATE_TYPE",
-  "VARIABLE", "NUMBER_VALUE", "VARCHAR_VALUE", "DATE_VALUE", "END",
-  "$accept", "program", "command", "create", "attribute_type_list",
-  "attribute_type", "drop", "insert", "record", "item", "delete",
-  "where_list", "compare_opt", "condition_const", "c_attribute",
-  "cc_attribute", "condition", "select", "attribute_list", "attribute",
-  "table_list", "single_table", YY_NULLPTR
+  "CREATE_INDEX", "BEqual", "BUNEqual", "BSmaller", "BSmallerEqual",
+  "BBigger", "BBiggerEqual", "BLike", "LEFT_PARENTHESIS",
+  "RIGHT_PARENTHESIS", "COMMA", "STAR", "AND", "OR", "INT_TYPE",
+  "VARCHAR_TYPE", "DATE_TYPE", "VARIABLE", "NUMBER_VALUE", "VARCHAR_VALUE",
+  "DATE_VALUE", "END", "EXIT", "$accept", "program", "command",
+  "create_index", "create", "attribute_type_list", "attribute_type",
+  "drop", "insert", "record", "item", "delete", "where_list",
+  "compare_opt", "condition_const", "c_attribute", "cc_attribute",
+  "condition", "select", "attribute_list", "attribute", "table_list",
+  "single_table", YY_NULLPTR
 };
 #endif
 
@@ -524,14 +530,14 @@ static const yytype_uint16 yytoknum[] =
        0,   256,   257,   258,   259,   260,   261,   262,   263,   264,
      265,   266,   267,   268,   269,   270,   271,   272,   273,   274,
      275,   276,   277,   278,   279,   280,   281,   282,   283,   284,
-     285,   286,   287,   288
+     285,   286,   287,   288,   289,   290
 };
 # endif
 
-#define YYPACT_NINF -23
+#define YYPACT_NINF -25
 
 #define yypact_value_is_default(Yystate) \
-  (!!((Yystate) == (-23)))
+  (!!((Yystate) == (-25)))
 
 #define YYTABLE_NINF -1
 
@@ -542,15 +548,16 @@ static const yytype_uint16 yytoknum[] =
      STATE-NUM.  */
 static const yytype_int8 yypact[] =
 {
-      30,   -20,   -15,     7,     1,    -8,    39,    30,   -23,   -23,
-     -23,   -23,   -23,    32,   -23,    47,    25,    46,   -23,    48,
-     -23,     3,   -23,   -23,   -23,    29,    36,    49,    31,    33,
-      34,    -7,    14,    22,   -23,    15,    -6,   -23,   -23,   -23,
-      -9,   -23,   -23,   -23,    41,   -23,   -23,    29,   -23,   -23,
-     -23,    27,   -23,   -23,   -23,   -22,    13,   -23,    -6,    34,
-      35,   -23,   -23,    15,    -6,    -6,   -23,   -23,   -23,   -23,
-     -23,   -23,   -23,   -23,   -12,   -17,   -23,    43,   -23,   -23,
-     -23,   -23,   -23,   -23,   -23,   -23,   -23,   -23,   -23,   -23
+      -3,   -24,   -21,   -17,     3,    -5,   -12,   -25,    20,    -3,
+     -25,   -25,   -25,   -25,   -25,   -25,    16,   -25,    25,    13,
+      32,   -25,    50,   -25,     5,   -25,    39,   -25,   -25,    34,
+      40,    52,    35,    36,    37,    -4,    38,    11,    -7,   -25,
+      21,    -1,   -25,   -25,   -25,     7,   -25,   -25,    41,   -25,
+      48,   -25,   -25,    34,   -25,   -25,   -25,    33,   -25,   -25,
+     -25,     8,    31,   -25,    -1,    37,   -25,    42,   -25,   -25,
+      21,    -1,    -1,   -25,   -25,   -25,   -25,   -25,   -25,   -25,
+     -25,    -9,    10,   -25,    49,   -25,   -25,   -25,   -25,   -25,
+     -25,   -25,   -25,   -25,   -25,   -25,   -25
 };
 
   /* YYDEFACT[STATE-NUM] -- Default reduction number in state STATE-NUM.
@@ -558,31 +565,32 @@ static const yytype_int8 yypact[] =
      means the default is an error.  */
 static const yytype_uint8 yydefact[] =
 {
-       0,     0,     0,     0,     0,     0,     0,     3,     4,     5,
-       6,     7,     8,     0,    15,     0,     0,     0,    48,     0,
-      47,     0,    46,     1,     2,     0,     0,     0,     0,     0,
-       0,     0,     0,     0,    11,     0,     0,    22,    43,    51,
-       0,    50,    45,    12,     0,    14,     9,     0,    19,    20,
-      21,     0,    18,    38,    37,     0,     0,    26,     0,     0,
-       0,    10,    16,     0,     0,     0,    23,    27,    28,    29,
-      30,    31,    32,    33,     0,     0,    49,     0,    17,    24,
-      25,    40,    39,    34,    35,    36,    41,    42,    44,    13
+       0,     0,     0,     0,     0,     0,     0,    10,     0,     3,
+       9,     4,     5,     6,     7,     8,     0,    18,     0,     0,
+       0,    51,     0,    50,     0,    49,     0,     1,     2,     0,
+       0,     0,     0,     0,     0,     0,     0,     0,     0,    14,
+       0,     0,    25,    46,    54,     0,    53,    48,     0,    15,
+       0,    17,    12,     0,    22,    23,    24,     0,    21,    41,
+      40,     0,     0,    29,     0,     0,    11,     0,    13,    19,
+       0,     0,     0,    26,    30,    31,    32,    33,    34,    35,
+      36,     0,     0,    52,     0,    20,    27,    28,    43,    42,
+      37,    38,    39,    44,    45,    47,    16
 };
 
   /* YYPGOTO[NTERM-NUM].  */
 static const yytype_int8 yypgoto[] =
 {
-     -23,    59,   -23,   -23,   -23,    20,   -23,   -23,   -23,     5,
-     -23,    11,   -23,   -23,   -23,   -23,   -14,   -23,   -23,    40,
-     -23,    16
+     -25,    61,   -25,   -25,   -25,   -25,    19,   -25,   -25,   -25,
+       4,   -25,    12,   -25,   -25,   -25,   -25,   -14,   -25,   -25,
+      43,   -25,    14
 };
 
   /* YYDEFGOTO[NTERM-NUM].  */
 static const yytype_int8 yydefgoto[] =
 {
-      -1,     6,     7,     8,    33,    34,     9,    10,    51,    52,
-      11,    55,    74,    86,    56,    87,    57,    12,    21,    22,
-      40,    41
+      -1,     8,     9,    10,    11,    38,    39,    12,    13,    57,
+      58,    14,    61,    81,    93,    62,    94,    63,    15,    24,
+      25,    45,    46
 };
 
   /* YYTABLE[YYPACT[STATE-NUM]] -- What to do in state STATE-NUM.  If
@@ -590,63 +598,64 @@ static const yytype_int8 yydefgoto[] =
      number is the opposite.  If YYTABLE_NINF, syntax error.  */
 static const yytype_uint8 yytable[] =
 {
-      81,    58,    64,    65,    18,    18,    53,    64,    65,    13,
-      16,    66,    30,    59,    14,    19,    88,    82,    83,    84,
-      85,    20,    20,    54,    17,    31,    67,    68,    69,    70,
-      71,    72,    73,     1,     2,     3,    15,     4,     5,    23,
-      43,    44,    45,    46,    47,    48,    49,    50,    62,    63,
-      79,    80,    25,    26,    27,    28,    35,    29,    32,    36,
-      37,    60,    38,    39,    89,    77,    24,    61,    78,    75,
-       0,    42,     0,     0,     0,    76
+       1,     2,     3,    88,     4,     5,    16,    21,    21,    17,
+       6,    59,    19,    18,    34,    52,    53,    64,    26,    22,
+      27,    89,    90,    91,    92,    23,    23,    20,    35,    60,
+      65,    30,     7,    71,    72,    71,    72,    29,    49,    50,
+      51,    32,    73,    31,    95,    74,    75,    76,    77,    78,
+      79,    80,    54,    55,    56,    69,    70,    86,    87,    33,
+      36,    40,    41,    66,    37,    42,    43,    44,    48,    67,
+      28,    96,    68,    84,    85,     0,    82,     0,    47,    83
 };
 
 static const yytype_int8 yycheck[] =
 {
-      12,    10,    24,    25,    12,    12,    12,    24,    25,    29,
-       9,    33,     9,    22,    29,    23,    33,    29,    30,    31,
-      32,    29,    29,    29,    23,    22,    13,    14,    15,    16,
-      17,    18,    19,     3,     4,     5,    29,     7,     8,     0,
-      26,    27,    28,    21,    22,    30,    31,    32,    21,    22,
-      64,    65,    20,     6,    29,     9,    20,     9,    29,    10,
-      29,    20,    29,    29,    21,    30,     7,    47,    63,    58,
-      -1,    31,    -1,    -1,    -1,    59
+       3,     4,     5,    12,     7,     8,    30,    12,    12,    30,
+      13,    12,     9,    30,     9,    22,    23,    10,    30,    24,
+       0,    30,    31,    32,    33,    30,    30,    24,    23,    30,
+      23,     6,    35,    25,    26,    25,    26,    21,    27,    28,
+      29,     9,    34,    30,    34,    14,    15,    16,    17,    18,
+      19,    20,    31,    32,    33,    22,    23,    71,    72,     9,
+      21,    21,    10,    22,    30,    30,    30,    30,    30,    21,
+       9,    22,    53,    31,    70,    -1,    64,    -1,    35,    65
 };
 
   /* YYSTOS[STATE-NUM] -- The (internal number of the) accessing
      symbol of state STATE-NUM.  */
 static const yytype_uint8 yystos[] =
 {
-       0,     3,     4,     5,     7,     8,    35,    36,    37,    40,
-      41,    44,    51,    29,    29,    29,     9,    23,    12,    23,
-      29,    52,    53,     0,    35,    20,     6,    29,     9,     9,
-       9,    22,    29,    38,    39,    20,    10,    29,    29,    29,
-      54,    55,    53,    26,    27,    28,    21,    22,    30,    31,
-      32,    42,    43,    12,    29,    45,    48,    50,    10,    22,
-      20,    39,    21,    22,    24,    25,    33,    13,    14,    15,
-      16,    17,    18,    19,    46,    45,    55,    30,    43,    50,
-      50,    12,    29,    30,    31,    32,    47,    49,    33,    21
+       0,     3,     4,     5,     7,     8,    13,    35,    37,    38,
+      39,    40,    43,    44,    47,    54,    30,    30,    30,     9,
+      24,    12,    24,    30,    55,    56,    30,     0,    37,    21,
+       6,    30,     9,     9,     9,    23,    21,    30,    41,    42,
+      21,    10,    30,    30,    30,    57,    58,    56,    30,    27,
+      28,    29,    22,    23,    31,    32,    33,    45,    46,    12,
+      30,    48,    51,    53,    10,    23,    22,    21,    42,    22,
+      23,    25,    26,    34,    14,    15,    16,    17,    18,    19,
+      20,    49,    48,    58,    31,    46,    53,    53,    12,    30,
+      31,    32,    33,    50,    52,    34,    22
 };
 
   /* YYR1[YYN] -- Symbol number of symbol that rule YYN derives.  */
 static const yytype_uint8 yyr1[] =
 {
-       0,    34,    35,    35,    36,    36,    36,    36,    36,    37,
-      38,    38,    39,    39,    39,    40,    41,    42,    42,    43,
-      43,    43,    44,    44,    45,    45,    45,    46,    46,    46,
-      46,    46,    46,    46,    47,    47,    47,    48,    48,    49,
-      49,    50,    50,    51,    51,    52,    52,    53,    53,    54,
-      54,    55
+       0,    36,    37,    37,    38,    38,    38,    38,    38,    38,
+      38,    39,    40,    41,    41,    42,    42,    42,    43,    44,
+      45,    45,    46,    46,    46,    47,    47,    48,    48,    48,
+      49,    49,    49,    49,    49,    49,    49,    50,    50,    50,
+      51,    51,    52,    52,    53,    53,    54,    54,    55,    55,
+      56,    56,    57,    57,    58
 };
 
   /* YYR2[YYN] -- Number of symbols on the right hand side of rule YYN.  */
 static const yytype_uint8 yyr2[] =
 {
-       0,     2,     2,     1,     1,     1,     1,     1,     1,     5,
-       3,     1,     2,     5,     2,     2,     6,     3,     1,     1,
-       1,     1,     4,     6,     3,     3,     1,     1,     1,     1,
+       0,     2,     2,     1,     1,     1,     1,     1,     1,     1,
+       1,     5,     5,     3,     1,     2,     5,     2,     2,     6,
+       3,     1,     1,     1,     1,     4,     6,     3,     3,     1,
        1,     1,     1,     1,     1,     1,     1,     1,     1,     1,
-       1,     3,     3,     4,     7,     3,     1,     1,     1,     3,
-       1,     1
+       1,     1,     1,     1,     3,     3,     4,     7,     3,     1,
+       1,     1,     3,     1,     1
 };
 
 
@@ -1322,8 +1331,23 @@ yyreduce:
   YY_REDUCE_PRINT (yyn);
   switch (yyn)
     {
-        case 9:
-#line 33 "syntactic-analysis.y" /* yacc.c:1646  */
+        case 10:
+#line 32 "syntactic-analysis.y" /* yacc.c:1646  */
+    {exit(0);}
+#line 1338 "y.tab.c" /* yacc.c:1646  */
+    break;
+
+  case 11:
+#line 35 "syntactic-analysis.y" /* yacc.c:1646  */
+    {
+		int fid = getLogicfidByName(&head, (yyvsp[-3]).name);
+		createIndexOn(&head, fid, (yyvsp[-1]).name);
+	}
+#line 1347 "y.tab.c" /* yacc.c:1646  */
+    break;
+
+  case 12:
+#line 42 "syntactic-analysis.y" /* yacc.c:1646  */
     {
 		// create table space
 		int fid = creatFileSpace(&head);
@@ -1341,55 +1365,55 @@ yyreduce:
 		}
 		
 		// print succeed infomation
-		printf("table name: %s\n", head.redef[n].getRelationName());
-		for(int i=0; i<head.redef[n].getAttributeNum(); i++) {
-			printf("%s %d\n", head.redef[n].getAttributeByNo(i).getName(), head.redef[n].getAttributeByNo(i).getType());
-		}
+		printf("create table %s succeed!\n", head.redef[n].getRelationName());
+	/*	for(int i=0; i<head.redef[n].getAttributeNum(); i++) {
+			printf("%s %d ", head.redef[n].getAttributeByNo(i).getName(), head.redef[n].getAttributeByNo(i).getType());
+		}*/
 		cur_attribute = 0;
 	}
-#line 1351 "y.tab.c" /* yacc.c:1646  */
-    break;
-
-  case 12:
-#line 64 "syntactic-analysis.y" /* yacc.c:1646  */
-    { add_attribute((yyvsp[-1]).name, (yyvsp[0]).val, 4); }
-#line 1357 "y.tab.c" /* yacc.c:1646  */
-    break;
-
-  case 13:
-#line 65 "syntactic-analysis.y" /* yacc.c:1646  */
-    { add_attribute((yyvsp[-4]).name, (yyvsp[-3]).val, (yyvsp[-1]).val); }
-#line 1363 "y.tab.c" /* yacc.c:1646  */
-    break;
-
-  case 14:
-#line 66 "syntactic-analysis.y" /* yacc.c:1646  */
-    { add_attribute((yyvsp[-1]).name, (yyvsp[0]).val, 10);}
-#line 1369 "y.tab.c" /* yacc.c:1646  */
+#line 1375 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 15:
-#line 70 "syntactic-analysis.y" /* yacc.c:1646  */
-    { 
-	dropTable(&head, (yyvsp[0]).name); }
-#line 1376 "y.tab.c" /* yacc.c:1646  */
+#line 73 "syntactic-analysis.y" /* yacc.c:1646  */
+    { add_attribute((yyvsp[-1]).name, (yyvsp[0]).val, 4); }
+#line 1381 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 16:
+#line 74 "syntactic-analysis.y" /* yacc.c:1646  */
+    { add_attribute((yyvsp[-4]).name, (yyvsp[-3]).val, (yyvsp[-1]).val); }
+#line 1387 "y.tab.c" /* yacc.c:1646  */
+    break;
+
+  case 17:
 #line 75 "syntactic-analysis.y" /* yacc.c:1646  */
+    { add_attribute((yyvsp[-1]).name, (yyvsp[0]).val, 10);}
+#line 1393 "y.tab.c" /* yacc.c:1646  */
+    break;
+
+  case 18:
+#line 79 "syntactic-analysis.y" /* yacc.c:1646  */
+    { 
+	dropTable(&head, (yyvsp[0]).name); }
+#line 1400 "y.tab.c" /* yacc.c:1646  */
+    break;
+
+  case 19:
+#line 84 "syntactic-analysis.y" /* yacc.c:1646  */
     {
 		char *tmp = (char *)malloc(sizeof(char)*(cur_value+1));
 		memcpy(tmp, insert_value, cur_value+1);
-		printf("length: %d, value:%s, table: %s\n", cur_value, tmp, (yyvsp[-4]).name);
+		printf("insert into %s value %s\n", (yyvsp[-4]).name, tmp);
 		insertOneTuple(&head, (yyvsp[-4]).name, tmp);
 		free(tmp);
 		cur_value = 0;
 	}
-#line 1389 "y.tab.c" /* yacc.c:1646  */
+#line 1413 "y.tab.c" /* yacc.c:1646  */
     break;
 
-  case 19:
-#line 91 "syntactic-analysis.y" /* yacc.c:1646  */
+  case 22:
+#line 100 "syntactic-analysis.y" /* yacc.c:1646  */
     {
 		// memcpy(insert_value+cur_value, (void *)(&($1.val)), sizeof(int));
 		char tmp[100];
@@ -1399,39 +1423,39 @@ yyreduce:
 		memcpy(insert_value+cur_value, "|", sizeof(char));
 		cur_value += sizeof(char); 
 		insert_value[cur_value] = '\0'; }
-#line 1403 "y.tab.c" /* yacc.c:1646  */
+#line 1427 "y.tab.c" /* yacc.c:1646  */
     break;
 
-  case 20:
-#line 100 "syntactic-analysis.y" /* yacc.c:1646  */
+  case 23:
+#line 109 "syntactic-analysis.y" /* yacc.c:1646  */
     {
 		memcpy(insert_value+cur_value, (yyvsp[0]).name, sizeof(char)*strlen((yyvsp[0]).name)); 
 		cur_value += strlen((yyvsp[0]).name); 
 		memcpy(insert_value+cur_value, "|", sizeof(char));
 		cur_value += sizeof(char); 
 		insert_value[cur_value] = '\0'; }
-#line 1414 "y.tab.c" /* yacc.c:1646  */
+#line 1438 "y.tab.c" /* yacc.c:1646  */
     break;
 
-  case 21:
-#line 106 "syntactic-analysis.y" /* yacc.c:1646  */
+  case 24:
+#line 115 "syntactic-analysis.y" /* yacc.c:1646  */
     {
 		memcpy(insert_value+cur_value, (yyvsp[0]).name, sizeof(char)*strlen((yyvsp[0]).name));
 		cur_value += strlen((yyvsp[0]).name); 
 		memcpy(insert_value+cur_value, "|", sizeof(char));
 		cur_value += sizeof(char); 
 		insert_value[cur_value] = '\0'; }
-#line 1425 "y.tab.c" /* yacc.c:1646  */
+#line 1449 "y.tab.c" /* yacc.c:1646  */
     break;
 
-  case 22:
-#line 115 "syntactic-analysis.y" /* yacc.c:1646  */
+  case 25:
+#line 124 "syntactic-analysis.y" /* yacc.c:1646  */
     { deleteAllTuples(&head, (yyvsp[0]).name); }
-#line 1431 "y.tab.c" /* yacc.c:1646  */
+#line 1455 "y.tab.c" /* yacc.c:1646  */
     break;
 
-  case 23:
-#line 116 "syntactic-analysis.y" /* yacc.c:1646  */
+  case 26:
+#line 125 "syntactic-analysis.y" /* yacc.c:1646  */
     {
 		if (cur_condition == 1) {
 			int fid = getLogicfidByName(&head, (yyvsp[-3]).name);
@@ -1439,108 +1463,92 @@ yyreduce:
 		}
 		cur_condition = 0;
 	}
-#line 1443 "y.tab.c" /* yacc.c:1646  */
-    break;
-
-  case 34:
-#line 134 "syntactic-analysis.y" /* yacc.c:1646  */
-    {
-		sprintf(condition_array[cur_condition].attribute_value, "%d", (yyvsp[0]).val);
-		condition_array[cur_condition].attribute_value[sizeof(int)] = '\0'; }
-#line 1451 "y.tab.c" /* yacc.c:1646  */
-    break;
-
-  case 35:
-#line 137 "syntactic-analysis.y" /* yacc.c:1646  */
-    {
-		strcpy(condition_array[cur_condition].attribute_value, (yyvsp[0]).name); }
-#line 1458 "y.tab.c" /* yacc.c:1646  */
-    break;
-
-  case 36:
-#line 139 "syntactic-analysis.y" /* yacc.c:1646  */
-    {
-		strcpy(condition_array[cur_condition].attribute_value, (yyvsp[0]).name); }
-#line 1465 "y.tab.c" /* yacc.c:1646  */
+#line 1467 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 37:
-#line 144 "syntactic-analysis.y" /* yacc.c:1646  */
-    { strcpy(condition_array[cur_condition].attribute_name, (yyvsp[0]).name); }
-#line 1471 "y.tab.c" /* yacc.c:1646  */
+#line 143 "syntactic-analysis.y" /* yacc.c:1646  */
+    {
+		sprintf(condition_array[cur_condition].attribute_value, "%d", (yyvsp[0]).val);
+		condition_array[cur_condition].attribute_value[sizeof(int)] = '\0'; }
+#line 1475 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 38:
-#line 145 "syntactic-analysis.y" /* yacc.c:1646  */
-    { strcpy(condition_array[cur_condition].attribute_name, (yyvsp[0]).name); }
-#line 1477 "y.tab.c" /* yacc.c:1646  */
+#line 146 "syntactic-analysis.y" /* yacc.c:1646  */
+    {
+		strcpy(condition_array[cur_condition].attribute_value, (yyvsp[0]).name); }
+#line 1482 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 39:
-#line 149 "syntactic-analysis.y" /* yacc.c:1646  */
-    { strcpy(condition_array[cur_condition].attribute_value, (yyvsp[0]).name); }
-#line 1483 "y.tab.c" /* yacc.c:1646  */
+#line 148 "syntactic-analysis.y" /* yacc.c:1646  */
+    {
+		strcpy(condition_array[cur_condition].attribute_value, (yyvsp[0]).name); }
+#line 1489 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 40:
-#line 150 "syntactic-analysis.y" /* yacc.c:1646  */
-    { strcpy(condition_array[cur_condition].attribute_value, (yyvsp[0]).name); }
-#line 1489 "y.tab.c" /* yacc.c:1646  */
+#line 153 "syntactic-analysis.y" /* yacc.c:1646  */
+    { strcpy(condition_array[cur_condition].attribute_name, (yyvsp[0]).name); }
+#line 1495 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 41:
 #line 154 "syntactic-analysis.y" /* yacc.c:1646  */
-    {
-		condition_array[cur_condition].operation = (yyvsp[-1]).val;
-		condition_array[cur_condition].isjoin = false;
-		cur_condition += 1; }
-#line 1498 "y.tab.c" /* yacc.c:1646  */
+    { strcpy(condition_array[cur_condition].attribute_name, (yyvsp[0]).name); }
+#line 1501 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 42:
 #line 158 "syntactic-analysis.y" /* yacc.c:1646  */
-    {
-		condition_array[cur_condition].operation = (yyvsp[-1]).val;
-		condition_array[cur_condition].isjoin = true;
-		cur_condition += 1; }
+    { strcpy(condition_array[cur_condition].attribute_value, (yyvsp[0]).name); }
 #line 1507 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 43:
-#line 165 "syntactic-analysis.y" /* yacc.c:1646  */
-    {
-		int logicfid = getLogicfidByName(&head, (yyvsp[0]).name);
-		if (logicfid != -2) {
-			TableScan(&head, logicfid, temp_data_dict);
-
-			// have trouble reading the data after table scan
-			
-			int dictid = queryFileID(&head, logicfid);
-
-			int buffer_ID_ = - temp_data_dict[dictid].fileID;
-   			int record_num_ = temp_data_dict[dictid].getRecordNum();
-   			// int record_num_ = 1;
-    		int record_len_ = temp_data_dict[dictid].getRecordLength();
-
-    		RecordCursorTmp t1(&head,dictid,record_len_,buffer_ID_,record_num_);
-    		cout<<buffer_ID_<<"~"<<record_len_<<"~"<<record_num_<<endl;
-    		
-    		char * one_Row_ = (char *)malloc(sizeof(char)*record_len_);
-		    while (true == t1.getNextRecord(one_Row_)) { //only scan
-		        getOneRecord(one_Row_, &temp_data_dict[dictid]);
-		    }
-		    free(one_Row_);
-		    
-		}
-	}
-#line 1537 "y.tab.c" /* yacc.c:1646  */
+#line 159 "syntactic-analysis.y" /* yacc.c:1646  */
+    { strcpy(condition_array[cur_condition].attribute_value, (yyvsp[0]).name); }
+#line 1513 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 44:
-#line 190 "syntactic-analysis.y" /* yacc.c:1646  */
+#line 163 "syntactic-analysis.y" /* yacc.c:1646  */
+    {
+		condition_array[cur_condition].operation = (yyvsp[-1]).val;
+		condition_array[cur_condition].isjoin = false;
+		cur_condition += 1; }
+#line 1522 "y.tab.c" /* yacc.c:1646  */
+    break;
+
+  case 45:
+#line 167 "syntactic-analysis.y" /* yacc.c:1646  */
+    {
+		condition_array[cur_condition].operation = (yyvsp[-1]).val;
+		condition_array[cur_condition].isjoin = true;
+		cur_condition += 1; }
+#line 1531 "y.tab.c" /* yacc.c:1646  */
+    break;
+
+  case 46:
+#line 174 "syntactic-analysis.y" /* yacc.c:1646  */
+    {
+		int logicfid = getLogicfidByName(&head, (yyvsp[0]).name);
+		if (logicfid != -2) {
+			int tmp_dict_id = TableScan(&head, temp_data_dict, (yyvsp[0]).name);
+		    
+		    printTempTable(&head, temp_data_dict, tmp_dict_id);
+		    
+		}
+	}
+#line 1545 "y.tab.c" /* yacc.c:1646  */
+    break;
+
+  case 47:
+#line 183 "syntactic-analysis.y" /* yacc.c:1646  */
     {
 		
-		printf("-------------------------------\n");
+	/*	printf("-------------------------------\n");
 		printf("selected attributes: ");
 		for (int i=0; i<cur_sattr; i++) {
 			printf("%s ", select_attributes[i]);
@@ -1551,12 +1559,12 @@ yyreduce:
 		for (int i=0; i<cur_table; i++) {
 			printf("%s ", table_array[i]);
 		}
-		printf("\n");
+		printf("\n"); 
 		
 		for (int i=0; i<cur_condition; i++) {
 			printf("%d condition: %s %d %s\n", i+1, condition_array[i].attribute_name, condition_array[i].operation, condition_array[i].attribute_value);
 		}
-		printf("--------------------------------\n");
+		printf("--------------------------------\n");*/
 		
 		if( cur_table == 1) {
 			// fisrt projection, attributes in selected results and conditions
@@ -1584,6 +1592,14 @@ yyreduce:
 			*/
 			// table scan
 			int tmp_dict_id = TableScan(&head, temp_data_dict, table_array[0]);
+			// check
+			for (int i=0; i<cur_sattr; i++) {
+				if(!is_in_table(temp_data_dict, tmp_dict_id, select_attributes[i])) {
+					cout<<"The attribute "<<select_attributes[i]<<" is not in table!"<<endl;
+					exit(0);
+				}
+			}
+			
 			// projection
 			tmp_dict_id = project(&head, temp_data_dict, tmp_dict_id, project_attrnum, project_attrname);
 			// selection
@@ -1646,7 +1662,7 @@ yyreduce:
 							strcat(final_project_attrname[final_project_attrnum], "_");
 							strcat(final_project_attrname[final_project_attrnum], select_attributes[i]+c+1);
 							// test print
-							printf("final project: %s\n", final_project_attrname[final_project_attrnum]);
+						//	printf("final project: %s\n", final_project_attrname[final_project_attrnum]);
 							final_project_attrnum++;
 						}
 					}
@@ -1759,7 +1775,7 @@ yyreduce:
 				}
 			}
 		
-			printf("################################\n");
+		/*	printf("################################\n");
 			for (int k=0; k<cur_table; k++) {
 				for (int i=0; i<project_attrnum[k]; i++) {
 					printf("table %d %s first projection: %s\n", k+1, table_array[k], project_attrname[k][i]);
@@ -1776,18 +1792,22 @@ yyreduce:
 				printf("join %s %s condition attr: %s\n", table_array[join_table[i][0]], table_array[join_table[i][1]], join_attrname[i]);
 			for (int i=0; i<final_project_attrnum; i++)
 				printf("final project attr %s\n", final_project_attrname[i]);
-			printf("###############################\n");
+			printf("###############################\n"); */
 			
 			
 			// operation on single table
 			for (int k=0; k<cur_table; k++) {
 				// first projection
 				tmp_dict_id[k] = project(&head, temp_data_dict, tmp_dict_id[k], project_attrnum[k], project_attrname[k]);
+			//	printf("## join table id %d, tmp_dict id %d\n", join_table[0][0], tmp_dict_id[join_table[0][0]]);
+			//	printf("### after project dict indexed %d\n", head.redef[1].getIndexedByName("nationkey"));
+			//	printf("#### after project is indexed %d#########\n", temp_data_dict[tmp_dict_id[k]].getIndexedByName("nationkey"));
 				// selection
 				for (int i=0; i<single_condition_num[k]; i++) {
 					if (condition_array[single_condition_id[k][i]].operation == EQUAL) {
 						// not consider whether the index exists
 						tmp_dict_id[k] = tableScanEqualFilter(&head , temp_data_dict, tmp_dict_id[k], condition_array[single_condition_id[k][i]].attribute_name, condition_array[single_condition_id[k][i]].attribute_value);
+			//			printf("####after select is indexed %d#########\n", temp_data_dict[tmp_dict_id[k]].getIndexedByName(join_attrname[0]));
 					}
 					// else just include <, <=, >, >=
 					else {
@@ -1801,7 +1821,9 @@ yyreduce:
 			printf("###########table 2###############");
 			printTempTable(&head, temp_data_dict, tmp_dict_id[1]);
 			*/
-			
+		/*	for(int k=0; k<cur_table; k++)
+				printf("####table %d is indexed %d on %s#########\n", k, temp_data_dict[tmp_dict_id[k]].getIndexedByName(join_attrname[0]), join_attrname[0]);
+			*/
 			// join 2 tables
 			int tmp_join_dict_id;
 			if (join_num == 1) {
@@ -1809,10 +1831,19 @@ yyreduce:
 			}
 			// join 3 tables
 			else if (join_num == 2) {
+			//	cout<<"before join"<<join_table[0][0]<<join_table[0][1]<<join_attrname[0]<<endl;
 				tmp_join_dict_id = choosejoin(&head, temp_data_dict, tmp_dict_id[join_table[0][0]], tmp_dict_id[join_table[0][1]], join_attrname[0]);				
+			//	cout<<"after join "<<temp_data_dict[tmp_join_dict_id].getAttributeNum()<<" name "<<temp_data_dict[tmp_join_dict_id].getRelationName()<<endl;
+				//for(int i=0; i<temp_data_dict[tmp_join_dict_id].getAttributeNum(); i++)
+				//	cout<<"-----------"<<temp_data_dict[tmp_join_dict_id].getAttributeByNo(i).getName()<<endl;
 				for (int i=0; i<2; i++) {
+				//	cout<<"not in "<<join_table[1][i]<<join_table[0][1]<<join_table[0][0]<<endl;
 					if (join_table[1][i]==join_table[0][0] || join_table[1][i]==join_table[0][1]) {
-						tmp_join_dict_id = choosejoin(&head, temp_data_dict, tmp_join_dict_id, tmp_dict_id[join_table[1][i]], join_attrname[1]);
+					//	cout<<"---2 table"<<join_table[1][1-i]<<endl;
+					//	for(int k=0; k<temp_data_dict[tmp_dict_id[join_table[1][1-i]]].getAttributeNum(); k++)
+					//		cout<<"-----------"<<temp_data_dict[tmp_dict_id[join_table[1][1-i]]].getAttributeByNo(k).getName()<<endl;
+						tmp_join_dict_id = choosejoin(&head, temp_data_dict, tmp_join_dict_id, tmp_dict_id[join_table[1][1-i]], join_attrname[1]);
+				//		cout<<"after join "<<temp_data_dict[tmp_join_dict_id].getAttributeNum()<<" name "<<temp_data_dict[tmp_join_dict_id].getRelationName()<<endl;
 					}
 				}
 			}
@@ -1828,41 +1859,44 @@ yyreduce:
 			*/
 			
 			// project final result
+		//	cout<<"final project num "<<final_project_attrnum<<endl;
+		/*	for(int i=0; i<final_project_attrnum; i++)
+				cout<<final_project_attrname[i]<<endl;	*/
 			tmp_join_dict_id = project(&head, temp_data_dict, tmp_join_dict_id, final_project_attrnum, final_project_attrname);
 			
 			// print results
-			printf("---------------------------------------------");
-			printf("id %d\n", tmp_join_dict_id);
-			printTempTable(&head, temp_data_dict, tmp_join_dict_id);
+		/*	printf("---------------------------------------------");
+			printf("id %d\n", tmp_join_dict_id);*/
+			printTempTable(&head, temp_data_dict, tmp_join_dict_id);	
 		}
 		
 		cur_condition = 0;
 		cur_sattr = 0;
 		cur_table = 0;
 	}
-#line 1844 "y.tab.c" /* yacc.c:1646  */
+#line 1878 "y.tab.c" /* yacc.c:1646  */
     break;
 
-  case 47:
-#line 500 "syntactic-analysis.y" /* yacc.c:1646  */
+  case 50:
+#line 519 "syntactic-analysis.y" /* yacc.c:1646  */
     { strcpy(select_attributes[cur_sattr], (yyvsp[0]).name); cur_sattr++; }
-#line 1850 "y.tab.c" /* yacc.c:1646  */
-    break;
-
-  case 48:
-#line 501 "syntactic-analysis.y" /* yacc.c:1646  */
-    { strcpy(select_attributes[cur_sattr], (yyvsp[0]).name); cur_sattr++; }
-#line 1856 "y.tab.c" /* yacc.c:1646  */
+#line 1884 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 51:
-#line 510 "syntactic-analysis.y" /* yacc.c:1646  */
+#line 520 "syntactic-analysis.y" /* yacc.c:1646  */
+    { strcpy(select_attributes[cur_sattr], (yyvsp[0]).name); cur_sattr++; }
+#line 1890 "y.tab.c" /* yacc.c:1646  */
+    break;
+
+  case 54:
+#line 529 "syntactic-analysis.y" /* yacc.c:1646  */
     {strcpy(table_array[cur_table], (yyvsp[0]).name); cur_table++; }
-#line 1862 "y.tab.c" /* yacc.c:1646  */
+#line 1896 "y.tab.c" /* yacc.c:1646  */
     break;
 
 
-#line 1866 "y.tab.c" /* yacc.c:1646  */
+#line 1900 "y.tab.c" /* yacc.c:1646  */
       default: break;
     }
   /* User semantic actions sometimes alter yychar, and that requires
@@ -2090,7 +2124,7 @@ yyreturn:
 #endif
   return yyresult;
 }
-#line 513 "syntactic-analysis.y" /* yacc.c:1906  */
+#line 532 "syntactic-analysis.y" /* yacc.c:1906  */
 
 
 bool is_in_table(relation *temp_data_dict, int dict_id, char *attr_name) {
@@ -2131,15 +2165,22 @@ int init_database(struct dbSysHead *head)
 	return 0;
 }
 
-int main() {
+int main(int argc, char *argv[]) {
+	cout<<"Welcome to Database Management System!"<<endl;
 	init_database(&head);
+	if (argc==2 && strcmp(argv[1], "big")==0) {
+		createTable(&head);
+		loaddata(&head, 1);
+	//	createIndexOn(&head, 1, "custkey");
 
-	createTable(&head);
-	loaddata(&head, 1);
-
-	createTable(&head);
-	loaddata(&head, 2);
-	createIndexOn(&head, 2, "nationkey");
+		createTable(&head);
+		loaddata(&head, 2);
+	//	createIndexOn(&head, 2, "nationkey");
+		
+		createTable(&head);
+		loaddata(&head, 3);
+	//	createIndexOn(&head, 3, "regionkey");
+	}
 
 	cur_attribute = 0;
 	cur_condition = 0;
@@ -2148,7 +2189,8 @@ int main() {
 }
 
 void yyerror(char *s) {
-    printf("parse error!\n");
+    printf("Wrong Syntax, Please Try Again!\n");
+    yyparse();
 }
 
 int yywrap() {

@@ -69,7 +69,7 @@ int deleteRecordWhere(struct dbSysHead *head, long fid, char* attributeName, cha
 			if (recordValue == compareValue){
 				hitRecordCount++;
 				location = scanTable.getcLogicLocation()-rec_length;				
-		    printf("%d\n",location);
+	//	    printf("%d\n",location);
 				deleteInIndex(head, fid, location);	//delete in indexes, if there exists indexes
 				wtFile(head, bufferID, fid, location, rec_length, erase);
 			}

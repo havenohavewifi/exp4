@@ -32,21 +32,24 @@ int project(struct dbSysHead *head, relation *temp_datadic, int old_relation, in
     }
     //input error control
     int insert_num_ = 0;
+ //   cout<<"#####"<<temp_datadic[old_relation].getAttributeNum()<<endl;
     for (int i = 0; i < temp_datadic[old_relation].getAttributeNum(); i++) {
+//		cout<<"########project "<<temp_datadic[old_relation].getAttributeByNo(i).getName()<<endl;
         for (int j = 0; j < attribute_num; j++) {
+		//	cout<<"inner ##### "<<attribute_list[j]<<endl;
             if (strcmp(attribute_list[j], temp_datadic[old_relation].getAttributeByNo(i).getName()) == 0) {
                 temp_datadic[new_relation].insertAttribute(temp_datadic[old_relation].getAttributeByNo(i).getName(), temp_datadic[old_relation].getAttributeByNo(i).getType(), temp_datadic[old_relation].getAttributeByNo(i).getLength());
                 temp_datadic[new_relation].changeIndexedByName(attribute_list[j], temp_datadic[old_relation].getIndexedByName(attribute_list[j]));
                 insert_num_ ++;
-               // cout<<attribute_list[j] <<" "<<temp_datadic[old_relation].getAttributeByNo(i).getName() <<endl;
+              //  cout<<attribute_list[j] <<" "<<temp_datadic[old_relation].getAttributeByNo(i).getName() <<endl;
             }
         }
     }
-    if (insert_num_ == attribute_num ) {
+   if (insert_num_ == attribute_num ) {
         //
     }
     else{
-        cout<<"input attributes error!"<<endl;
+        cout<<"project input attributes error!"<<endl;
         return -1;
     }
     int original_rec_length = temp_datadic[old_relation].getRecordLength();

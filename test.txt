@@ -1,32 +1,42 @@
-语法输入错误会提示，用户可重新继续输入
-例如输入 creat
-
-1. create正确
-语句例子：
+1. create
 CREATE TABLE student (sid int, sname varchar(10), birth date)
+
 2. insert语句
 INSERT INTO student VALUES (2015, "cc", 1993-12-11)
-SELECT * FROM student
-插入后可选择展示
-3. delete语句
-DELETE FROM student WHERE sid=2015; （这一句删除了）
-删除后可以再选择展示
-SELECT * FROM student
+SELECT sid,sname FROM student WHERE sid=2015;	//插入后可选择展示
 
-############开新的窗口###################
+3. 建立索引
+CREATE INDEX ON student (sid)
 
-4. select
+4. delete语句
+DELETE FROM student WHERE sid=2015;
+SELECT * FROM student	//删除后可以再选择展示
+
+5. 语法输入错误会提示，用户可重新继续输入, 例如输入 creat
+
+6. EXIT 退出数据库
+
+
+选择操作使用大表：清空原来的数据库，导入大数据./demo big
+
+"customer"表：
+"custkey", "cusname", "address", "nationkey", "phone", "acctbal", "mktsegment", "cuscomment"
+
+"nation"表
+"nationkey", "naname", regionkey", "nacomment"
+
+"region"表
+"regionkey", "regionname", "regioncomment"
+
+7. select
 	1）单表（AND，等值，非等值）
 SELECT cusname, address FROM customer WHERE nationkey=13 AND custkey<5;
-	2）多表连接
-没有index的时候：hashjoin
+
+	2）两表连接
 SELECT naname, cusname FROM customer, nation WHERE nation.nationkey=customer.nationkey AND nationkey=15;
 
-有了index：indexjoin
-创建索引
-CREATE INDEX ON customer (custkey)
-CREATE INDEX ON nation (nationkey)
-SELECT naname, cusname FROM customer, nation WHERE nation.nationkey=customer.nationkey AND nationkey=15;
+	3）三表连接
+SELECT regionname, naname, cusname FROM customer, nation, region WHERE nation.nationkey=customer.nationkey AND nation.regionkey=region.regionkey;
 
 
 EXIT：输入则退出系统

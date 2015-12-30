@@ -420,6 +420,7 @@ int hashjoin(struct dbSysHead *head, relation *temp_datadic,int old_relation_1, 
             flag ++;
         
     }
+  //  cout<<"------flag "<<flag<<endl;
     if (flag != 1) {
         cout<<"input attributes error!"<<endl;
         return -1;

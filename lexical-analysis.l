@@ -23,6 +23,10 @@ letter			[a-zA-Z]
 "AND"			{return AND;}
 "OR"			{return OR;}
 
+"CREATE INDEX ON"	{return CREATE_INDEX;}
+
+"EXIT"			{return EXIT;}
+
 "("		{return LEFT_PARENTHESIS;}
 ")"		{return RIGHT_PARENTHESIS;}
 ","		{return COMMA;}

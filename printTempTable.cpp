@@ -21,8 +21,7 @@
 #include "nestloop.h"
 
 void printTempTable(struct dbSysHead *head, relation * temp_data_dict,int new_relation){
- //   showRelation(&temp_data_dict[new_relation]);
-    showRelation(&temp_data_dict[new_relation]);
+
     if(temp_data_dict[new_relation].getRecordNum() == 0)
     {
         cout<<"query result num is 0."<<endl;

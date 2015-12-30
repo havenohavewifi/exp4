@@ -55,27 +55,29 @@ extern int yydebug;
     WHERE = 265,
     ORDER_BY = 266,
     ATTRIBUTE = 267,
-    BEqual = 268,
-    BUNEqual = 269,
-    BSmaller = 270,
-    BSmallerEqual = 271,
-    BBigger = 272,
-    BBiggerEqual = 273,
-    BLike = 274,
-    LEFT_PARENTHESIS = 275,
-    RIGHT_PARENTHESIS = 276,
-    COMMA = 277,
-    STAR = 278,
-    AND = 279,
-    OR = 280,
-    INT_TYPE = 281,
-    VARCHAR_TYPE = 282,
-    DATE_TYPE = 283,
-    VARIABLE = 284,
-    NUMBER_VALUE = 285,
-    VARCHAR_VALUE = 286,
-    DATE_VALUE = 287,
-    END = 288
+    CREATE_INDEX = 268,
+    BEqual = 269,
+    BUNEqual = 270,
+    BSmaller = 271,
+    BSmallerEqual = 272,
+    BBigger = 273,
+    BBiggerEqual = 274,
+    BLike = 275,
+    LEFT_PARENTHESIS = 276,
+    RIGHT_PARENTHESIS = 277,
+    COMMA = 278,
+    STAR = 279,
+    AND = 280,
+    OR = 281,
+    INT_TYPE = 282,
+    VARCHAR_TYPE = 283,
+    DATE_TYPE = 284,
+    VARIABLE = 285,
+    NUMBER_VALUE = 286,
+    VARCHAR_VALUE = 287,
+    DATE_VALUE = 288,
+    END = 289,
+    EXIT = 290
   };
 #endif
 /* Tokens.  */
@@ -89,27 +91,29 @@ extern int yydebug;
 #define WHERE 265
 #define ORDER_BY 266
 #define ATTRIBUTE 267
-#define BEqual 268
-#define BUNEqual 269
-#define BSmaller 270
-#define BSmallerEqual 271
-#define BBigger 272
-#define BBiggerEqual 273
-#define BLike 274
-#define LEFT_PARENTHESIS 275
-#define RIGHT_PARENTHESIS 276
-#define COMMA 277
-#define STAR 278
-#define AND 279
-#define OR 280
-#define INT_TYPE 281
-#define VARCHAR_TYPE 282
-#define DATE_TYPE 283
-#define VARIABLE 284
-#define NUMBER_VALUE 285
-#define VARCHAR_VALUE 286
-#define DATE_VALUE 287
-#define END 288
+#define CREATE_INDEX 268
+#define BEqual 269
+#define BUNEqual 270
+#define BSmaller 271
+#define BSmallerEqual 272
+#define BBigger 273
+#define BBiggerEqual 274
+#define BLike 275
+#define LEFT_PARENTHESIS 276
+#define RIGHT_PARENTHESIS 277
+#define COMMA 278
+#define STAR 279
+#define AND 280
+#define OR 281
+#define INT_TYPE 282
+#define VARCHAR_TYPE 283
+#define DATE_TYPE 284
+#define VARIABLE 285
+#define NUMBER_VALUE 286
+#define VARCHAR_VALUE 287
+#define DATE_VALUE 288
+#define END 289
+#define EXIT 290
 
 /* Value type.  */
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED

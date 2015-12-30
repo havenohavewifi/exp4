@@ -106,7 +106,7 @@ bool createIndexOn(struct dbSysHead *head, long fid, char* column){
         //getOneRecord(one_Row_, (head->desc).redef[idx]); //get each attribute value and print
     }
     
-    printf("inserted %d records.\n",scanPointer-1);
+ //   printf("inserted %d records.\n",scanPointer-1);
     //test
     /*
      printf("search(fp,-10):%d\n",search(fp,-10));

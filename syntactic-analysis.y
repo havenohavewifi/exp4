@@ -8,7 +8,7 @@
 %}
 
 %start	program		
-%token  CREATE_TABLE DROP_TABLE INSERT VALUES DELETE SELECT FROM WHERE ORDER_BY ATTRIBUTE
+%token  CREATE_TABLE DROP_TABLE INSERT VALUES DELETE SELECT FROM WHERE ORDER_BY ATTRIBUTE CREATE_INDEX
 %token  BEqual BUNEqual BSmaller BSmallerEqual BBigger BBiggerEqual BLike
 %token	LEFT_PARENTHESIS RIGHT_PARENTHESIS COMMA STAR
 %token  AND OR
@@ -18,6 +18,7 @@
 %token	VARCHAR_VALUE
 %token	DATE_VALUE
 %token	END
+%token	EXIT
 
 %%
 
@@ -27,7 +28,15 @@ program
 	;
 
 command
-	: create | drop | insert | delete | select;
+	: create | drop | insert | delete | select | create_index
+	| EXIT {exit(0);};
+	
+create_index
+	: CREATE_INDEX VARIABLE LEFT_PARENTHESIS VARIABLE RIGHT_PARENTHESIS {
+		int fid = getLogicfidByName(&head, $2.name);
+		createIndexOn(&head, fid, $4.name);
+	}
+	;
 
 create
 	: CREATE_TABLE VARIABLE LEFT_PARENTHESIS attribute_type_list RIGHT_PARENTHESIS {
@@ -47,10 +56,10 @@ create
 		}
 		
 		// print succeed infomation
-		printf("table name: %s\n", head.redef[n].getRelationName());
-		for(int i=0; i<head.redef[n].getAttributeNum(); i++) {
-			printf("%s %d\n", head.redef[n].getAttributeByNo(i).getName(), head.redef[n].getAttributeByNo(i).getType());
-		}
+		printf("create table %s succeed!\n", head.redef[n].getRelationName());
+	/*	for(int i=0; i<head.redef[n].getAttributeNum(); i++) {
+			printf("%s %d ", head.redef[n].getAttributeByNo(i).getName(), head.redef[n].getAttributeByNo(i).getType());
+		}*/
 		cur_attribute = 0;
 	}
 	;
@@ -75,7 +84,7 @@ insert
 	: INSERT VARIABLE VALUES LEFT_PARENTHESIS record RIGHT_PARENTHESIS  {
 		char *tmp = (char *)malloc(sizeof(char)*(cur_value+1));
 		memcpy(tmp, insert_value, cur_value+1);
-		printf("length: %d, value:%s, table: %s\n", cur_value, tmp, $2.name);
+		printf("insert into %s value %s\n", $2.name, tmp);
 		insertOneTuple(&head, $2.name, tmp);
 		free(tmp);
 		cur_value = 0;
@@ -165,31 +174,15 @@ select
 	: SELECT STAR FROM VARIABLE {
 		int logicfid = getLogicfidByName(&head, $4.name);
 		if (logicfid != -2) {
-			TableScan(&head, logicfid, temp_data_dict);
-
-			// have trouble reading the data after table scan
-			
-			int dictid = queryFileID(&head, logicfid);
-
-			int buffer_ID_ = - temp_data_dict[dictid].fileID;
-   			int record_num_ = temp_data_dict[dictid].getRecordNum();
-   			// int record_num_ = 1;
-    		int record_len_ = temp_data_dict[dictid].getRecordLength();
-
-    		RecordCursorTmp t1(&head,dictid,record_len_,buffer_ID_,record_num_);
-    		cout<<buffer_ID_<<"~"<<record_len_<<"~"<<record_num_<<endl;
-    		
-    		char * one_Row_ = (char *)malloc(sizeof(char)*record_len_);
-		    while (true == t1.getNextRecord(one_Row_)) { //only scan
-		        getOneRecord(one_Row_, &temp_data_dict[dictid]);
-		    }
-		    free(one_Row_);
+			int tmp_dict_id = TableScan(&head, temp_data_dict, $4.name);
+		    
+		    printTempTable(&head, temp_data_dict, tmp_dict_id);
 		    
 		}
 	}
 	| SELECT attribute_list FROM table_list WHERE where_list END{
 		
-		printf("-------------------------------\n");
+	/*	printf("-------------------------------\n");
 		printf("selected attributes: ");
 		for (int i=0; i<cur_sattr; i++) {
 			printf("%s ", select_attributes[i]);
@@ -200,12 +193,12 @@ select
 		for (int i=0; i<cur_table; i++) {
 			printf("%s ", table_array[i]);
 		}
-		printf("\n");
+		printf("\n"); 
 		
 		for (int i=0; i<cur_condition; i++) {
 			printf("%d condition: %s %d %s\n", i+1, condition_array[i].attribute_name, condition_array[i].operation, condition_array[i].attribute_value);
 		}
-		printf("--------------------------------\n");
+		printf("--------------------------------\n");*/
 		
 		if( cur_table == 1) {
 			// fisrt projection, attributes in selected results and conditions
@@ -233,6 +226,14 @@ select
 			*/
 			// table scan
 			int tmp_dict_id = TableScan(&head, temp_data_dict, table_array[0]);
+			// check
+			for (int i=0; i<cur_sattr; i++) {
+				if(!is_in_table(temp_data_dict, tmp_dict_id, select_attributes[i])) {
+					cout<<"The attribute "<<select_attributes[i]<<" is not in table!"<<endl;
+					exit(0);
+				}
+			}
+			
 			// projection
 			tmp_dict_id = project(&head, temp_data_dict, tmp_dict_id, project_attrnum, project_attrname);
 			// selection
@@ -295,7 +296,7 @@ select
 							strcat(final_project_attrname[final_project_attrnum], "_");
 							strcat(final_project_attrname[final_project_attrnum], select_attributes[i]+c+1);
 							// test print
-							printf("final project: %s\n", final_project_attrname[final_project_attrnum]);
+						//	printf("final project: %s\n", final_project_attrname[final_project_attrnum]);
 							final_project_attrnum++;
 						}
 					}
@@ -408,7 +409,7 @@ select
 				}
 			}
 		
-			printf("################################\n");
+		/*	printf("################################\n");
 			for (int k=0; k<cur_table; k++) {
 				for (int i=0; i<project_attrnum[k]; i++) {
 					printf("table %d %s first projection: %s\n", k+1, table_array[k], project_attrname[k][i]);
@@ -425,18 +426,22 @@ select
 				printf("join %s %s condition attr: %s\n", table_array[join_table[i][0]], table_array[join_table[i][1]], join_attrname[i]);
 			for (int i=0; i<final_project_attrnum; i++)
 				printf("final project attr %s\n", final_project_attrname[i]);
-			printf("###############################\n");
+			printf("###############################\n"); */
 			
 			
 			// operation on single table
 			for (int k=0; k<cur_table; k++) {
 				// first projection
 				tmp_dict_id[k] = project(&head, temp_data_dict, tmp_dict_id[k], project_attrnum[k], project_attrname[k]);
+			//	printf("## join table id %d, tmp_dict id %d\n", join_table[0][0], tmp_dict_id[join_table[0][0]]);
+			//	printf("### after project dict indexed %d\n", head.redef[1].getIndexedByName("nationkey"));
+			//	printf("#### after project is indexed %d#########\n", temp_data_dict[tmp_dict_id[k]].getIndexedByName("nationkey"));
 				// selection
 				for (int i=0; i<single_condition_num[k]; i++) {
 					if (condition_array[single_condition_id[k][i]].operation == EQUAL) {
 						// not consider whether the index exists
 						tmp_dict_id[k] = tableScanEqualFilter(&head , temp_data_dict, tmp_dict_id[k], condition_array[single_condition_id[k][i]].attribute_name, condition_array[single_condition_id[k][i]].attribute_value);
+			//			printf("####after select is indexed %d#########\n", temp_data_dict[tmp_dict_id[k]].getIndexedByName(join_attrname[0]));
 					}
 					// else just include <, <=, >, >=
 					else {
@@ -450,7 +455,9 @@ select
 			printf("###########table 2###############");
 			printTempTable(&head, temp_data_dict, tmp_dict_id[1]);
 			*/
-			
+		/*	for(int k=0; k<cur_table; k++)
+				printf("####table %d is indexed %d on %s#########\n", k, temp_data_dict[tmp_dict_id[k]].getIndexedByName(join_attrname[0]), join_attrname[0]);
+			*/
 			// join 2 tables
 			int tmp_join_dict_id;
 			if (join_num == 1) {
@@ -458,10 +465,19 @@ select
 			}
 			// join 3 tables
 			else if (join_num == 2) {
+			//	cout<<"before join"<<join_table[0][0]<<join_table[0][1]<<join_attrname[0]<<endl;
 				tmp_join_dict_id = choosejoin(&head, temp_data_dict, tmp_dict_id[join_table[0][0]], tmp_dict_id[join_table[0][1]], join_attrname[0]);				
+			//	cout<<"after join "<<temp_data_dict[tmp_join_dict_id].getAttributeNum()<<" name "<<temp_data_dict[tmp_join_dict_id].getRelationName()<<endl;
+				//for(int i=0; i<temp_data_dict[tmp_join_dict_id].getAttributeNum(); i++)
+				//	cout<<"-----------"<<temp_data_dict[tmp_join_dict_id].getAttributeByNo(i).getName()<<endl;
 				for (int i=0; i<2; i++) {
+				//	cout<<"not in "<<join_table[1][i]<<join_table[0][1]<<join_table[0][0]<<endl;
 					if (join_table[1][i]==join_table[0][0] || join_table[1][i]==join_table[0][1]) {
-						tmp_join_dict_id = choosejoin(&head, temp_data_dict, tmp_join_dict_id, tmp_dict_id[join_table[1][i]], join_attrname[1]);
+					//	cout<<"---2 table"<<join_table[1][1-i]<<endl;
+					//	for(int k=0; k<temp_data_dict[tmp_dict_id[join_table[1][1-i]]].getAttributeNum(); k++)
+					//		cout<<"-----------"<<temp_data_dict[tmp_dict_id[join_table[1][1-i]]].getAttributeByNo(k).getName()<<endl;
+						tmp_join_dict_id = choosejoin(&head, temp_data_dict, tmp_join_dict_id, tmp_dict_id[join_table[1][1-i]], join_attrname[1]);
+				//		cout<<"after join "<<temp_data_dict[tmp_join_dict_id].getAttributeNum()<<" name "<<temp_data_dict[tmp_join_dict_id].getRelationName()<<endl;
 					}
 				}
 			}
@@ -477,12 +493,15 @@ select
 			*/
 			
 			// project final result
+		//	cout<<"final project num "<<final_project_attrnum<<endl;
+		/*	for(int i=0; i<final_project_attrnum; i++)
+				cout<<final_project_attrname[i]<<endl;	*/
 			tmp_join_dict_id = project(&head, temp_data_dict, tmp_join_dict_id, final_project_attrnum, final_project_attrname);
 			
 			// print results
-			printf("---------------------------------------------");
-			printf("id %d\n", tmp_join_dict_id);
-			printTempTable(&head, temp_data_dict, tmp_join_dict_id);
+		/*	printf("---------------------------------------------");
+			printf("id %d\n", tmp_join_dict_id);*/
+			printTempTable(&head, temp_data_dict, tmp_join_dict_id);	
 		}
 		
 		cur_condition = 0;
@@ -550,15 +569,22 @@ int init_database(struct dbSysHead *head)
 	return 0;
 }
 
-int main() {
+int main(int argc, char *argv[]) {
+	cout<<"Welcome to Database Management System!"<<endl;
 	init_database(&head);
+	if (argc==2 && strcmp(argv[1], "big")==0) {
+		createTable(&head);
+		loaddata(&head, 1);
+	//	createIndexOn(&head, 1, "custkey");
 
-	createTable(&head);
-	loaddata(&head, 1);
-
-	createTable(&head);
-	loaddata(&head, 2);
-	createIndexOn(&head, 2, "nationkey");
+		createTable(&head);
+		loaddata(&head, 2);
+	//	createIndexOn(&head, 2, "nationkey");
+		
+		createTable(&head);
+		loaddata(&head, 3);
+	//	createIndexOn(&head, 3, "regionkey");
+	}
 
 	cur_attribute = 0;
 	cur_condition = 0;
@@ -567,7 +593,8 @@ int main() {
 }
 
 void yyerror(char *s) {
-    printf("parse error!\n");
+    printf("Wrong Syntax, Please Try Again!\n");
+    yyparse();
 }
 
 int yywrap() {
